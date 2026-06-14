@@ -8,6 +8,7 @@
     "nightPurple": "#0D0820",
     "deepPurple": "#1A1038",
     "royalPurple": "#2B1763",
+    "panelPurple": "#3A207C",
     "mainPurple": "#6D4CFF",
     "softPurple": "#9F84FF",
     "lavenderMist": "#D8CCFF",
@@ -36,7 +37,8 @@
   "shadow": {
     "soft": "0 18px 45px rgba(9, 3, 30, 0.28)",
     "card": "0 12px 30px rgba(13, 8, 32, 0.22)",
-    "glow": "0 0 32px rgba(109, 76, 255, 0.35)"
+    "glow": "0 0 32px rgba(109, 76, 255, 0.35)",
+    "glowStrong": "0 0 48px rgba(109, 76, 255, 0.55)"
   },
   "typography": {
     "display": { "size": 52, "weight": 800, "lineHeight": 1.05 },
@@ -46,5 +48,15 @@
     "body": { "size": 16, "weight": 500, "lineHeight": 1.6 },
     "caption": { "size": 12, "weight": 500, "lineHeight": 1.4 },
     "button": { "size": 16, "weight": 700, "lineHeight": 1.2 }
+  },
+  "spacing": {
+    "2xs": 4,
+    "xs": 8,
+    "sm": 12,
+    "md": 16,
+    "lg": 24,
+    "xl": 32,
+    "2xl": 48,
+    "3xl": 64
   }
 }

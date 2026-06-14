@@ -1,26 +1,38 @@
 @import "tailwindcss";
+/* Raw brand token values (single source of truth). */
 @import "../../tokens/brand-tokens.css";
+/* Tailwind v4 bridge that turns those tokens into utilities. */
+@import "../styles/theme.css";
 
 /*
-  Brand font wiring.
-  Layer the next/font face (--font-baloo) on top of the brand font stack
-  defined in /tokens/brand-tokens.css, WITHOUT editing the token source.
+  Layer the next/font face (--font-baloo, set on <html> in layout.tsx) on top
+  of the brand font stack, without editing the token source in /tokens.
 */
 :root {
   --font-primary: var(--font-baloo), "Baloo Bhaijaan 2", "Cairo", "Tajawal",
     system-ui, sans-serif;
 }
 
-/* Make Tailwind's default sans utility use the brand font. */
-@theme inline {
-  --font-sans: var(--font-primary);
-}
+@layer base {
+  html {
+    /* Tell the UA the app is dark so form controls / scrollbars match. */
+    color-scheme: dark;
+  }
 
-/*
-  Base layout helpers only.
-  Brand colors / direction / body font come from brand-tokens.css.
-  Full design-token → Tailwind theme mapping is intentionally deferred to Task 2.
-*/
-html {
-  font-family: var(--font-primary);
+  body {
+    /* RTL is also set via the dir attribute in layout.tsx; kept for safety. */
+    direction: rtl;
+    font-family: var(--font-primary);
+    /* Mostly-purple: the app surface defaults to deep purple. White/cream is
+       opt-in per card via bg-cream / bg-surface-contrast. */
+    background: var(--color-deep-purple);
+    color: var(--text-on-dark);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--color-main-purple);
+    color: var(--color-warm-white);
+  }
 }

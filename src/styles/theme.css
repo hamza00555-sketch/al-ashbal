@@ -1,0 +1,125 @@
+/*
+  الأشبال — Tailwind v4 theme bridge
+  ------------------------------------------------------------------
+  Maps the brand design tokens from /tokens/brand-tokens.css into Tailwind's
+  theme so brand-aware utilities are generated (bg-purple, text-display,
+  rounded-lg, shadow-glow, p-md, ...).
+
+  `@theme inline` is used on purpose: the resolved utilities reference the
+  brand CSS variables directly, so the actual values stay single-sourced in
+  /tokens (no duplicated hex/length values here).
+*/
+@theme inline {
+  /* ---------- Fonts ---------- */
+  --font-sans: var(--font-primary);
+  --font-display: var(--font-primary);
+
+  /* ---------- Brand colors ---------- */
+  --color-night: var(--color-night-purple);
+  --color-deep: var(--color-deep-purple);
+  --color-royal: var(--color-royal-purple);
+  --color-panel: var(--color-panel-purple);
+  --color-purple: var(--color-main-purple);
+  --color-purple-soft: var(--color-soft-purple);
+  --color-lavender: var(--color-lavender-mist);
+  --color-cream: var(--color-warm-white);
+  --color-gold: var(--color-badge-gold);
+  --color-mint: var(--color-success-mint);
+  --color-coral: var(--color-alert-coral);
+
+  /* ---------- Semantic surfaces & text ---------- */
+  --color-surface: var(--color-deep-purple);          /* default app background */
+  --color-surface-raised: var(--color-royal-purple);  /* dark purple cards */
+  --color-surface-panel: var(--color-panel-purple);   /* gradient-ish panels */
+  --color-surface-contrast: var(--color-warm-white);  /* the LIMITED light cards */
+  --color-on-dark: var(--text-on-dark);
+  --color-on-dark-muted: var(--text-muted-on-dark);
+  --color-on-light: var(--text-on-light);
+  --color-muted: var(--text-muted);
+
+  /* ---------- Semantic states ---------- */
+  --color-success: var(--color-success-mint);
+  --color-warning: var(--color-badge-gold);
+  --color-danger: var(--color-alert-coral);
+
+  /* ---------- Typography scale (size + line-height + weight) ---------- */
+  --text-display: var(--fs-display);
+  --text-display--line-height: var(--lh-display);
+  --text-display--font-weight: var(--fw-extrabold);
+
+  --text-h1: var(--fs-h1);
+  --text-h1--line-height: var(--lh-h1);
+  --text-h1--font-weight: var(--fw-extrabold);
+
+  --text-h2: var(--fs-h2);
+  --text-h2--line-height: var(--lh-h2);
+  --text-h2--font-weight: var(--fw-bold);
+
+  --text-card-title: var(--fs-card-title);
+  --text-card-title--line-height: var(--lh-card-title);
+  --text-card-title--font-weight: var(--fw-bold);
+
+  --text-body: var(--fs-body);
+  --text-body--line-height: var(--lh-body);
+  --text-body--font-weight: var(--fw-medium);
+
+  --text-caption: var(--fs-caption);
+  --text-caption--line-height: var(--lh-caption);
+  --text-caption--font-weight: var(--fw-medium);
+
+  --text-button: var(--fs-button);
+  --text-button--line-height: var(--lh-button);
+  --text-button--font-weight: var(--fw-bold);
+
+  /* ---------- Radius (brand scale overrides Tailwind defaults) ---------- */
+  --radius-sm: var(--radius-small);
+  --radius-md: var(--radius-medium);
+  --radius-lg: var(--radius-large);
+  --radius-xl: var(--radius-xlarge);
+  --radius-pill: var(--radius-pill);
+
+  /* ---------- Shadows / glow ---------- */
+  --shadow-soft: var(--shadow-soft);
+  --shadow-card: var(--shadow-card);
+  --shadow-glow: var(--shadow-glow);
+  --shadow-glow-strong: var(--shadow-glow-strong);
+
+  /* ---------- Spacing scale ---------- */
+  --spacing-2xs: var(--space-2xs);
+  --spacing-xs: var(--space-xs);
+  --spacing-sm: var(--space-sm);
+  --spacing-md: var(--space-md);
+  --spacing-lg: var(--space-lg);
+  --spacing-xl: var(--space-xl);
+  --spacing-2xl: var(--space-2xl);
+  --spacing-3xl: var(--space-3xl);
+}
+
+/* ------------------------------------------------------------------
+   Brand gradient utilities (Tailwind has no var-driven gradient util).
+   Usage: <div class="gradient-hero"> ...
+   ------------------------------------------------------------------ */
+@utility gradient-hero {
+  background-image: var(--gradient-hero);
+}
+@utility gradient-card {
+  background-image: var(--gradient-card);
+}
+@utility gradient-cta {
+  background-image: var(--gradient-button);
+}
+@utility gradient-badge {
+  background-image: var(--gradient-badge);
+}
+
+/* ------------------------------------------------------------------
+   RTL-safe helper.
+   The app is RTL globally (dir="rtl" on <html>), so prefer Tailwind's
+   logical utilities for layout — ms / me, ps / pe, start / end,
+   text-start / text-end, float-start / float-end — they flip
+   automatically with direction.
+   Use `flip-x` only to mirror inherently-directional glyphs / icons.
+   ------------------------------------------------------------------ */
+@utility flip-x {
+  transform: scaleX(-1);
+}
