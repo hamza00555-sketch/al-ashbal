@@ -7,8 +7,10 @@
 */
 import type {
   AppNotification,
+  Badge,
   ChildProfile,
   Halaqa,
+  Lesson,
   ProgressSnapshot,
   RecitationSubmission,
   User,
@@ -81,6 +83,36 @@ export function getTeacherHalaqas(viewer: User): Halaqa[] {
 /** Notifications addressed to the viewer only. */
 export function getNotificationsForViewer(viewer: User): AppNotification[] {
   return db.notifications.filter((n) => n.userId === viewer.id);
+}
+
+/** Lessons of a child's halaqa, gated by canViewChild. */
+export function getLessonsForChild(viewer: User, childId: string): Lesson[] {
+  if (!can.canViewChild(viewer, childId)) return [];
+  const child = db.children.find((c) => c.id === childId);
+  if (!child) return [];
+  return db.lessons.filter((l) => l.halaqaId === child.halaqaId);
+}
+
+/** The next upcoming/live lesson for a child, or null. */
+export function getNextLessonForChild(viewer: User, childId: string): Lesson | null {
+  const upcoming = getLessonsForChild(viewer, childId)
+    .filter((l) => l.status === "scheduled" || l.status === "live")
+    .sort((a, b) => `${a.date}${a.startTime}`.localeCompare(`${b.date}${b.startTime}`));
+  return upcoming[0] ?? null;
+}
+
+/** Badges a child has been awarded (via teacher reviews), gated by canViewChild. */
+export function getBadgesForChild(viewer: User, childId: string): Badge[] {
+  if (!can.canViewChild(viewer, childId)) return [];
+  const childRecitationIds = db.recitations
+    .filter((r) => r.childId === childId)
+    .map((r) => r.id);
+  const awarded = new Set<string>();
+  for (const review of db.teacherReviews) {
+    if (!childRecitationIds.includes(review.recitationId)) continue;
+    review.badgeIds?.forEach((id) => awarded.add(id));
+  }
+  return db.badges.filter((b) => awarded.has(b.id));
 }
 
 export interface GuestSummary {

@@ -15,6 +15,9 @@ export {
   getProgressForChild,
   getTeacherHalaqas,
   getNotificationsForViewer,
+  getLessonsForChild,
+  getNextLessonForChild,
+  getBadgesForChild,
   getGuestSummary,
 } from "./access";
 export type { GuestSummary } from "./access";
