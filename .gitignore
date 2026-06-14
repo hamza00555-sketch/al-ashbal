@@ -1,0 +1,7 @@
+# Secrets — never commit API keys
+.env
+.env.*
+!.env.example
+
+# Generated image output from the gpt-image-2 skill
+output/
