@@ -1,0 +1,26 @@
+@import "tailwindcss";
+@import "../../tokens/brand-tokens.css";
+
+/*
+  Brand font wiring.
+  Layer the next/font face (--font-baloo) on top of the brand font stack
+  defined in /tokens/brand-tokens.css, WITHOUT editing the token source.
+*/
+:root {
+  --font-primary: var(--font-baloo), "Baloo Bhaijaan 2", "Cairo", "Tajawal",
+    system-ui, sans-serif;
+}
+
+/* Make Tailwind's default sans utility use the brand font. */
+@theme inline {
+  --font-sans: var(--font-primary);
+}
+
+/*
+  Base layout helpers only.
+  Brand colors / direction / body font come from brand-tokens.css.
+  Full design-token → Tailwind theme mapping is intentionally deferred to Task 2.
+*/
+html {
+  font-family: var(--font-primary);
+}
