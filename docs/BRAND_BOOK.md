@@ -348,18 +348,18 @@ font-family: 'Baloo Bhaijaan 2', 'Cairo', 'Tajawal', system-ui, sans-serif;
 
 | الصورة | الاستخدام |
 |---|---|
-| `images/hero.jpg` | العرض العام للتطبيق |
-| `images/child.jpg` | تجربة الطفل |
-| `images/video.jpg` | مهمة التسميع بالفيديو |
-| `images/progress_badges.jpg` | التقدم والأوسمة |
-| `images/parent.jpg` | تجربة ولي الأمر |
-| `images/approval.jpg` | موافقة ولي الأمر |
-| `images/teacher.jpg` | لوحة المعلم |
-| `images/attendance.jpg` | إدارة الحلقة والحضور |
-| `images/notifications.jpg` | التنبيهات والملخصات |
-| `images/progress_bar.jpg` | بار التقدم |
-| `images/wishes_child.jpg` | الأمنيات عند الطفل |
-| `images/wishes_parent.jpg` | الأمنيات عند ولي الأمر |
+| `../assets/visual-reference/hero.jpg` | العرض العام للتطبيق |
+| `../assets/visual-reference/child.jpg` | تجربة الطفل |
+| `../assets/visual-reference/video.jpg` | مهمة التسميع بالفيديو |
+| `../assets/visual-reference/progress_badges.jpg` | التقدم والأوسمة |
+| `../assets/visual-reference/parent.jpg` | تجربة ولي الأمر |
+| `../assets/visual-reference/approval.jpg` | موافقة ولي الأمر |
+| `../assets/visual-reference/teacher.jpg` | لوحة المعلم |
+| `../assets/visual-reference/attendance.jpg` | إدارة الحلقة والحضور |
+| `../assets/visual-reference/notifications.jpg` | التنبيهات والملخصات |
+| `../assets/visual-reference/progress_bar.jpg` | بار التقدم |
+| `../assets/visual-reference/wishes_child.jpg` | الأمنيات عند الطفل |
+| `../assets/visual-reference/wishes_parent.jpg` | الأمنيات عند ولي الأمر |
 
 ### قواعد الصور
 
@@ -792,51 +792,51 @@ font-family: 'Baloo Bhaijaan 2', 'Cairo', 'Tajawal', system-ui, sans-serif;
 
 ### Overview
 
-![Hero](images/hero.jpg)
+![Hero](../assets/visual-reference/hero.jpg)
 
 ### تجربة الطفل
 
-![Child](images/child.jpg)
+![Child](../assets/visual-reference/child.jpg)
 
 ### مهمة التسميع بالفيديو
 
-![Video](images/video.jpg)
+![Video](../assets/visual-reference/video.jpg)
 
 ### التقدم والأوسمة
 
-![Progress Badges](images/progress_badges.jpg)
+![Progress Badges](../assets/visual-reference/progress_badges.jpg)
 
 ### تجربة ولي الأمر
 
-![Parent](images/parent.jpg)
+![Parent](../assets/visual-reference/parent.jpg)
 
 ### موافقة ولي الأمر
 
-![Approval](images/approval.jpg)
+![Approval](../assets/visual-reference/approval.jpg)
 
 ### لوحة المعلم
 
-![Teacher](images/teacher.jpg)
+![Teacher](../assets/visual-reference/teacher.jpg)
 
 ### إدارة الحلقة والحضور
 
-![Attendance](images/attendance.jpg)
+![Attendance](../assets/visual-reference/attendance.jpg)
 
 ### التنبيهات والملخصات
 
-![Notifications](images/notifications.jpg)
+![Notifications](../assets/visual-reference/notifications.jpg)
 
 ### بار التقدم
 
-![Progress Bar](images/progress_bar.jpg)
+![Progress Bar](../assets/visual-reference/progress_bar.jpg)
 
 ### أمنيات الطفل
 
-![Wishes Child](images/wishes_child.jpg)
+![Wishes Child](../assets/visual-reference/wishes_child.jpg)
 
 ### الأمنيات عند ولي الأمر
 
-![Wishes Parent](images/wishes_parent.jpg)
+![Wishes Parent](../assets/visual-reference/wishes_parent.jpg)
 
 ---
 
@@ -957,8 +957,8 @@ font-family: 'Baloo Bhaijaan 2', 'Cairo', 'Tajawal', system-ui, sans-serif;
 
 تم تجهيز ملفات عملية:
 
-- `tokens/design-tokens.json`
-- `tokens/brand-tokens.css`
+- `../tokens/design-tokens.json`
+- `../tokens/brand-tokens.css`
 
 تستخدم للمطور أو Claude لضبط الألوان، الخطوط، والـ UI system.
 
