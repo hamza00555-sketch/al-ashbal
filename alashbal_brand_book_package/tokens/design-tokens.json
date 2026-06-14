@@ -1,0 +1,50 @@
+{
+  "brand": {
+    "name": "الأشبال",
+    "fontPrimary": "Baloo Bhaijaan 2",
+    "direction": "rtl"
+  },
+  "colors": {
+    "nightPurple": "#0D0820",
+    "deepPurple": "#1A1038",
+    "royalPurple": "#2B1763",
+    "mainPurple": "#6D4CFF",
+    "softPurple": "#9F84FF",
+    "lavenderMist": "#D8CCFF",
+    "warmWhite": "#FFF8EA",
+    "badgeGold": "#F6C65B",
+    "successMint": "#63D9A0",
+    "alertCoral": "#F97373",
+    "textPrimaryOnDark": "#FFF8EA",
+    "textSecondaryOnDark": "#D8CCFF",
+    "textPrimaryOnLight": "#1A1038",
+    "textMuted": "#AFA4D9"
+  },
+  "gradients": {
+    "hero": "radial-gradient(circle at 50% 20%, #6D4CFF 0%, #2B1763 42%, #0D0820 100%)",
+    "card": "linear-gradient(145deg, #3A207C 0%, #1A1038 100%)",
+    "button": "linear-gradient(135deg, #8B6CFF 0%, #6D4CFF 55%, #4B2BC7 100%)",
+    "badge": "linear-gradient(135deg, #F8D77A 0%, #F6C65B 45%, #B98221 100%)"
+  },
+  "radius": {
+    "small": 12,
+    "medium": 20,
+    "large": 28,
+    "xl": 32,
+    "pill": 999
+  },
+  "shadow": {
+    "soft": "0 18px 45px rgba(9, 3, 30, 0.28)",
+    "card": "0 12px 30px rgba(13, 8, 32, 0.22)",
+    "glow": "0 0 32px rgba(109, 76, 255, 0.35)"
+  },
+  "typography": {
+    "display": { "size": 52, "weight": 800, "lineHeight": 1.05 },
+    "h1": { "size": 32, "weight": 800, "lineHeight": 1.15 },
+    "h2": { "size": 24, "weight": 700, "lineHeight": 1.25 },
+    "cardTitle": { "size": 18, "weight": 700, "lineHeight": 1.3 },
+    "body": { "size": 16, "weight": 500, "lineHeight": 1.6 },
+    "caption": { "size": 12, "weight": 500, "lineHeight": 1.4 },
+    "button": { "size": 16, "weight": 700, "lineHeight": 1.2 }
+  }
+}

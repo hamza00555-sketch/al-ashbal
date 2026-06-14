@@ -1,0 +1,41 @@
+:root {
+  --font-primary: 'Baloo Bhaijaan 2', 'Cairo', 'Tajawal', system-ui, sans-serif;
+
+  --color-night-purple: #0D0820;
+  --color-deep-purple: #1A1038;
+  --color-royal-purple: #2B1763;
+  --color-main-purple: #6D4CFF;
+  --color-soft-purple: #9F84FF;
+  --color-lavender-mist: #D8CCFF;
+  --color-warm-white: #FFF8EA;
+  --color-badge-gold: #F6C65B;
+  --color-success-mint: #63D9A0;
+  --color-alert-coral: #F97373;
+
+  --text-on-dark: #FFF8EA;
+  --text-muted-on-dark: #D8CCFF;
+  --text-on-light: #1A1038;
+  --text-muted: #AFA4D9;
+
+  --gradient-hero: radial-gradient(circle at 50% 20%, #6D4CFF 0%, #2B1763 42%, #0D0820 100%);
+  --gradient-card: linear-gradient(145deg, #3A207C 0%, #1A1038 100%);
+  --gradient-button: linear-gradient(135deg, #8B6CFF 0%, #6D4CFF 55%, #4B2BC7 100%);
+  --gradient-badge: linear-gradient(135deg, #F8D77A 0%, #F6C65B 45%, #B98221 100%);
+
+  --radius-small: 12px;
+  --radius-medium: 20px;
+  --radius-large: 28px;
+  --radius-xl: 32px;
+  --radius-pill: 999px;
+
+  --shadow-soft: 0 18px 45px rgba(9, 3, 30, 0.28);
+  --shadow-card: 0 12px 30px rgba(13, 8, 32, 0.22);
+  --shadow-glow: 0 0 32px rgba(109, 76, 255, 0.35);
+}
+
+body {
+  direction: rtl;
+  font-family: var(--font-primary);
+  background: var(--color-night-purple);
+  color: var(--text-on-dark);
+}
