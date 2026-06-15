@@ -4,6 +4,9 @@ import { getMockUser, getVisibleChildren } from "@/lib/data";
 import type {
   AttendanceStatus,
   ChildProfile,
+  ChildTaskStatus,
+  ChildTaskSubject,
+  ChildTaskType,
   LessonStatus,
   RecitationStatus,
   User,
@@ -32,6 +35,33 @@ export const ATTENDANCE_STATUS: Record<AttendanceStatus, { label: string; tone: 
   excused: { label: "بعذر", tone: "purple" },
   manual_override: { label: "تعديل يدوي", tone: "neutral" },
 };
+
+export const TASK_STATUS: Record<ChildTaskStatus, { label: string; tone: BadgeTone }> = {
+  not_started: { label: "لم يبدأ", tone: "neutral" },
+  in_progress: { label: "قيد التنفيذ", tone: "purple" },
+  submitted: { label: "تم الإرسال", tone: "purple" },
+  pending_parent_approval: { label: "بانتظار موافقة ولي الأمر", tone: "warning" },
+  pending_teacher_review: { label: "بانتظار مراجعة المعلم", tone: "purple" },
+  accepted: { label: "مقبول", tone: "success" },
+  rerecord_needed: { label: "مطلوب إعادة", tone: "danger" },
+};
+
+export const TASK_TYPE_LABEL: Record<ChildTaskType, string> = {
+  recitation: "تسميع",
+  memorization: "حفظ",
+  review: "مراجعة",
+};
+
+export const TASK_SUBJECT_LABEL: Record<ChildTaskSubject, string> = {
+  quran: "القرآن",
+  tajweed: "التجويد",
+  behavior: "السلوك",
+};
+
+/** Tasks that still need the child's attention (anything not accepted). */
+export function isOpenTask(status: ChildTaskStatus): boolean {
+  return status !== "accepted";
+}
 
 export const LESSON_STATUS: Record<LessonStatus, { label: string; tone: BadgeTone }> = {
   draft: { label: "مسودة", tone: "neutral" },

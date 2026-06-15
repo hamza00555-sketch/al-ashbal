@@ -38,6 +38,14 @@ export function IconMic() {
     </svg>
   );
 }
+export function IconTasks() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden className={base}>
+      <rect x="5" y="4" width="14" height="16" rx="2.5" stroke="currentColor" strokeWidth="1.8" />
+      <path d="m8.5 10 1.5 1.5L13 8M8.5 15.5h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
 export function IconBell() {
   return (
     <svg viewBox="0 0 24 24" fill="none" aria-hidden className={base}>

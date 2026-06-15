@@ -18,6 +18,8 @@ export {
   getLessonsForChild,
   getNextLessonForChild,
   getBadgesForChild,
+  getTasksForChild,
+  getActiveActivity,
   getAttendanceForChild,
   getTeacherReviewsForChild,
   getTeacherIdsForChild,

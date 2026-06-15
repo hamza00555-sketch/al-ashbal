@@ -10,6 +10,8 @@ import type {
   AttendanceRecord,
   Badge,
   ChildProfile,
+  ChildTask,
+  ClassActivity,
   Halaqa,
   Lesson,
   ProgressSnapshot,
@@ -115,6 +117,17 @@ export function getBadgesForChild(viewer: User, childId: string): Badge[] {
     review.badgeIds?.forEach((id) => awarded.add(id));
   }
   return db.badges.filter((b) => awarded.has(b.id));
+}
+
+/** A child's tasks (recitation / memorization / review), gated by canViewChild. */
+export function getTasksForChild(viewer: User, childId: string): ChildTask[] {
+  if (!can.canViewChild(viewer, childId)) return [];
+  return db.childTasks.filter((t) => t.childId === childId);
+}
+
+/** The currently-open class activity, or null when none is active. */
+export function getActiveActivity(): ClassActivity | null {
+  return db.activeActivity.active ? db.activeActivity : null;
 }
 
 /** A child's attendance records, gated by canViewChild. */

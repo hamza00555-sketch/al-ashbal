@@ -203,3 +203,33 @@ export interface AppNotification {
   readAt?: string;
   createdAt: string;
 }
+
+export type ChildTaskType = "recitation" | "memorization" | "review";
+export type ChildTaskSubject = "quran" | "tajweed" | "behavior";
+export type ChildTaskStatus =
+  | "not_started"
+  | "in_progress"
+  | "submitted"
+  | "pending_parent_approval"
+  | "pending_teacher_review"
+  | "accepted"
+  | "rerecord_needed";
+
+export interface ChildTask {
+  id: string;
+  childId: string;
+  title: string;
+  type: ChildTaskType;
+  subject: ChildTaskSubject;
+  dueLabel: string;
+  status: ChildTaskStatus;
+  description?: string;
+}
+
+/** A temporary class activity/quiz the teacher can open during a session. */
+export interface ClassActivity {
+  id: string;
+  title: string;
+  description: string;
+  active: boolean;
+}

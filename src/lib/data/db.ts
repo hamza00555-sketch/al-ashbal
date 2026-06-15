@@ -14,6 +14,7 @@ import { recitations, parentApprovals, teacherReviews } from "./recitations";
 import { badges, progressSnapshots } from "./progress";
 import { wishes } from "./wishes";
 import { notifications } from "./notifications";
+import { childTasks, activeActivity } from "./tasks";
 
 export const db = {
   users,
@@ -29,6 +30,8 @@ export const db = {
   progressSnapshots,
   wishes,
   notifications,
+  childTasks,
+  activeActivity,
 } as const;
 
 export type Db = typeof db;
