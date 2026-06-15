@@ -33,7 +33,7 @@ export function ProgressBar({
   const rounded = Math.round(pct);
 
   return (
-    <div className={cn("flex flex-col gap-xs", className)}>
+    <div className={cn("flex flex-col gap-2", className)}>
       {(label || showValue) && (
         <div className="flex items-center justify-between text-caption text-on-dark-muted">
           <span>{label}</span>

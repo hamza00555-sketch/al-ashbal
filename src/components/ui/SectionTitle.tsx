@@ -16,8 +16,8 @@ export function SectionTitle({
   className,
 }: SectionTitleProps) {
   return (
-    <div className={cn("flex items-center justify-between gap-md", className)}>
-      <div className="flex flex-col gap-2xs">
+    <div className={cn("flex items-center justify-between gap-4", className)}>
+      <div className="flex flex-col gap-1">
         <h2 className="text-h2 text-on-dark">{title}</h2>
         {subtitle && <p className="text-caption text-on-dark-muted">{subtitle}</p>}
       </div>

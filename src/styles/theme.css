@@ -3,7 +3,7 @@
   ------------------------------------------------------------------
   Maps the brand design tokens from /tokens/brand-tokens.css into Tailwind's
   theme so brand-aware utilities are generated (bg-purple, text-display,
-  rounded-lg, shadow-glow, p-md, ...).
+  rounded-lg, shadow-glow, ...).
 
   `@theme inline` is used on purpose: the resolved utilities reference the
   brand CSS variables directly, so the actual values stay single-sourced in
@@ -84,15 +84,14 @@
   --shadow-glow: var(--shadow-glow);
   --shadow-glow-strong: var(--shadow-glow-strong);
 
-  /* ---------- Spacing scale ---------- */
-  --spacing-2xs: var(--space-2xs);
-  --spacing-xs: var(--space-xs);
-  --spacing-sm: var(--space-sm);
-  --spacing-md: var(--space-md);
-  --spacing-lg: var(--space-lg);
-  --spacing-xl: var(--space-xl);
-  --spacing-2xl: var(--space-2xl);
-  --spacing-3xl: var(--space-3xl);
+  /*
+    Spacing intentionally uses Tailwind's default numeric scale (p-4, gap-6, …)
+    powered by the built-in --spacing base (4px step) — the same 4px brand
+    scale. We do NOT register named --spacing-* tokens: their keys
+    (sm/md/lg/xl/2xl/3xl) collide with Tailwind's container scale and would
+    hijack max-w-* / w-* utilities. Raw --space-* values still live in /tokens
+    for plain-CSS usage.
+  */
 }
 
 /* ------------------------------------------------------------------

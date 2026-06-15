@@ -1,11 +1,10 @@
 /*
-  Child home (Phase 01 · Task 5) — /child.
-  Server component. Reads ONLY the viewer-scoped accessors from the data layer,
-  never the raw db, so a child can only ever see their own data.
-  Mock phase: buttons are visual placeholders (no real lesson join / upload).
+  Child home (Phase 01 · Task 5, layout-hardened) — /child.
+  Server component. Reads ONLY viewer-scoped accessors, never the raw db.
+  Mobile-first: a single centered column (max 430px) of full-width cards.
+  Mock phase: buttons are visual placeholders.
 */
 import {
-  AppShell,
   Avatar,
   Badge,
   type BadgeTone,
@@ -29,7 +28,6 @@ import {
 } from "@/lib/data";
 import type { RecitationStatus } from "@/types";
 
-/* — small inline icons (rounded line style, no new assets) — */
 const iconBase = "size-full";
 function IconBook() {
   return (
@@ -57,8 +55,7 @@ function IconStar() {
 function IconSparkle() {
   return (
     <svg viewBox="0 0 24 24" fill="none" aria-hidden className={iconBase}>
-      <path d="M12 4v16M4 12h16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M12 7c.6 2.4 2.6 4.4 5 5-2.4.6-4.4 2.6-5 5-.6-2.4-2.6-4.4-5-5 2.4-.6 4.4-2.6 5-5z" fill="currentColor" opacity=".35" />
+      <path d="M12 7c.6 2.4 2.6 4.4 5 5-2.4.6-4.4 2.6-5 5-.6-2.4-2.6-4.4-5-5 2.4-.6 4.4-2.6 5-5z" fill="currentColor" opacity=".5" />
     </svg>
   );
 }
@@ -96,14 +93,14 @@ const RECITATION_STATUS: Record<RecitationStatus, { label: string; tone: BadgeTo
 export default function ChildHomePage() {
   const viewer = getMockUser("child");
   const child = getVisibleChildren(viewer)[0] ?? null;
-
   const mobileNav = <MobileNav items={navItems} activeId="home" />;
 
   if (!child) {
     return (
-      <AppShell mobileNav={mobileNav}>
+      <main className="mx-auto w-full max-w-[430px] px-4 py-6">
         <p className="text-body text-on-dark-muted">لا توجد بيانات لعرضها.</p>
-      </AppShell>
+        {mobileNav}
+      </main>
     );
   }
 
@@ -114,10 +111,11 @@ export default function ChildHomePage() {
   const recitations = getRecitationsForViewer(viewer, child.id);
   const currentRecitation =
     recitations.find((r) => r.status !== "teacher_reviewed") ?? recitations[0] ?? null;
+  const status = currentRecitation ? RECITATION_STATUS[currentRecitation.status] : null;
 
   return (
-    <AppShell mobileNav={mobileNav}>
-      <div className="mx-auto flex w-full max-w-md flex-col gap-lg">
+    <div className="min-h-dvh bg-surface text-on-dark">
+      <main className="mx-auto flex w-full max-w-[430px] flex-col gap-6 px-4 pt-6 pb-28">
         <PageHeader
           eyebrow="مرحباً"
           title={child.displayName}
@@ -133,16 +131,16 @@ export default function ChildHomePage() {
         />
 
         {/* 1) Mission today + join lesson */}
-        <Card id="lessons" variant="gradient" className="flex flex-col gap-md">
-          <div className="flex items-center justify-between">
+        <Card id="lessons" variant="gradient" className="flex flex-col gap-4">
+          <div className="flex items-center justify-between gap-2">
             <span className="text-caption text-on-dark-muted">مهمة اليوم</span>
             {nextLesson && <Badge tone="purple">اليوم</Badge>}
           </div>
-          <h2 className="text-h2">{nextLesson?.title ?? "لا يوجد درس مجدول الآن"}</h2>
+          <h2 className="text-h2 break-words">{nextLesson?.title ?? "لا يوجد درس مجدول الآن"}</h2>
           {nextLesson?.quranSegment && (
-            <p className="text-body text-on-dark-muted">القرآن: {nextLesson.quranSegment}</p>
+            <p className="text-body text-on-dark-muted break-words">القرآن: {nextLesson.quranSegment}</p>
           )}
-          <div className="flex flex-wrap gap-xs">
+          <div className="flex flex-wrap gap-2">
             {nextLesson?.tajweedTopic && <Badge tone="neutral">تجويد: {nextLesson.tajweedTopic}</Badge>}
             {nextLesson?.behaviorTopic && <Badge tone="neutral">سلوك: {nextLesson.behaviorTopic}</Badge>}
           </div>
@@ -157,15 +155,15 @@ export default function ChildHomePage() {
         </Card>
 
         {/* 2) Recitation task */}
-        <Card className="flex flex-col gap-md">
+        <Card className="flex flex-col gap-4">
           <SectionTitle title="مهمة التسميع" />
-          {currentRecitation ? (
-            <div className="flex items-center justify-between gap-md">
-              <div className="flex flex-col gap-2xs">
-                <span className="text-card-title font-bold">{currentRecitation.title}</span>
-                <Badge tone={RECITATION_STATUS[currentRecitation.status].tone}>
-                  {RECITATION_STATUS[currentRecitation.status].label}
-                </Badge>
+          {currentRecitation && status ? (
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex min-w-0 flex-col gap-1">
+                <span className="text-card-title font-bold break-words">{currentRecitation.title}</span>
+                <span>
+                  <Badge tone={status.tone}>{status.label}</Badge>
+                </span>
               </div>
               <span className="inline-flex size-12 shrink-0 items-center justify-center rounded-pill bg-purple/15 p-3 text-purple-soft">
                 <IconMic />
@@ -184,45 +182,45 @@ export default function ChildHomePage() {
         </Card>
 
         {/* 3) Progress rings: Quran / Tajweed / Behavior */}
-        <Card id="progress" className="flex flex-col gap-md">
+        <Card id="progress" className="flex flex-col gap-4">
           <SectionTitle title="تقدّمي" subtitle="القرآن · التجويد · السلوك" />
-          <div className="flex items-center justify-around">
-            <ProgressRing value={progress?.quranPercent ?? 0} tone="purple" sublabel="القرآن" />
-            <ProgressRing value={progress?.tajweedPercent ?? 0} tone="gold" sublabel="التجويد" />
-            <ProgressRing value={progress?.behaviorPercent ?? 0} tone="success" sublabel="السلوك" />
+          <div className="flex items-center justify-between gap-2">
+            <ProgressRing value={progress?.quranPercent ?? 0} size={72} strokeWidth={8} tone="purple" sublabel="القرآن" />
+            <ProgressRing value={progress?.tajweedPercent ?? 0} size={72} strokeWidth={8} tone="gold" sublabel="التجويد" />
+            <ProgressRing value={progress?.behaviorPercent ?? 0} size={72} strokeWidth={8} tone="success" sublabel="السلوك" />
           </div>
         </Card>
 
         {/* 4) Badge of the day */}
-        <Card variant="raised" className="flex items-center gap-md">
+        <Card variant="raised" className="flex items-center gap-4">
           <span className="gradient-badge inline-flex size-14 shrink-0 items-center justify-center rounded-pill p-3 text-on-light shadow-glow">
             <IconStar />
           </span>
-          <div className="flex flex-col gap-2xs">
+          <div className="flex min-w-0 flex-col gap-1">
             <span className="text-caption text-on-dark-muted">وسام اليوم</span>
-            <span className="text-card-title font-bold">{badge?.title ?? "لا يوجد وسام بعد"}</span>
+            <span className="text-card-title font-bold break-words">{badge?.title ?? "لا يوجد وسام بعد"}</span>
             {badge && <span className="text-caption text-on-dark-muted">أحسنت، خطوة جميلة!</span>}
           </div>
         </Card>
 
         {/* 5) Cub journey progress bar */}
-        <Card className="flex flex-col gap-sm">
+        <Card className="flex flex-col gap-3">
           <SectionTitle title="رحلة الشبل" />
           <ProgressBar value={progress?.currentProgressBar.current ?? 0} tone="purple" />
           <p className="text-caption text-on-dark-muted">باقي القليل على الإنجاز القادم.</p>
         </Card>
 
         {/* 6) Wishes preview (private to the parent) */}
-        <Card id="wishes" className="flex flex-col gap-sm">
+        <Card id="wishes" className="flex flex-col gap-3">
           <SectionTitle title="أمنياتي" subtitle="تظهر لولي أمرك فقط" />
           {wishes.length > 0 ? (
-            <ul className="flex flex-col gap-xs">
+            <ul className="flex flex-col gap-2">
               {wishes.slice(0, 3).map((wish) => (
-                <li key={wish.id} className="flex items-center gap-sm">
+                <li key={wish.id} className="flex items-center gap-3">
                   <span className="inline-flex size-6 shrink-0 items-center justify-center text-purple-soft">
                     <IconSparkle />
                   </span>
-                  <span className="text-body">{wish.title}</span>
+                  <span className="text-body break-words">{wish.title}</span>
                 </li>
               ))}
             </ul>
@@ -230,7 +228,8 @@ export default function ChildHomePage() {
             <p className="text-body text-on-dark-muted">اكتب أمنيتك، ولي أمرك يشوفها.</p>
           )}
         </Card>
-      </div>
-    </AppShell>
+      </main>
+      {mobileNav}
+    </div>
   );
 }

@@ -31,7 +31,7 @@ export function StatCard({
   className,
 }: StatCardProps) {
   return (
-    <Card variant={variant} className={cn("flex items-center gap-md", className)}>
+    <Card variant={variant} className={cn("flex items-center gap-4", className)}>
       {icon && (
         <span
           className={cn(
@@ -43,7 +43,7 @@ export function StatCard({
         </span>
       )}
       {/* Secondary text uses opacity so the card works on dark OR contrast surfaces. */}
-      <div className="flex min-w-0 flex-col gap-2xs">
+      <div className="flex min-w-0 flex-col gap-1">
         <span className="text-caption opacity-70">{label}</span>
         <span className="text-h2 font-extrabold">{value}</span>
         {hint && <span className="text-caption opacity-70">{hint}</span>}

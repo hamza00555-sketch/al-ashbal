@@ -22,16 +22,16 @@ export function PageHeader({
   className,
 }: PageHeaderProps) {
   return (
-    <header className={cn("flex items-start justify-between gap-md", className)}>
-      <div className="flex items-center gap-md">
+    <header className={cn("flex items-start justify-between gap-4", className)}>
+      <div className="flex items-center gap-4">
         {leading}
-        <div className="flex flex-col gap-2xs">
+        <div className="flex flex-col gap-1">
           {eyebrow && <span className="text-caption text-on-dark-muted">{eyebrow}</span>}
           <h1 className="text-h1 text-on-dark">{title}</h1>
           {subtitle && <p className="text-body text-on-dark-muted">{subtitle}</p>}
         </div>
       </div>
-      {actions && <div className="flex shrink-0 items-center gap-xs">{actions}</div>}
+      {actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}
     </header>
   );
 }

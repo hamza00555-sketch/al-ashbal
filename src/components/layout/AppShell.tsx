@@ -28,8 +28,8 @@ export function AppShell({
     <div className={cn("flex min-h-dvh bg-surface text-on-dark", className)}>
       {sidebar}
       <div className="flex min-w-0 flex-1 flex-col">
-        {header && <div className="px-lg pt-lg">{header}</div>}
-        <main className="flex-1 px-lg py-lg pb-24 md:pb-lg">{children}</main>
+        {header && <div className="px-6 pt-6">{header}</div>}
+        <main className="flex-1 px-6 py-6 pb-24 md:pb-6">{children}</main>
       </div>
       {mobileNav}
     </div>

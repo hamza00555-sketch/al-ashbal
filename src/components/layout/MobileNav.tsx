@@ -16,15 +16,15 @@ export function MobileNav({ items, activeId, onSelect, className }: MobileNavPro
     <nav
       aria-label="التنقل"
       className={cn(
-        "fixed inset-x-0 bottom-0 z-40 flex items-stretch justify-around gap-2xs",
-        "border-t border-white/10 bg-surface/95 px-sm pt-xs pb-2xs backdrop-blur md:hidden",
+        "fixed inset-x-0 bottom-0 z-40 flex items-stretch justify-around gap-1",
+        "border-t border-white/10 bg-surface/95 px-3 pt-2 pb-1 backdrop-blur md:hidden",
         className,
       )}
     >
       {items.map((item) => {
         const active = item.id === activeId;
         const itemClass = cn(
-          "flex flex-1 flex-col items-center justify-center gap-2xs rounded-md py-xs text-caption transition",
+          "flex flex-1 flex-col items-center justify-center gap-1 rounded-md py-2 text-caption transition",
           active ? "text-purple-soft" : "text-on-dark-muted hover:text-on-dark",
         );
         const inner = (

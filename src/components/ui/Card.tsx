@@ -25,7 +25,7 @@ export function Card({
 }: CardProps) {
   return (
     <div
-      className={cn("rounded-lg", padded && "p-lg", variantClasses[variant], className)}
+      className={cn("rounded-lg", padded && "p-6", variantClasses[variant], className)}
       {...rest}
     >
       {children}

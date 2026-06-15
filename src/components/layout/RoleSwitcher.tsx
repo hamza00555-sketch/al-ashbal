@@ -29,7 +29,7 @@ export function RoleSwitcher({
       role="group"
       aria-label="تبديل الدور (للعرض فقط)"
       className={cn(
-        "inline-flex flex-wrap items-center gap-2xs rounded-pill bg-surface-raised p-2xs",
+        "inline-flex flex-wrap items-center gap-1 rounded-pill bg-surface-raised p-1",
         className,
       )}
     >
@@ -42,7 +42,7 @@ export function RoleSwitcher({
             aria-pressed={active}
             onClick={() => onChange(role.id)}
             className={cn(
-              "rounded-pill px-md py-2xs text-caption font-bold transition",
+              "rounded-pill px-4 py-1 text-caption font-bold transition",
               active
                 ? "gradient-cta text-cream shadow-glow"
                 : "text-on-dark-muted hover:text-on-dark",
