@@ -1,24 +1,15 @@
 /* Child home (/child) — greeting, today's mission, recitation task, quick glance. */
 import Link from "next/link";
-import {
-  Avatar,
-  Badge,
-  Button,
-  Card,
-  NotificationBell,
-  PageHeader,
-  ProgressBar,
-  SectionTitle,
-} from "@/components";
+import { Avatar, Badge, Card, PageHeader, ProgressBar, SectionTitle } from "@/components";
 import {
   getNextLessonForChild,
-  getNotificationsForViewer,
   getProgressForChild,
   getRecitationsForViewer,
   getWishesForViewer,
 } from "@/lib/data";
 import { IconMic, IconSparkle, IconStar } from "./_icons";
 import { getChildContext, RECITATION_STATUS } from "./_shared";
+import { RecordButton } from "./RecordButton";
 
 const glanceLink =
   "flex min-h-11 items-center justify-center gap-2 rounded-md bg-surface-raised px-4 text-caption font-bold text-on-dark transition hover:bg-white/5";
@@ -33,7 +24,6 @@ export default function ChildHomePage() {
   const status = current ? RECITATION_STATUS[current.status] : null;
   const progress = getProgressForChild(viewer, child.id);
   const wishesCount = getWishesForViewer(viewer, child.id).length;
-  const notifications = getNotificationsForViewer(viewer);
 
   return (
     <>
@@ -42,7 +32,6 @@ export default function ChildHomePage() {
         title={child.displayName}
         subtitle="جاهز لمهمة اليوم؟"
         leading={<Avatar name={child.displayName} size="lg" />}
-        actions={<NotificationBell notifications={notifications} />}
       />
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -80,9 +69,7 @@ export default function ChildHomePage() {
             ) : (
               <p className="text-body text-on-dark-muted">لا توجد مهمة تسميع الآن.</p>
             )}
-            <Button variant="secondary" fullWidth leadingIcon={<span className="inline-flex size-5"><IconMic /></span>}>
-              سجّل تسميعك
-            </Button>
+            <RecordButton />
           </Card>
         </div>
 

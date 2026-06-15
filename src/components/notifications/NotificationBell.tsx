@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { AppNotification } from "@/types";
-import { Modal } from "../ui/Modal";
+import { Drawer } from "../ui/Drawer";
 import { NotificationList } from "./NotificationList";
 
 function BellIcon() {
@@ -20,9 +20,9 @@ function BellIcon() {
 }
 
 /**
- * Unified notifications bell used across the app. Opens a mock notifications
- * sheet; unread count reflects un-read items (server flag only — local reads
- * are handled inside the list).
+ * Unified notifications bell. Opens a right-side drawer (RTL) listing mock
+ * notifications; the unread count reflects server-unread items, and individual
+ * items can be marked read locally inside the list.
  */
 export function NotificationBell({
   notifications,
@@ -45,9 +45,9 @@ export function NotificationBell({
           <span className="absolute -top-0.5 -end-0.5 size-2.5 rounded-pill bg-coral" />
         )}
       </button>
-      <Modal open={open} onClose={() => setOpen(false)} title="التنبيهات">
+      <Drawer open={open} onClose={() => setOpen(false)} title="الإشعارات">
         <NotificationList notifications={notifications} />
-      </Modal>
+      </Drawer>
     </>
   );
 }

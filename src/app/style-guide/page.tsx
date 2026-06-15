@@ -13,6 +13,7 @@ import {
   Badge,
   Button,
   Card,
+  DemoExperienceSwitcher,
   DesktopSidebar,
   MobileNav,
   PageHeader,
@@ -75,6 +76,10 @@ export default function ShowcasePage() {
       }
     >
       <div className="flex flex-col gap-12">
+        <div className="flex items-center justify-between gap-2">
+          <DemoExperienceSwitcher current="style-guide" />
+        </div>
+
         {/* What is this page? */}
         <Card variant="contrast" className="flex flex-col gap-2">
           <h2 className="text-card-title font-bold">ما هذه الصفحة؟</h2>

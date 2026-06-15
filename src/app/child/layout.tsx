@@ -1,18 +1,24 @@
 /*
   Shared shell for all /child/* routes.
-  Responsive: one mobile-first column (max 430px) on phones, a wider container
-  (max 1120px) with desktop side navigation on larger screens. Each page lays
-  out its own content (single column on mobile, multi-column on desktop).
+  Responsive: mobile-first column (max 430px) on phones, wider (max 1120px) with
+  desktop side-nav on larger screens. A top utility bar holds the global demo
+  experience switcher + the notifications bell on every child page.
 */
 import type { ReactNode } from "react";
-import { AppShell } from "@/components";
+import { AppShell, DemoExperienceSwitcher, NotificationBell } from "@/components";
+import { getMockUser, getNotificationsForViewer } from "@/lib/data";
 import { ChildDesktopNav } from "./ChildDesktopNav";
 import { ChildMobileNav } from "./ChildMobileNav";
 
 export default function ChildLayout({ children }: { children: ReactNode }) {
+  const notifications = getNotificationsForViewer(getMockUser("child"));
   return (
     <AppShell sidebar={<ChildDesktopNav />} mobileNav={<ChildMobileNav />}>
       <div className="mx-auto flex w-full max-w-[430px] flex-col gap-6 md:max-w-[1120px]">
+        <div className="flex items-center justify-between gap-2">
+          <DemoExperienceSwitcher current="child" />
+          <NotificationBell notifications={notifications} />
+        </div>
         {children}
       </div>
     </AppShell>

@@ -13,7 +13,7 @@ export function ApprovalActions() {
   if (decision) {
     return (
       <Badge tone={decision === "approved" ? "success" : "warning"}>
-        {decision === "approved" ? "تمت الموافقة (تجريبي)" : "طلبت إعادة التسجيل (تجريبي)"}
+        {decision === "approved" ? "تمت الموافقة تجريبيًا" : "تم طلب إعادة التسجيل تجريبيًا"}
       </Badge>
     );
   }

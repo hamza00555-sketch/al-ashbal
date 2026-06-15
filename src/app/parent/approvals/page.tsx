@@ -1,6 +1,6 @@
 /* Parent approvals (/parent/approvals) — pending video approvals (mock actions). */
-import { Card, NotificationBell, PageHeader } from "@/components";
-import { getNotificationsForViewer, getPendingParentApprovals } from "@/lib/data";
+import { Card, PageHeader } from "@/components";
+import { getPendingParentApprovals } from "@/lib/data";
 import { ApprovalActions } from "../ApprovalActions";
 import { IconVideo } from "../_icons";
 import { getParentContext } from "../_shared";
@@ -8,17 +8,12 @@ import { getParentContext } from "../_shared";
 export default function ParentApprovalsPage() {
   const { viewer, children } = getParentContext();
   const pending = getPendingParentApprovals(viewer);
-  const notifications = getNotificationsForViewer(viewer);
   const nameOf = (childId: string) =>
     children.find((c) => c.id === childId)?.displayName ?? "طفلك";
 
   return (
     <>
-      <PageHeader
-        title="الموافقات"
-        subtitle="الفيديو لا يصل للمعلم إلا بعد موافقتك"
-        actions={<NotificationBell notifications={notifications} />}
-      />
+      <PageHeader title="الموافقات" subtitle="الفيديو لا يصل للمعلم إلا بعد موافقتك" />
 
       {pending.length > 0 ? (
         <div className="grid gap-6 lg:grid-cols-2">

@@ -13,6 +13,8 @@ export { SectionTitle } from "./ui/SectionTitle";
 export type { SectionTitleProps } from "./ui/SectionTitle";
 export { Modal } from "./ui/Modal";
 export type { ModalProps } from "./ui/Modal";
+export { Drawer } from "./ui/Drawer";
+export type { DrawerProps } from "./ui/Drawer";
 
 // notifications
 export { NotificationBell } from "./notifications/NotificationBell";
@@ -37,6 +39,7 @@ export { MobileNav } from "./layout/MobileNav";
 export type { MobileNavProps } from "./layout/MobileNav";
 export { DesktopSidebar } from "./layout/DesktopSidebar";
 export type { DesktopSidebarProps } from "./layout/DesktopSidebar";
+export { DemoExperienceSwitcher } from "./layout/DemoExperienceSwitcher";
 export { RoleSwitcher } from "./layout/RoleSwitcher";
 export type { RoleSwitcherProps, RoleOption } from "./layout/RoleSwitcher";
 export type { NavItem } from "./layout/types";
