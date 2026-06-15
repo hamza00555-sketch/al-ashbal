@@ -50,48 +50,50 @@ export default function ChildLessonsPage() {
         </Button>
       </Card>
 
-      <section className="flex flex-col gap-3">
-        <SectionTitle title="الدروس القادمة" />
-        {upcoming.length > 0 ? (
-          upcoming.map((l) => (
-            <Card key={l.id} className="flex items-center justify-between gap-3">
-              <div className="flex min-w-0 flex-col gap-1">
-                <span className="text-card-title font-bold break-words">{l.title}</span>
-                <span className="text-caption text-on-dark-muted">{l.date} · {l.startTime}</span>
-              </div>
-              <Badge tone={LESSON_STATUS[l.status].tone}>{LESSON_STATUS[l.status].label}</Badge>
-            </Card>
-          ))
-        ) : (
-          <Card><p className="text-body text-on-dark-muted">لا دروس قادمة حاليًا.</p></Card>
-        )}
-      </section>
-
-      <section className="flex flex-col gap-3">
-        <SectionTitle title="الحضور" />
-        {past.length > 0 ? (
-          past.map((l) => {
-            const record = attendance.find((a) => a.lessonId === l.id) ?? null;
-            return (
+      <div className="grid gap-6 lg:grid-cols-2">
+        <section className="flex flex-col gap-3">
+          <SectionTitle title="الدروس القادمة" />
+          {upcoming.length > 0 ? (
+            upcoming.map((l) => (
               <Card key={l.id} className="flex items-center justify-between gap-3">
                 <div className="flex min-w-0 flex-col gap-1">
                   <span className="text-card-title font-bold break-words">{l.title}</span>
-                  <span className="text-caption text-on-dark-muted">{l.date}</span>
+                  <span className="text-caption text-on-dark-muted">{l.date} · {l.startTime}</span>
                 </div>
-                {record ? (
-                  <Badge tone={ATTENDANCE_STATUS[record.status].tone}>
-                    {ATTENDANCE_STATUS[record.status].label}
-                  </Badge>
-                ) : (
-                  <Badge tone="neutral">—</Badge>
-                )}
+                <Badge tone={LESSON_STATUS[l.status].tone}>{LESSON_STATUS[l.status].label}</Badge>
               </Card>
-            );
-          })
-        ) : (
-          <Card><p className="text-body text-on-dark-muted">لا سجلّ حضور بعد.</p></Card>
-        )}
-      </section>
+            ))
+          ) : (
+            <Card><p className="text-body text-on-dark-muted">لا دروس قادمة حاليًا.</p></Card>
+          )}
+        </section>
+
+        <section className="flex flex-col gap-3">
+          <SectionTitle title="الحضور" />
+          {past.length > 0 ? (
+            past.map((l) => {
+              const record = attendance.find((a) => a.lessonId === l.id) ?? null;
+              return (
+                <Card key={l.id} className="flex items-center justify-between gap-3">
+                  <div className="flex min-w-0 flex-col gap-1">
+                    <span className="text-card-title font-bold break-words">{l.title}</span>
+                    <span className="text-caption text-on-dark-muted">{l.date}</span>
+                  </div>
+                  {record ? (
+                    <Badge tone={ATTENDANCE_STATUS[record.status].tone}>
+                      {ATTENDANCE_STATUS[record.status].label}
+                    </Badge>
+                  ) : (
+                    <Badge tone="neutral">—</Badge>
+                  )}
+                </Card>
+              );
+            })
+          ) : (
+            <Card><p className="text-body text-on-dark-muted">لا سجلّ حضور بعد.</p></Card>
+          )}
+        </section>
+      </div>
     </>
   );
 }

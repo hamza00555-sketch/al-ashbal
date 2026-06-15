@@ -23,9 +23,9 @@ export default function ChildWishesPage() {
         </p>
       </Card>
 
-      <section className="flex flex-col gap-3">
-        {wishes.length > 0 ? (
-          wishes.map((wish) => (
+      {wishes.length > 0 ? (
+        <div className="grid gap-3 lg:grid-cols-2">
+          {wishes.map((wish) => (
             <Card key={wish.id} className="flex items-start gap-3">
               <span className="inline-flex size-6 shrink-0 items-center justify-center text-purple-soft">
                 <IconSparkle />
@@ -37,15 +37,17 @@ export default function ChildWishesPage() {
                 )}
               </div>
             </Card>
-          ))
-        ) : (
-          <Card><p className="text-body text-on-dark-muted">اكتب أمنيتك، ولي أمرك يشوفها.</p></Card>
-        )}
-      </section>
+          ))}
+        </div>
+      ) : (
+        <Card><p className="text-body text-on-dark-muted">اكتب أمنيتك، ولي أمرك يشوفها.</p></Card>
+      )}
 
-      <Button variant="primary" fullWidth leadingIcon={<span className="inline-flex size-5"><IconSparkle /></span>}>
-        أضف أمنية
-      </Button>
+      <div className="lg:max-w-xs">
+        <Button variant="primary" fullWidth leadingIcon={<span className="inline-flex size-5"><IconSparkle /></span>}>
+          أضف أمنية
+        </Button>
+      </div>
     </>
   );
 }
