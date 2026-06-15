@@ -14,6 +14,7 @@ import type {
   Lesson,
   ProgressSnapshot,
   RecitationSubmission,
+  TeacherReview,
   User,
   Wish,
 } from "@/types";
@@ -123,6 +124,18 @@ export function getAttendanceForChild(
 ): AttendanceRecord[] {
   if (!can.canViewChild(viewer, childId)) return [];
   return db.attendanceRecords.filter((a) => a.childId === childId);
+}
+
+/** Teacher reviews for a child's recitations, gated by canViewChild. */
+export function getTeacherReviewsForChild(
+  viewer: User,
+  childId: string,
+): TeacherReview[] {
+  if (!can.canViewChild(viewer, childId)) return [];
+  const recitationIds = db.recitations
+    .filter((r) => r.childId === childId)
+    .map((r) => r.id);
+  return db.teacherReviews.filter((rv) => recitationIds.includes(rv.recitationId));
 }
 
 export interface GuestSummary {
