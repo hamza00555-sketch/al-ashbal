@@ -4,7 +4,15 @@
   Desktop: a wider two-column layout (main = approval + children, side =
   notifications). Reads ONLY viewer-scoped accessors with getMockUser("parent").
 */
-import { AppShell, Avatar, Card, PageHeader, SectionTitle } from "@/components";
+import {
+  AppShell,
+  Avatar,
+  Card,
+  NotificationBell,
+  NotificationList,
+  PageHeader,
+  SectionTitle,
+} from "@/components";
 import {
   getMockUser,
   getNotificationsForViewer,
@@ -14,14 +22,13 @@ import {
 import { ApprovalActions } from "./ApprovalActions";
 import { ParentChildCard } from "./_ParentChildCard";
 import { ParentMobileNav } from "./ParentMobileNav";
-import { IconBell, IconVideo } from "./_icons";
+import { IconVideo } from "./_icons";
 
 export default function ParentHomePage() {
   const viewer = getMockUser("parent");
   const children = getVisibleChildren(viewer);
   const pending = getPendingParentApprovals(viewer);
   const notifications = getNotificationsForViewer(viewer);
-  const unread = notifications.filter((n) => !n.readAt).length;
   const nameOf = (childId: string) =>
     children.find((c) => c.id === childId)?.displayName ?? "طفلك";
 
@@ -33,14 +40,7 @@ export default function ParentHomePage() {
           title={viewer.displayName}
           subtitle="متابعة أبنائك باطمئنان"
           leading={<Avatar name={viewer.displayName} size="lg" />}
-          actions={
-            <span className="relative inline-flex size-9 items-center justify-center rounded-pill bg-surface-raised text-on-dark-muted">
-              <span className="inline-flex size-5"><IconBell /></span>
-              {unread > 0 && (
-                <span className="absolute -top-0.5 -end-0.5 size-2.5 rounded-pill bg-coral" />
-              )}
-            </span>
-          }
+          actions={<NotificationBell notifications={notifications} />}
         />
 
         <div className="grid gap-6 lg:grid-cols-3">
@@ -91,20 +91,8 @@ export default function ParentHomePage() {
           <div className="flex flex-col gap-6">
             <section id="alerts" className="flex flex-col gap-3">
               <SectionTitle title="تنبيهات" />
-              <Card className="flex flex-col gap-3">
-                {notifications.length > 0 ? (
-                  notifications.slice(0, 4).map((n) => (
-                    <div key={n.id} className="flex items-start gap-3">
-                      <span className="mt-1.5 inline-flex size-2 shrink-0 rounded-pill bg-purple-soft" />
-                      <div className="flex min-w-0 flex-col gap-1">
-                        <span className="text-body font-bold break-words">{n.title}</span>
-                        <span className="text-caption text-on-dark-muted break-words">{n.body}</span>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-body text-on-dark-muted">لا تنبيهات جديدة.</p>
-                )}
+              <Card>
+                <NotificationList notifications={notifications} />
               </Card>
             </section>
           </div>

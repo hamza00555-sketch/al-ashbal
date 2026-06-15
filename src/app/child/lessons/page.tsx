@@ -1,12 +1,12 @@
 /* Child lessons (/child/lessons) — today, upcoming, and attendance. */
-import { Badge, Button, Card, PageHeader, SectionTitle } from "@/components";
+import { Badge, Card, PageHeader, SectionTitle } from "@/components";
 import {
   getAttendanceForChild,
   getLessonsForChild,
   getNextLessonForChild,
 } from "@/lib/data";
-import { IconBook } from "../_icons";
 import { ATTENDANCE_STATUS, getChildContext, LESSON_STATUS } from "../_shared";
+import { JoinLessonButton } from "./JoinLessonButton";
 
 export default function ChildLessonsPage() {
   const { viewer, child } = getChildContext();
@@ -40,14 +40,7 @@ export default function ChildLessonsPage() {
           {next?.tajweedTopic && <Badge tone="neutral">تجويد: {next.tajweedTopic}</Badge>}
           {next?.behaviorTopic && <Badge tone="neutral">سلوك: {next.behaviorTopic}</Badge>}
         </div>
-        <Button
-          variant="primary"
-          fullWidth
-          disabled={!next}
-          leadingIcon={<span className="inline-flex size-5"><IconBook /></span>}
-        >
-          ادخل الدرس
-        </Button>
+        <JoinLessonButton meetUrl={next?.meetUrl} disabled={!next} />
       </Card>
 
       <div className="grid gap-6 lg:grid-cols-2">

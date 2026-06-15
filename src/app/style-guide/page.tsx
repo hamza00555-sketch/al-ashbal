@@ -67,15 +67,27 @@ export default function ShowcasePage() {
       mobileNav={<MobileNav items={navItems} activeId={activeNav} onSelect={setActiveNav} />}
       header={
         <PageHeader
-          eyebrow="Phase 01 · Task 3"
-          title="معرض المكوّنات"
-          subtitle="مكتبة الواجهة الأساسية — بيانات تجريبية فقط"
-          leading={<Avatar name="طلال محمد" size="lg" />}
-          actions={<Button size="sm">إجراء</Button>}
+          eyebrow="صفحة داخلية · للمطوّرين"
+          title="دليل التصميم"
+          subtitle="معرض المكوّنات والهوية البصرية"
+          leading={<Avatar name="دليل التصميم" size="lg" />}
         />
       }
     >
       <div className="flex flex-col gap-12">
+        {/* What is this page? */}
+        <Card variant="contrast" className="flex flex-col gap-2">
+          <h2 className="text-card-title font-bold">ما هذه الصفحة؟</h2>
+          <p className="text-body opacity-80">
+            هذه صفحة داخلية لعرض مكوّنات التصميم: الأزرار، الكروت، الشارات، أشرطة
+            التقدّم، والألوان. فائدتها أنها تساعدنا نتأكد أن كل واجهات التطبيق ماشية
+            على نفس الهوية البصرية.
+          </p>
+          <p className="text-caption opacity-70">
+            ملاحظة: هذه الصفحة ليست جزءًا من رحلة الطفل أو ولي الأمر.
+          </p>
+        </Card>
+
         {/* Buttons */}
         <section className="flex flex-col gap-4">
           <SectionTitle title="الأزرار" subtitle="variants و أحجام" />

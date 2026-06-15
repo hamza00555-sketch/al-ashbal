@@ -1,13 +1,23 @@
 /* Child home (/child) — greeting, today's mission, recitation task, quick glance. */
 import Link from "next/link";
-import { Avatar, Badge, Button, Card, PageHeader, ProgressBar, SectionTitle } from "@/components";
+import {
+  Avatar,
+  Badge,
+  Button,
+  Card,
+  NotificationBell,
+  PageHeader,
+  ProgressBar,
+  SectionTitle,
+} from "@/components";
 import {
   getNextLessonForChild,
+  getNotificationsForViewer,
   getProgressForChild,
   getRecitationsForViewer,
   getWishesForViewer,
 } from "@/lib/data";
-import { IconBell, IconMic, IconSparkle, IconStar } from "./_icons";
+import { IconMic, IconSparkle, IconStar } from "./_icons";
 import { getChildContext, RECITATION_STATUS } from "./_shared";
 
 const glanceLink =
@@ -23,6 +33,7 @@ export default function ChildHomePage() {
   const status = current ? RECITATION_STATUS[current.status] : null;
   const progress = getProgressForChild(viewer, child.id);
   const wishesCount = getWishesForViewer(viewer, child.id).length;
+  const notifications = getNotificationsForViewer(viewer);
 
   return (
     <>
@@ -31,11 +42,7 @@ export default function ChildHomePage() {
         title={child.displayName}
         subtitle="جاهز لمهمة اليوم؟"
         leading={<Avatar name={child.displayName} size="lg" />}
-        actions={
-          <Button variant="ghost" size="sm" aria-label="التنبيهات">
-            <span className="inline-flex size-5 items-center justify-center"><IconBell /></span>
-          </Button>
-        }
+        actions={<NotificationBell notifications={notifications} />}
       />
 
       <div className="grid gap-6 lg:grid-cols-3">

@@ -1,0 +1,102 @@
+"use client";
+
+import { useState } from "react";
+import { Button, Card, Modal } from "@/components";
+import { IconSparkle } from "../_icons";
+
+export interface LocalWish {
+  id: string;
+  title: string;
+  description?: string;
+}
+
+/**
+ * Wishes list + add form (mock). New wishes are kept in local state only —
+ * nothing is written to the mock db or any backend.
+ */
+export function WishesSection({ initialWishes }: { initialWishes: LocalWish[] }) {
+  const [wishes, setWishes] = useState<LocalWish[]>(initialWishes);
+  const [open, setOpen] = useState(false);
+  const [title, setTitle] = useState("");
+  const [note, setNote] = useState("");
+
+  function handleSave(e: React.FormEvent) {
+    e.preventDefault();
+    const trimmed = title.trim();
+    if (!trimmed) return;
+    setWishes((prev) => [
+      { id: `local-${Date.now()}`, title: trimmed, description: note.trim() || undefined },
+      ...prev,
+    ]);
+    setTitle("");
+    setNote("");
+    setOpen(false);
+  }
+
+  const inputClass =
+    "min-h-11 rounded-md border border-white/10 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft";
+
+  return (
+    <>
+      {/* Read-only display cards (no clickable affordance). */}
+      {wishes.length > 0 ? (
+        <div className="grid gap-3 lg:grid-cols-2">
+          {wishes.map((wish) => (
+            <Card key={wish.id} className="flex items-start gap-3">
+              <span className="inline-flex size-6 shrink-0 items-center justify-center text-purple-soft">
+                <IconSparkle />
+              </span>
+              <div className="flex min-w-0 flex-col gap-1">
+                <span className="text-card-title font-bold break-words">{wish.title}</span>
+                {wish.description && (
+                  <span className="text-caption text-on-dark-muted break-words">{wish.description}</span>
+                )}
+              </div>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <Card><p className="text-body text-on-dark-muted">اكتب أمنيتك، ولي أمرك يشوفها.</p></Card>
+      )}
+
+      <div className="lg:max-w-xs">
+        <Button
+          variant="primary"
+          fullWidth
+          onClick={() => setOpen(true)}
+          leadingIcon={<span className="inline-flex size-5"><IconSparkle /></span>}
+        >
+          أضف أمنية
+        </Button>
+      </div>
+
+      <Modal open={open} onClose={() => setOpen(false)} title="أضف أمنية">
+        <form onSubmit={handleSave} className="flex flex-col gap-4">
+          <label className="flex flex-col gap-2">
+            <span className="text-caption text-on-dark-muted">اسم الأمنية</span>
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              placeholder="مثال: كتاب جديد"
+              className={inputClass}
+            />
+          </label>
+          <label className="flex flex-col gap-2">
+            <span className="text-caption text-on-dark-muted">ملاحظة قصيرة (اختياري)</span>
+            <input
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              className={inputClass}
+            />
+          </label>
+          <p className="text-caption text-on-dark-muted">تجربة مؤقتة — لا يتم الحفظ الآن.</p>
+          <div className="flex gap-2">
+            <Button type="submit" variant="primary" fullWidth>حفظ</Button>
+            <Button type="button" variant="ghost" onClick={() => setOpen(false)}>إلغاء</Button>
+          </div>
+        </form>
+      </Modal>
+    </>
+  );
+}

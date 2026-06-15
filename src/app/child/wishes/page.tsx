@@ -1,14 +1,19 @@
-/* Child wishes (/child/wishes) — list, privacy note, add (mock). */
-import { Button, Card, PageHeader } from "@/components";
+/* Child wishes (/child/wishes) — privacy note + interactive (mock) wishes. */
+import { Card, PageHeader } from "@/components";
 import { getWishesForViewer } from "@/lib/data";
 import { IconSparkle } from "../_icons";
 import { getChildContext } from "../_shared";
+import { WishesSection } from "./WishesSection";
 
 export default function ChildWishesPage() {
   const { viewer, child } = getChildContext();
   if (!child) return <p className="text-body text-on-dark-muted">لا توجد بيانات لعرضها.</p>;
 
-  const wishes = getWishesForViewer(viewer, child.id);
+  const wishes = getWishesForViewer(viewer, child.id).map((w) => ({
+    id: w.id,
+    title: w.title,
+    description: w.description,
+  }));
 
   return (
     <>
@@ -23,31 +28,7 @@ export default function ChildWishesPage() {
         </p>
       </Card>
 
-      {wishes.length > 0 ? (
-        <div className="grid gap-3 lg:grid-cols-2">
-          {wishes.map((wish) => (
-            <Card key={wish.id} className="flex items-start gap-3">
-              <span className="inline-flex size-6 shrink-0 items-center justify-center text-purple-soft">
-                <IconSparkle />
-              </span>
-              <div className="flex min-w-0 flex-col gap-1">
-                <span className="text-card-title font-bold break-words">{wish.title}</span>
-                {wish.description && (
-                  <span className="text-caption text-on-dark-muted break-words">{wish.description}</span>
-                )}
-              </div>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <Card><p className="text-body text-on-dark-muted">اكتب أمنيتك، ولي أمرك يشوفها.</p></Card>
-      )}
-
-      <div className="lg:max-w-xs">
-        <Button variant="primary" fullWidth leadingIcon={<span className="inline-flex size-5"><IconSparkle /></span>}>
-          أضف أمنية
-        </Button>
-      </div>
+      <WishesSection initialWishes={wishes} />
     </>
   );
 }

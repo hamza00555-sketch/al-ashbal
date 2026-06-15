@@ -42,7 +42,7 @@ export default function Home() {
           href="/style-guide"
           className="text-caption text-on-dark-muted transition hover:text-on-dark"
         >
-          معرض المكوّنات (للمطوّرين)
+          دليل التصميم / معرض المكوّنات
         </Link>
       </div>
     </main>

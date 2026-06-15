@@ -11,6 +11,12 @@ export { Avatar } from "./ui/Avatar";
 export type { AvatarProps, AvatarSize } from "./ui/Avatar";
 export { SectionTitle } from "./ui/SectionTitle";
 export type { SectionTitleProps } from "./ui/SectionTitle";
+export { Modal } from "./ui/Modal";
+export type { ModalProps } from "./ui/Modal";
+
+// notifications
+export { NotificationBell } from "./notifications/NotificationBell";
+export { NotificationList } from "./notifications/NotificationList";
 
 // progress
 export { ProgressBar } from "./progress/ProgressBar";
