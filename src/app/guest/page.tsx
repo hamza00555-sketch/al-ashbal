@@ -17,6 +17,7 @@ import {
   StatCard,
 } from "@/components";
 import { getGuestSummary, getMockUser, getNotificationsForViewer } from "@/lib/data";
+import { GuestLessonEntry } from "./GuestLessonEntry";
 import { IconBadge, IconCalendar, IconHalaqa, IconUsers } from "./_icons";
 
 const chip = "inline-flex size-6 items-center justify-center";
@@ -48,6 +49,8 @@ export default function GuestOverviewPage() {
             هذه صفحة عرض عامة لا تعرض بيانات الأطفال الشخصية.
           </p>
         </Card>
+
+        <GuestLessonEntry />
 
         {summary ? (
           <>

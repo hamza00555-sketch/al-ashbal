@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Avatar, Badge, Button, Card } from "@/components";
 import { cn } from "@/lib/cn";
 import {
@@ -31,22 +32,38 @@ export interface AttendanceChild {
   name: string;
 }
 
-/**
- * Teacher attendance manager (mock). Open/close the gate, watch children join
- * (via the child page in the same browser), and override manually. localStorage
- * only — nothing persisted.
- */
 export function AttendanceManager({
   lessonId,
   childrenList,
+  teacherId,
+  teacherName,
 }: {
   lessonId: string;
   childrenList: AttendanceChild[];
+  teacherId: string;
+  teacherName: string;
 }) {
   const ids = childrenList.map((c) => c.id);
   const { state, openGate, closeGate, setManual } = useAttendance(lessonId, ids);
   const summary = summarize(state, ids);
   const { gate } = state;
+
+  const [meetUrl, setMeetUrl] = useState("");
+  const [teacherMessage, setTeacherMessage] = useState<string | null>(null);
+
+  function handleOpen() {
+    openGate({ meetUrl: meetUrl.trim() || undefined, teacherId, teacherName });
+  }
+
+  function joinAsTeacher() {
+    const url = gate.meetUrl;
+    if (url && /^https?:\/\//.test(url)) {
+      window.open(url, "_blank", "noopener,noreferrer");
+      setTeacherMessage("يُفتح رابط الحلقة في تبويب جديد (دخولك لا يُسجّل حضورًا).");
+    } else {
+      setTeacherMessage("لا يوجد رابط للحلقة الآن.");
+    }
+  }
 
   const overrideBtn = (childId: string, current: AttendanceStatus) =>
     OVERRIDES.map((opt) => (
@@ -57,9 +74,7 @@ export function AttendanceManager({
         onClick={() => setManual(childId, opt.id)}
         className={cn(
           "rounded-pill px-3 py-1 text-caption font-bold transition",
-          current === opt.id
-            ? "gradient-cta text-cream"
-            : "bg-surface-raised text-on-dark-muted hover:text-on-dark",
+          current === opt.id ? "gradient-cta text-cream" : "bg-surface-raised text-on-dark-muted hover:text-on-dark",
         )}
       >
         {opt.label}
@@ -81,7 +96,7 @@ export function AttendanceManager({
             </span>
           </div>
           <div className="flex gap-2">
-            <Button variant="primary" size="sm" onClick={openGate} disabled={gate.status === "open"}>
+            <Button variant="primary" size="sm" onClick={handleOpen} disabled={gate.status === "open"}>
               فتح البوابة
             </Button>
             <Button variant="danger" size="sm" onClick={closeGate} disabled={gate.status !== "open"}>
@@ -90,11 +105,43 @@ export function AttendanceManager({
           </div>
         </div>
 
+        {/* Lesson meet link */}
+        <label className="flex flex-col gap-2">
+          <span className="text-caption text-on-dark-muted">رابط الحلقة</span>
+          <input
+            value={meetUrl}
+            onChange={(e) => setMeetUrl(e.target.value)}
+            inputMode="url"
+            placeholder="ضع رابط Google Meet الخاص بك"
+            disabled={gate.status === "open"}
+            className="min-h-11 rounded-md border border-white/10 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft disabled:opacity-60"
+          />
+          {gate.status !== "open" && meetUrl.trim() === "" && (
+            <span className="text-caption text-on-dark-muted">
+              يمكن فتح البوابة بدون رابط، لكن زر «دخول الدرس» لن يفتح Google Meet.
+            </span>
+          )}
+        </label>
+
         <div className="flex flex-wrap gap-2">
           <Badge tone="neutral">فترة السماح: {gate.graceMinutes} دقائق</Badge>
           <Badge tone="purple">وقت الفتح: {formatTime(gate.openedAt)}</Badge>
           <Badge tone="purple">وقت الإغلاق: {formatTime(gate.closedAt)}</Badge>
         </div>
+
+        {/* Active gate info + teacher entry */}
+        {gate.status === "open" && (
+          <div className="flex flex-col gap-3 rounded-md bg-surface-raised p-4">
+            <div className="flex flex-wrap items-center gap-2 text-caption text-on-dark-muted">
+              <span>فتحها: <span className="font-bold text-on-dark">{gate.teacherName ?? "—"}</span></span>
+              <span className="break-all">رابط الحلقة: {gate.meetUrl ?? "—"}</span>
+            </div>
+            <div>
+              <Button variant="secondary" size="sm" onClick={joinAsTeacher}>دخول الدرس كمعلم</Button>
+            </div>
+            {teacherMessage && <p className="text-caption text-on-dark-muted">{teacherMessage}</p>}
+          </div>
+        )}
 
         <div className="flex flex-wrap gap-2">
           <Badge tone="success">حاضر {summary.present}</Badge>
@@ -105,8 +152,8 @@ export function AttendanceManager({
         </div>
 
         <p className="text-caption text-on-dark-muted">
-          الأساس أن الطفل يدخل عبر بوابة التطبيق. التعديل اليدوي للطوارئ فقط، والنسبة
-          تجريبية قابلة للتعديل لاحقًا — لا شيء محفوظ في قاعدة بيانات.
+          الأساس أن الطفل يدخل عبر بوابة التطبيق. التعديل اليدوي للطوارئ فقط، ودخول المعلم
+          لا يُسجّل حضورًا. النسبة تجريبية — لا شيء محفوظ في قاعدة بيانات.
         </p>
       </Card>
 

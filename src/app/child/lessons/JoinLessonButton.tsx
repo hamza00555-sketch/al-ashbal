@@ -6,20 +6,18 @@ import { useAttendance } from "@/lib/demo/attendance";
 import { IconBook } from "../_icons";
 
 /**
- * Child join flow (mock). Acts as the attendance gate entry:
- * - gate open  → records join time → present (within grace) or late
- * - gate closed/not-open → blocked with a clear message
- * After a successful join, opens the meet link (if any) in a new tab.
+ * Child join flow (mock). Uses the OPEN gate's meet link (set by the teacher),
+ * not a static lesson URL.
+ * - gate open  → record join → present (within grace) / late → open gate.meetUrl
+ * - gate closed / not opened → blocked with a clear message (no attendance)
  */
 export function JoinLessonButton({
   lessonId,
   childId,
-  meetUrl,
   disabled = false,
 }: {
   lessonId?: string;
   childId: string;
-  meetUrl?: string;
   disabled?: boolean;
 }) {
   const { state, recordJoin } = useAttendance(lessonId ?? "none", [childId]);
@@ -31,12 +29,12 @@ export function JoinLessonButton({
       setMessage("لا يوجد درس الآن.");
       return;
     }
-    if (state.gate.status !== "open") {
-      setMessage(
-        state.gate.status === "closed"
-          ? "بوابة الحضور مغلقة — لا يمكن التسجيل الآن."
-          : "بوابة الحضور لم تُفتح بعد. انتظر فتح المعلم لها.",
-      );
+    if (state.gate.status === "idle") {
+      setMessage("لم يفتح المعلم بوابة الحضور بعد.");
+      return;
+    }
+    if (state.gate.status === "closed") {
+      setMessage("بوابة الحضور مغلقة الآن.");
       return;
     }
     const result = recordJoin(childId);
@@ -44,12 +42,13 @@ export function JoinLessonButton({
       setMessage("تعذّر تسجيل الدخول الآن.");
       return;
     }
-    const base = result.status === "present" ? "تم تسجيل دخولك: حاضر" : "تم تسجيل دخولك: متأخر";
+    const label = result.status === "present" ? "حاضر" : "متأخر";
+    const meetUrl = state.gate.meetUrl;
     if (meetUrl && /^https?:\/\//.test(meetUrl)) {
       window.open(meetUrl, "_blank", "noopener,noreferrer");
-      setMessage(`${base} — يُفتح رابط الدرس في تبويب جديد.`);
+      setMessage(`تم تسجيل حضورك تجريبيًا: ${label} — يُفتح رابط الدرس في تبويب جديد.`);
     } else {
-      setMessage(`${base} — رابط الدرس التجريبي غير مفعّل.`);
+      setMessage(`تم تسجيل حضورك تجريبيًا: ${label}، لكن رابط الدرس غير مفعّل الآن.`);
     }
   }
 

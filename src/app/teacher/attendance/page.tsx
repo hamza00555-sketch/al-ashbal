@@ -32,7 +32,12 @@ export default function TeacherAttendancePage() {
         subtitle={todayLesson ? `${todayLesson.title} · ${todayLesson.date}` : "لا حلقة اليوم"}
       />
       {todayLesson ? (
-        <AttendanceManager lessonId={todayLesson.id} childrenList={childrenList} />
+        <AttendanceManager
+          lessonId={todayLesson.id}
+          childrenList={childrenList}
+          teacherId={viewer.id}
+          teacherName={viewer.displayName}
+        />
       ) : (
         <Card>
           <p className="text-body text-on-dark-muted">لا توجد حلقة لتسجيل حضورها الآن.</p>

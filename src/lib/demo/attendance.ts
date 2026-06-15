@@ -21,6 +21,9 @@ export interface AttendanceGate {
   openedAt?: string;
   closedAt?: string;
   graceMinutes: number;
+  meetUrl?: string;
+  teacherId?: string;
+  teacherName?: string;
 }
 
 export interface AttendanceState {
@@ -115,14 +118,24 @@ export function useAttendance(lessonId: string, childIds: string[]) {
 
   const state = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
-  const openGate = useCallback(() => {
-    const entries: Record<string, AttendanceEntry> = {};
-    for (const id of childIds) entries[id] = { status: "not_joined" };
-    writeState(lessonId, {
-      gate: { status: "open", openedAt: new Date().toISOString(), graceMinutes: GRACE_MINUTES },
-      entries,
-    });
-  }, [childIds, lessonId]);
+  const openGate = useCallback(
+    (opts?: { meetUrl?: string; teacherId?: string; teacherName?: string }) => {
+      const entries: Record<string, AttendanceEntry> = {};
+      for (const id of childIds) entries[id] = { status: "not_joined" };
+      writeState(lessonId, {
+        gate: {
+          status: "open",
+          openedAt: new Date().toISOString(),
+          graceMinutes: GRACE_MINUTES,
+          meetUrl: opts?.meetUrl,
+          teacherId: opts?.teacherId,
+          teacherName: opts?.teacherName,
+        },
+        entries,
+      });
+    },
+    [childIds, lessonId],
+  );
 
   const closeGate = useCallback(() => {
     const prev = readState(lessonId);
@@ -166,4 +179,52 @@ export function useAttendance(lessonId: string, childIds: string[]) {
   );
 
   return { state, openGate, closeGate, recordJoin, setManual };
+}
+
+export interface OpenGateInfo {
+  lessonId: string;
+  meetUrl?: string;
+  teacherName?: string;
+  openedAt?: string;
+}
+
+const KEY_PREFIX = "alashbal:attendance:";
+
+function findOpenGate(): OpenGateInfo | null {
+  if (typeof window === "undefined") return null;
+  for (let i = 0; i < window.localStorage.length; i++) {
+    const key = window.localStorage.key(i);
+    if (!key || !key.startsWith(KEY_PREFIX)) continue;
+    try {
+      const state = JSON.parse(window.localStorage.getItem(key) ?? "") as AttendanceState;
+      if (state?.gate?.status === "open") {
+        return {
+          lessonId: key.slice(KEY_PREFIX.length),
+          meetUrl: state.gate.meetUrl,
+          teacherName: state.gate.teacherName,
+          openedAt: state.gate.openedAt,
+        };
+      }
+    } catch {
+      // ignore malformed entries
+    }
+  }
+  return null;
+}
+
+/**
+ * Returns the first currently-open gate in this browser (any lesson), or null.
+ * Used by the guest entry to follow whichever gate the teacher opened — without
+ * touching any child data.
+ */
+export function useOpenGate(): OpenGateInfo | null {
+  const cache = useRef<{ sig: string; value: OpenGateInfo | null }>({ sig: "∅", value: null });
+  const getSnapshot = useCallback((): OpenGateInfo | null => {
+    const found = findOpenGate();
+    const sig = found ? JSON.stringify(found) : "";
+    if (sig === cache.current.sig) return cache.current.value;
+    cache.current = { sig, value: found };
+    return found;
+  }, []);
+  return useSyncExternalStore(subscribe, getSnapshot, () => null);
 }
