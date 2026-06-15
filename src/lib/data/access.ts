@@ -170,27 +170,41 @@ export interface GuestSummary {
   totalParents: number;
   halaqaCount: number;
   lessonsCompleted: number;
+  lessonsToday: number;
   badgesAwarded: number;
+  recitationsReviewed: number;
   groupProgressPercent: number;
+  avgQuran: number;
+  avgTajweed: number;
+  avgBehavior: number;
+  attendancePercent: number;
+  present: number;
+  late: number;
+  absent: number;
 }
 
 /**
  * Safe aggregate overview for the honored guest.
- * Contains NO names, videos, wishes, notes, or individual scores.
+ * Contains NO names, videos, wishes, notes, or individual scores — only
+ * anonymous, group-level counts and averages.
  */
 export function getGuestSummary(viewer: User): GuestSummary | null {
   if (!can.canViewGuestSummary(viewer)) return null;
 
-  const badgesAwarded = db.teacherReviews.reduce(
-    (sum, r) => sum + (r.badgeIds?.length ?? 0),
-    0,
-  );
-  const avgProgress =
-    db.progressSnapshots.reduce(
-      (sum, p) =>
-        sum + (p.quranPercent + p.tajweedPercent + p.behaviorPercent) / 3,
-      0,
-    ) / Math.max(1, db.progressSnapshots.length);
+  const snaps = db.progressSnapshots;
+  const n = Math.max(1, snaps.length);
+  const avg = (select: (p: ProgressSnapshot) => number) =>
+    Math.round(snaps.reduce((sum, p) => sum + select(p), 0) / n);
+  const avgQuran = avg((p) => p.quranPercent);
+  const avgTajweed = avg((p) => p.tajweedPercent);
+  const avgBehavior = avg((p) => p.behaviorPercent);
+
+  const records = db.attendanceRecords;
+  const present = records.filter((a) => a.status === "present").length;
+  const late = records.filter((a) => a.status === "late").length;
+  const absent = records.filter((a) => a.status === "absent").length;
+  const attendancePercent =
+    records.length === 0 ? 0 : Math.round((present / records.length) * 100);
 
   return {
     totalChildren: db.children.length,
@@ -198,7 +212,16 @@ export function getGuestSummary(viewer: User): GuestSummary | null {
     totalParents: db.users.filter((u) => u.role === "parent").length,
     halaqaCount: db.halaqas.length,
     lessonsCompleted: db.lessons.filter((l) => l.status === "completed").length,
-    badgesAwarded,
-    groupProgressPercent: Math.round(avgProgress),
+    lessonsToday: db.lessons.filter((l) => l.status === "live" || l.status === "scheduled").length,
+    badgesAwarded: db.teacherReviews.reduce((sum, r) => sum + (r.badgeIds?.length ?? 0), 0),
+    recitationsReviewed: db.recitations.filter((r) => r.status === "teacher_reviewed").length,
+    groupProgressPercent: Math.round((avgQuran + avgTajweed + avgBehavior) / 3),
+    avgQuran,
+    avgTajweed,
+    avgBehavior,
+    attendancePercent,
+    present,
+    late,
+    absent,
   };
 }
