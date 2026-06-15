@@ -1,20 +1,13 @@
 /*
-  Teacher · attendance (/teacher/attendance) — today's lesson attendance.
-  Statuses are editable as a mock (local state only); nothing is persisted.
+  Teacher · attendance (/teacher/attendance) — gate-based attendance (mock).
+  The teacher opens/closes the gate; children join from /child/lessons (same
+  browser, via localStorage). Manual override is available as a fallback.
+  Mobile shows cards; md+ shows a table. Nothing is persisted to a backend.
 */
-import { Badge, Card, PageHeader } from "@/components";
-import { getAttendanceForLesson, getLessonsForTeacher } from "@/lib/data";
-import type { AttendanceStatus } from "@/types";
+import { Card, PageHeader } from "@/components";
+import { getLessonsForTeacher } from "@/lib/data";
 import { getTeacherContext } from "../_shared";
-import { AttendanceTable, type AttendanceRow } from "./AttendanceTable";
-
-type EditableStatus = "present" | "late" | "absent";
-
-function toEditable(status: AttendanceStatus | undefined): EditableStatus {
-  if (status === "late") return "late";
-  if (status === "absent") return "absent";
-  return "present";
-}
+import { AttendanceManager, type AttendanceChild } from "./AttendanceManager";
 
 export default function TeacherAttendancePage() {
   const { viewer, children } = getTeacherContext();
@@ -30,12 +23,7 @@ export default function TeacherAttendancePage() {
       .sort((a, b) => `${b.date}${b.startTime}`.localeCompare(`${a.date}${a.startTime}`))[0] ??
     null;
 
-  const existing = todayLesson ? getAttendanceForLesson(viewer, todayLesson.id) : [];
-  const rows: AttendanceRow[] = children.map((child) => ({
-    childId: child.id,
-    name: child.displayName,
-    initial: toEditable(existing.find((a) => a.childId === child.id)?.status),
-  }));
+  const childrenList: AttendanceChild[] = children.map((c) => ({ id: c.id, name: c.displayName }));
 
   return (
     <>
@@ -43,18 +31,13 @@ export default function TeacherAttendancePage() {
         title="الحضور"
         subtitle={todayLesson ? `${todayLesson.title} · ${todayLesson.date}` : "لا حلقة اليوم"}
       />
-      <Card padded={false} className="p-4">
-        {todayLesson ? (
-          <AttendanceTable rows={rows} />
-        ) : (
+      {todayLesson ? (
+        <AttendanceManager lessonId={todayLesson.id} childrenList={childrenList} />
+      ) : (
+        <Card>
           <p className="text-body text-on-dark-muted">لا توجد حلقة لتسجيل حضورها الآن.</p>
-        )}
-      </Card>
-      <div className="flex flex-wrap gap-2">
-        <Badge tone="success">حاضر</Badge>
-        <Badge tone="warning">متأخر</Badge>
-        <Badge tone="danger">غائب</Badge>
-      </div>
+        </Card>
+      )}
     </>
   );
 }

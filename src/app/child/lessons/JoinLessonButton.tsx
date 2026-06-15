@@ -1,28 +1,55 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components";
+import { Badge, Button } from "@/components";
+import { useAttendance } from "@/lib/demo/attendance";
 import { IconBook } from "../_icons";
 
 /**
- * Mock "join lesson" action. If the lesson has a real (http) meet link it opens
- * in a new tab; otherwise it shows a clear demo message. No Meet integration.
+ * Child join flow (mock). Acts as the attendance gate entry:
+ * - gate open  → records join time → present (within grace) or late
+ * - gate closed/not-open → blocked with a clear message
+ * After a successful join, opens the meet link (if any) in a new tab.
  */
 export function JoinLessonButton({
+  lessonId,
+  childId,
   meetUrl,
   disabled = false,
 }: {
+  lessonId?: string;
+  childId: string;
   meetUrl?: string;
   disabled?: boolean;
 }) {
+  const { state, recordJoin } = useAttendance(lessonId ?? "none", [childId]);
   const [message, setMessage] = useState<string | null>(null);
+  const myStatus = state.entries[childId]?.status;
 
   function handleJoin() {
+    if (!lessonId) {
+      setMessage("لا يوجد درس الآن.");
+      return;
+    }
+    if (state.gate.status !== "open") {
+      setMessage(
+        state.gate.status === "closed"
+          ? "بوابة الحضور مغلقة — لا يمكن التسجيل الآن."
+          : "بوابة الحضور لم تُفتح بعد. انتظر فتح المعلم لها.",
+      );
+      return;
+    }
+    const result = recordJoin(childId);
+    if (!result.ok) {
+      setMessage("تعذّر تسجيل الدخول الآن.");
+      return;
+    }
+    const base = result.status === "present" ? "تم تسجيل دخولك: حاضر" : "تم تسجيل دخولك: متأخر";
     if (meetUrl && /^https?:\/\//.test(meetUrl)) {
       window.open(meetUrl, "_blank", "noopener,noreferrer");
-      setMessage("يُفتح رابط الدرس التجريبي في تبويب جديد.");
+      setMessage(`${base} — يُفتح رابط الدرس في تبويب جديد.`);
     } else {
-      setMessage("رابط الدرس التجريبي غير مفعّل الآن.");
+      setMessage(`${base} — رابط الدرس التجريبي غير مفعّل.`);
     }
   }
 
@@ -37,7 +64,16 @@ export function JoinLessonButton({
       >
         ادخل الدرس
       </Button>
+
+      {myStatus && myStatus !== "not_joined" && (
+        <span>
+          <Badge tone={myStatus === "present" ? "success" : myStatus === "late" ? "warning" : "danger"}>
+            {myStatus === "present" ? "حاضر" : myStatus === "late" ? "متأخر" : "غائب"}
+          </Badge>
+        </span>
+      )}
       {message && <p className="text-caption text-on-dark-muted">{message}</p>}
+      <p className="text-caption text-on-dark-muted">الحضور تجريبي وغير محفوظ في قاعدة بيانات.</p>
     </div>
   );
 }

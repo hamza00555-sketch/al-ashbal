@@ -40,7 +40,7 @@ export default function ChildLessonsPage() {
           {next?.tajweedTopic && <Badge tone="neutral">تجويد: {next.tajweedTopic}</Badge>}
           {next?.behaviorTopic && <Badge tone="neutral">سلوك: {next.behaviorTopic}</Badge>}
         </div>
-        <JoinLessonButton meetUrl={next?.meetUrl} disabled={!next} />
+        <JoinLessonButton lessonId={next?.id} childId={child.id} meetUrl={next?.meetUrl} disabled={!next} />
       </Card>
 
       <div className="grid gap-6 lg:grid-cols-2">
