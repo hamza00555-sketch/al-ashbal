@@ -4,6 +4,7 @@ import { getPendingParentApprovals, getTeacherIdsForChild } from "@/lib/data";
 import { ApprovalActions, type ApprovalItem } from "../ApprovalActions";
 import { IconVideo } from "../_icons";
 import { getParentContext } from "../_shared";
+import { ParentSubmissions } from "./ParentSubmissions";
 
 export default function ParentApprovalsPage() {
   const { viewer, children } = getParentContext();
@@ -25,6 +26,8 @@ export default function ParentApprovalsPage() {
   return (
     <>
       <PageHeader title="الموافقات" subtitle="الفيديو لا يصل للمعلم إلا بعد موافقتك" />
+
+      <ParentSubmissions parentUserId={viewer.id} />
 
       {items.length > 0 ? (
         <div className="grid gap-6 lg:grid-cols-2">

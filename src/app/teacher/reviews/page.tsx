@@ -7,6 +7,7 @@ import { PageHeader } from "@/components";
 import { getPendingTeacherReviews } from "@/lib/data";
 import { getTeacherContext } from "../_shared";
 import { TeacherReviewsList } from "./TeacherReviewsList";
+import { TeacherSubmissions } from "./TeacherSubmissions";
 import type { ReviewItem } from "./ReviewActions";
 
 export default function TeacherReviewsPage() {
@@ -28,6 +29,7 @@ export default function TeacherReviewsPage() {
   return (
     <>
       <PageHeader title="مراجعة التسميع" subtitle="تظهر فقط الفيديوهات المعتمدة من ولي الأمر" />
+      <TeacherSubmissions teacherId={viewer.id} />
       <TeacherReviewsList dbItems={dbItems} />
     </>
   );
