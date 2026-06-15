@@ -1,103 +1,56 @@
 /*
-  Parent home (Phase 01 · Task 6, responsive) — /parent.
-  Server component, calmer than the child page. Mobile: single stacked column.
-  Desktop: a wider two-column layout (main = approval + children, side =
-  notifications). Reads ONLY viewer-scoped accessors with getMockUser("parent").
+  Parent overview (Phase 01 · Task 6.3) — /parent.
+  Calm at-a-glance entry. Notifications live ONLY in the top bell (no standalone
+  section). Reads viewer-scoped accessors with getMockUser("parent").
 */
-import {
-  AppShell,
-  Avatar,
-  Card,
-  NotificationBell,
-  NotificationList,
-  PageHeader,
-  SectionTitle,
-} from "@/components";
-import {
-  getMockUser,
-  getNotificationsForViewer,
-  getPendingParentApprovals,
-  getVisibleChildren,
-} from "@/lib/data";
-import { ApprovalActions } from "./ApprovalActions";
-import { ParentChildCard } from "./_ParentChildCard";
-import { ParentMobileNav } from "./ParentMobileNav";
-import { IconVideo } from "./_icons";
+import Link from "next/link";
+import { Avatar, Card, NotificationBell, PageHeader, StatCard } from "@/components";
+import { getNotificationsForViewer, getPendingParentApprovals } from "@/lib/data";
+import { IconUsers, IconVideo } from "./_icons";
+import { getParentContext } from "./_shared";
 
-export default function ParentHomePage() {
-  const viewer = getMockUser("parent");
-  const children = getVisibleChildren(viewer);
+export default function ParentOverviewPage() {
+  const { viewer, children } = getParentContext();
   const pending = getPendingParentApprovals(viewer);
   const notifications = getNotificationsForViewer(viewer);
-  const nameOf = (childId: string) =>
-    children.find((c) => c.id === childId)?.displayName ?? "طفلك";
 
   return (
-    <AppShell mobileNav={<ParentMobileNav />}>
-      <div id="top" className="mx-auto flex w-full max-w-[430px] flex-col gap-6 md:max-w-[1120px]">
-        <PageHeader
-          eyebrow="أهلاً"
-          title={viewer.displayName}
-          subtitle="متابعة أبنائك باطمئنان"
-          leading={<Avatar name={viewer.displayName} size="lg" />}
-          actions={<NotificationBell notifications={notifications} />}
-        />
+    <>
+      <PageHeader
+        eyebrow="أهلاً"
+        title={viewer.displayName}
+        subtitle="متابعة أبنائك باطمئنان"
+        leading={<Avatar name={viewer.displayName} size="lg" />}
+        actions={<NotificationBell notifications={notifications} />}
+      />
 
-        <div className="grid gap-6 lg:grid-cols-3">
-          {/* main column */}
-          <div className="flex flex-col gap-6 lg:col-span-2">
-            <section className="flex flex-col gap-3">
-              <SectionTitle
-                title="بانتظار موافقتك"
-                subtitle="الفيديو لا يصل للمعلم إلا بعد موافقتك"
-              />
-              {pending.length > 0 ? (
-                pending.map((r) => (
-                  <Card key={r.id} variant="contrast" className="flex flex-col gap-3">
-                    <div className="flex items-center gap-3">
-                      <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-pill bg-purple/15 p-2.5 text-purple">
-                        <IconVideo />
-                      </span>
-                      <div className="flex min-w-0 flex-col gap-1">
-                        <span className="text-card-title font-bold break-words">{r.title}</span>
-                        <span className="text-caption opacity-70">{nameOf(r.childId)} · تسميع جديد</span>
-                      </div>
-                    </div>
-                    <p className="text-caption opacity-70">
-                      راجع الفيديو قبل إرساله للمعلم. (الأزرار تجريبية)
-                    </p>
-                    <ApprovalActions />
-                  </Card>
-                ))
-              ) : (
-                <Card className="flex items-center gap-3">
-                  <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-pill bg-mint/15 p-2.5 text-mint">
-                    <IconVideo />
-                  </span>
-                  <p className="text-body text-on-dark-muted">لا يوجد فيديو بانتظار موافقتك الآن.</p>
-                </Card>
-              )}
-            </section>
-
-            <section id="children" className="flex flex-col gap-3">
-              <SectionTitle title="أطفالك" subtitle={`${children.length} مرتبطون بك`} />
-              {children.map((child) => (
-                <ParentChildCard key={child.id} viewer={viewer} child={child} />
-              ))}
-            </section>
-          </div>
-
-          {/* side column */}
-          <div className="flex flex-col gap-6">
-            <section id="alerts" className="flex flex-col gap-3">
-              <SectionTitle title="تنبيهات" />
-              <Card>
-                <NotificationList notifications={notifications} />
-              </Card>
-            </section>
-          </div>
-        </div>
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Link href="/parent/children" className="block rounded-lg transition hover:brightness-110">
+          <StatCard
+            label="أطفالك"
+            value={children.length}
+            tone="purple"
+            icon={<span className="inline-flex size-6"><IconUsers /></span>}
+            hint="عرض التفاصيل"
+          />
+        </Link>
+        <Link href="/parent/approvals" className="block rounded-lg transition hover:brightness-110">
+          <StatCard
+            label="بانتظار موافقتك"
+            value={pending.length}
+            tone={pending.length > 0 ? "gold" : "success"}
+            icon={<span className="inline-flex size-6"><IconVideo /></span>}
+            hint="مراجعة الفيديوهات"
+          />
+        </Link>
       </div>
-    </AppShell>
+
+      <Card>
+        <p className="text-body text-on-dark-muted">
+          الفيديو لا يصل للمعلم إلا بعد موافقتك. تابع تقدّم أبنائك من قسم «أطفالي»،
+          وراجع التسميعات الجديدة من «الموافقات».
+        </p>
+      </Card>
+    </>
   );
 }

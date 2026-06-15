@@ -1,15 +1,12 @@
 "use client";
 
-import { MobileNav, type NavItem } from "@/components";
-import { IconBell, IconHome, IconUsers } from "./_icons";
+import { usePathname } from "next/navigation";
+import { MobileNav } from "@/components";
+import { parentNavItems } from "./_nav";
 
-// Single calm dashboard: the nav jumps to the page's sections.
-const items: NavItem[] = [
-  { id: "home", label: "الرئيسية", href: "#top", icon: <IconHome /> },
-  { id: "children", label: "أطفالي", href: "#children", icon: <IconUsers /> },
-  { id: "alerts", label: "التنبيهات", href: "#alerts", icon: <IconBell /> },
-];
-
+/** Parent bottom nav with active state from the current route (real links). */
 export function ParentMobileNav() {
-  return <MobileNav items={items} activeId="home" />;
+  const pathname = usePathname();
+  const active = parentNavItems.find((item) => item.href === pathname)?.id ?? "home";
+  return <MobileNav items={parentNavItems} activeId={active} />;
 }
