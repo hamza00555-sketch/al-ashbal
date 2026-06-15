@@ -25,14 +25,14 @@ const chip = "inline-flex size-6 items-center justify-center";
 export default function GuestOverviewPage() {
   const viewer = getMockUser("guest");
   const summary = getGuestSummary(viewer);
-  const notifications = getNotificationsForViewer(viewer);
+  const seed = getNotificationsForViewer(viewer);
 
   return (
     <AppShell>
       <div className="mx-auto flex w-full max-w-[1120px] flex-col gap-6">
         <div className="flex items-center justify-between gap-2">
           <DemoExperienceSwitcher current="guest" />
-          <NotificationBell notifications={notifications} />
+          <NotificationBell userId={viewer.id} seed={seed} />
         </div>
 
         <PageHeader

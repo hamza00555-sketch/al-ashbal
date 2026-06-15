@@ -15,6 +15,7 @@ export { Modal } from "./ui/Modal";
 export type { ModalProps } from "./ui/Modal";
 export { Drawer } from "./ui/Drawer";
 export type { DrawerProps } from "./ui/Drawer";
+export { RecitationPreview } from "./ui/RecitationPreview";
 
 // notifications
 export { NotificationBell } from "./notifications/NotificationBell";

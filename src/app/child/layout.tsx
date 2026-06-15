@@ -11,13 +11,14 @@ import { ChildDesktopNav } from "./ChildDesktopNav";
 import { ChildMobileNav } from "./ChildMobileNav";
 
 export default function ChildLayout({ children }: { children: ReactNode }) {
-  const notifications = getNotificationsForViewer(getMockUser("child"));
+  const viewer = getMockUser("child");
+  const seed = getNotificationsForViewer(viewer);
   return (
     <AppShell sidebar={<ChildDesktopNav />} mobileNav={<ChildMobileNav />}>
       <div className="mx-auto flex w-full max-w-[430px] flex-col gap-6 md:max-w-[1120px]">
         <div className="flex items-center justify-between gap-2">
           <DemoExperienceSwitcher current="child" />
-          <NotificationBell notifications={notifications} />
+          <NotificationBell userId={viewer.id} seed={seed} />
         </div>
         {children}
       </div>

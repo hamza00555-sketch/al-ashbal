@@ -138,6 +138,15 @@ export function getTeacherReviewsForChild(
   return db.teacherReviews.filter((rv) => recitationIds.includes(rv.recitationId));
 }
 
+/** Teacher user ids of a child's halaqa (gated by canViewChild). */
+export function getTeacherIdsForChild(viewer: User, childId: string): string[] {
+  if (!can.canViewChild(viewer, childId)) return [];
+  const child = db.children.find((c) => c.id === childId);
+  if (!child) return [];
+  const halaqa = db.halaqas.find((h) => h.id === child.halaqaId);
+  return halaqa ? [...halaqa.teacherIds] : [];
+}
+
 /** Lessons of the teacher's (or admin's) halaqas. */
 export function getLessonsForTeacher(viewer: User): Lesson[] {
   if (!can.canViewTeacherDashboard(viewer)) return [];

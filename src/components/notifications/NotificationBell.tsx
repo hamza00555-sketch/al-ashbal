@@ -1,7 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { AppNotification } from "@/types";
+import {
+  ensureSeed,
+  markNotificationRead,
+  useDemoNotifications,
+  type DemoNotification,
+} from "@/lib/demo/notifications";
 import { Drawer } from "../ui/Drawer";
 import { NotificationList } from "./NotificationList";
 
@@ -20,16 +26,33 @@ function BellIcon() {
 }
 
 /**
- * Unified notifications bell. Opens a right-side drawer (RTL) listing mock
- * notifications; the unread count reflects server-unread items, and individual
- * items can be marked read locally inside the list.
+ * Unified notifications bell. Merges the static (db) notifications passed as
+ * `seed` into the demo notifications store, then shows the role-filtered list
+ * for `userId` in a right-side drawer. Mark-read persists in the demo store.
  */
 export function NotificationBell({
-  notifications,
+  userId,
+  seed,
 }: {
-  notifications: AppNotification[];
+  userId: string;
+  seed: AppNotification[];
 }) {
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const mapped: DemoNotification[] = seed.map((n) => ({
+      id: n.id,
+      userId: n.userId,
+      title: n.title,
+      body: n.body,
+      type: n.type,
+      createdAt: n.createdAt,
+      readAt: n.readAt,
+    }));
+    ensureSeed(mapped);
+  }, [seed]);
+
+  const notifications = useDemoNotifications(userId);
   const unread = notifications.filter((n) => !n.readAt).length;
 
   return (
@@ -46,7 +69,7 @@ export function NotificationBell({
         )}
       </button>
       <Drawer open={open} onClose={() => setOpen(false)} title="الإشعارات">
-        <NotificationList notifications={notifications} />
+        <NotificationList notifications={notifications} onRead={markNotificationRead} />
       </Drawer>
     </>
   );

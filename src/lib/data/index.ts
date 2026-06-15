@@ -20,6 +20,7 @@ export {
   getBadgesForChild,
   getAttendanceForChild,
   getTeacherReviewsForChild,
+  getTeacherIdsForChild,
   getLessonsForTeacher,
   getAttendanceForLesson,
   getGuestSummary,

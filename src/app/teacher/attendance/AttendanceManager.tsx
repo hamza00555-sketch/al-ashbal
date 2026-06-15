@@ -27,6 +27,14 @@ function formatTime(iso?: string): string {
   return new Date(iso).toLocaleTimeString("ar-EG", { hour: "2-digit", minute: "2-digit" });
 }
 
+/** Demo attendance score per status. */
+function scoreOf(status: AttendanceStatus): string {
+  if (status === "present") return "100%";
+  if (status === "late") return "70%";
+  if (status === "absent") return "0%";
+  return "—";
+}
+
 export interface AttendanceChild {
   id: string;
   name: string;
@@ -109,7 +117,7 @@ export function AttendanceManager({
         <label className="flex flex-col gap-2">
           <span className="text-caption text-on-dark-muted">رابط الحلقة</span>
           <input
-            value={meetUrl}
+            value={gate.status === "open" ? gate.meetUrl ?? "" : meetUrl}
             onChange={(e) => setMeetUrl(e.target.value)}
             inputMode="url"
             placeholder="ضع رابط Google Meet الخاص بك"
@@ -173,6 +181,7 @@ export function AttendanceManager({
               </div>
               <div className="flex flex-wrap items-center gap-2 text-caption text-on-dark-muted">
                 <span>وقت الدخول: {formatTime(entry?.joinedAt)}</span>
+                <span>النسبة: {scoreOf(status)}</span>
                 {entry?.manual ? (
                   <Badge tone="neutral">تعديل يدوي</Badge>
                 ) : (
