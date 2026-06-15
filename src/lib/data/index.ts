@@ -18,6 +18,7 @@ export {
   getLessonsForChild,
   getNextLessonForChild,
   getBadgesForChild,
+  getAttendanceForChild,
   getGuestSummary,
 } from "./access";
 export type { GuestSummary } from "./access";

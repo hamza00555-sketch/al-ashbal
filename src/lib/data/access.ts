@@ -7,6 +7,7 @@
 */
 import type {
   AppNotification,
+  AttendanceRecord,
   Badge,
   ChildProfile,
   Halaqa,
@@ -113,6 +114,15 @@ export function getBadgesForChild(viewer: User, childId: string): Badge[] {
     review.badgeIds?.forEach((id) => awarded.add(id));
   }
   return db.badges.filter((b) => awarded.has(b.id));
+}
+
+/** A child's attendance records, gated by canViewChild. */
+export function getAttendanceForChild(
+  viewer: User,
+  childId: string,
+): AttendanceRecord[] {
+  if (!can.canViewChild(viewer, childId)) return [];
+  return db.attendanceRecords.filter((a) => a.childId === childId);
 }
 
 export interface GuestSummary {
