@@ -39,6 +39,12 @@ export default function Home() {
           تجربة ولي الأمر
         </Link>
         <Link
+          href="/teacher"
+          className="flex min-h-11 w-full items-center justify-center rounded-lg border border-white/10 bg-surface-raised px-8 text-button font-bold text-on-dark transition hover:bg-white/5"
+        >
+          لوحة المعلم
+        </Link>
+        <Link
           href="/style-guide"
           className="text-caption text-on-dark-muted transition hover:text-on-dark"
         >

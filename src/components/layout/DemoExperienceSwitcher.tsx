@@ -16,7 +16,7 @@ interface Experience {
 const EXPERIENCES: Experience[] = [
   { id: "child", label: "تجربة الطفل", href: "/child" },
   { id: "parent", label: "تجربة ولي الأمر", href: "/parent" },
-  { id: "teacher", label: "لوحة المعلم", href: "/teacher", soon: true },
+  { id: "teacher", label: "لوحة المعلم", href: "/teacher" },
   { id: "style-guide", label: "دليل التصميم", href: "/style-guide" },
   { id: "home", label: "الصفحة الرئيسية", href: "/" },
 ];

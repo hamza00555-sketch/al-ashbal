@@ -138,6 +138,32 @@ export function getTeacherReviewsForChild(
   return db.teacherReviews.filter((rv) => recitationIds.includes(rv.recitationId));
 }
 
+/** Lessons of the teacher's (or admin's) halaqas. */
+export function getLessonsForTeacher(viewer: User): Lesson[] {
+  if (!can.canViewTeacherDashboard(viewer)) return [];
+  const halaqaIds =
+    viewer.role === "admin"
+      ? db.halaqas.map((h) => h.id)
+      : db.halaqas.filter((h) => h.teacherIds.includes(viewer.id)).map((h) => h.id);
+  return db.lessons.filter((l) => halaqaIds.includes(l.halaqaId));
+}
+
+/** Attendance for a lesson, only if the viewer owns the lesson's halaqa (or admin). */
+export function getAttendanceForLesson(
+  viewer: User,
+  lessonId: string,
+): AttendanceRecord[] {
+  const lesson = db.lessons.find((l) => l.id === lessonId);
+  if (!lesson) return [];
+  const owns =
+    viewer.role === "admin" ||
+    db.halaqas.some(
+      (h) => h.id === lesson.halaqaId && h.teacherIds.includes(viewer.id),
+    );
+  if (!owns) return [];
+  return db.attendanceRecords.filter((a) => a.lessonId === lessonId);
+}
+
 export interface GuestSummary {
   totalChildren: number;
   activeChildren: number;
