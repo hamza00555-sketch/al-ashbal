@@ -7,6 +7,7 @@ import {
   TASK_SUBJECT_LABEL,
   TASK_TYPE_LABEL,
 } from "../_shared";
+import { PrepTasks } from "./PrepTasks";
 import { TaskActionButton } from "./TaskActionButton";
 
 export default function ChildTasksPage() {
@@ -18,6 +19,8 @@ export default function ChildTasksPage() {
   return (
     <>
       <PageHeader title="مهامي" subtitle="التسميع والحفظ والمراجعة" />
+
+      <PrepTasks halaqaId={child.halaqaId} />
 
       {tasks.length > 0 ? (
         <div className="grid gap-4 lg:grid-cols-2">

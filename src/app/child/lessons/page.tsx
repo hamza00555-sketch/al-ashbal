@@ -7,6 +7,7 @@ import {
 } from "@/lib/data";
 import { ATTENDANCE_STATUS, getChildContext, LESSON_STATUS } from "../_shared";
 import { JoinLessonButton } from "./JoinLessonButton";
+import { PrepLessons } from "./PrepLessons";
 
 export default function ChildLessonsPage() {
   const { viewer, child } = getChildContext();
@@ -26,6 +27,8 @@ export default function ChildLessonsPage() {
   return (
     <>
       <PageHeader title="الدروس" subtitle="حلقتك ومواعيدك" />
+
+      <PrepLessons halaqaId={child.halaqaId} />
 
       <Card variant="gradient" className="flex flex-col gap-4">
         <div className="flex items-center justify-between gap-2">

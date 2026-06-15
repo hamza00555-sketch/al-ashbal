@@ -1,10 +1,11 @@
 import type { NavItem } from "@/components";
-import { IconCalendar, IconHome, IconUsers, IconVideo } from "./_icons";
+import { IconCalendar, IconHome, IconPrep, IconUsers, IconVideo } from "./_icons";
 
 /** Real cross-page navigation for the teacher area (no scroll anchors). */
 export const teacherNavItems: NavItem[] = [
-  { id: "home", label: "نظرة عامة", href: "/teacher", icon: <IconHome /> },
-  { id: "children", label: "أطفال الحلقة", href: "/teacher/children", icon: <IconUsers /> },
+  { id: "home", label: "الرئيسية", href: "/teacher", icon: <IconHome /> },
+  { id: "prep", label: "التحضير", href: "/teacher/prep", icon: <IconPrep /> },
   { id: "attendance", label: "الحضور", href: "/teacher/attendance", icon: <IconCalendar /> },
-  { id: "reviews", label: "المراجعة", href: "/teacher/reviews", icon: <IconVideo /> },
+  { id: "children", label: "الأطفال", href: "/teacher/children", icon: <IconUsers /> },
+  { id: "reviews", label: "المراجعات", href: "/teacher/reviews", icon: <IconVideo /> },
 ];

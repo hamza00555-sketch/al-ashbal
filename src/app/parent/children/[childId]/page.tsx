@@ -23,6 +23,7 @@ import {
   RECITATION_STATUS,
   TASK_STATUS,
 } from "../../_shared";
+import { ParentPrepInfo } from "./ParentPrepInfo";
 
 export function generateStaticParams() {
   const { children } = getParentContext();
@@ -83,6 +84,8 @@ export default async function ParentChildDetailPage({
       />
 
       <div className="grid gap-6 lg:grid-cols-3">
+        <ParentPrepInfo halaqaId={child.halaqaId} />
+
         {/* Progress ring */}
         <Card className="flex flex-col items-center gap-3">
           <SectionTitle title="التقدّم العام" className="w-full" />

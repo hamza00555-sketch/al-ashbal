@@ -40,3 +40,11 @@ export function IconBook() {
     </svg>
   );
 }
+export function IconPrep() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden className={base}>
+      <rect x="5" y="4" width="14" height="16" rx="2.5" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M9 3.5h6v3H9zM8.5 11h7M8.5 15h4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
