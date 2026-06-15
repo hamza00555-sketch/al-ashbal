@@ -186,6 +186,67 @@ export function getAttendanceForLesson(
   return db.attendanceRecords.filter((a) => a.lessonId === lessonId);
 }
 
+export type ChildStatusLevel = "excellent" | "follow_up" | "intervene";
+
+export interface ChildStatusSummary {
+  level: ChildStatusLevel;
+  progressPercent: number;
+  openTasks: number;
+  lastActivity: string;
+}
+
+/**
+ * Derive a child's overall status (gated by canViewChild). Rules:
+ *  - intervene  : a re-record task, an absence, or progress < 40%
+ *  - follow_up  : an open task, or progress < 70%
+ *  - excellent  : otherwise
+ */
+export function getChildStatusSummary(viewer: User, childId: string): ChildStatusSummary | null {
+  if (!can.canViewChild(viewer, childId)) return null;
+
+  const progress = db.progressSnapshots.find((p) => p.childId === childId);
+  const progressPercent = progress
+    ? Math.round((progress.quranPercent + progress.tajweedPercent + progress.behaviorPercent) / 3)
+    : 0;
+
+  const tasks = db.childTasks.filter((t) => t.childId === childId);
+  const openTasks = tasks.filter((t) => t.status !== "accepted").length;
+  const hasRerecord = tasks.some((t) => t.status === "rerecord_needed");
+  const hasAbsence = db.attendanceRecords.some(
+    (a) => a.childId === childId && a.status === "absent",
+  );
+
+  let level: ChildStatusLevel;
+  if (hasRerecord || hasAbsence || progressPercent < 40) level = "intervene";
+  else if (openTasks > 0 || progressPercent < 70) level = "follow_up";
+  else level = "excellent";
+
+  const recitations = db.recitations.filter((r) => r.childId === childId);
+  const lastActivity =
+    recitations.length > 0
+      ? `آخر تسميع: ${recitations[recitations.length - 1].title}`
+      : tasks.length > 0
+        ? `مهمة: ${tasks[0].title}`
+        : "لا نشاط حديث";
+
+  return { level, progressPercent, openTasks, lastActivity };
+}
+
+export interface ChildOverviewItem {
+  child: ChildProfile;
+  summary: ChildStatusSummary;
+}
+
+/** The parent's linked children, each with a status summary. */
+export function getParentChildOverview(viewer: User): ChildOverviewItem[] {
+  return getVisibleChildren(viewer)
+    .map((child) => {
+      const summary = getChildStatusSummary(viewer, child.id);
+      return summary ? { child, summary } : null;
+    })
+    .filter((x): x is ChildOverviewItem => x !== null);
+}
+
 export interface GuestSummary {
   totalChildren: number;
   activeChildren: number;

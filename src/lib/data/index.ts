@@ -20,6 +20,8 @@ export {
   getBadgesForChild,
   getTasksForChild,
   getActiveActivity,
+  getChildStatusSummary,
+  getParentChildOverview,
   getAttendanceForChild,
   getTeacherReviewsForChild,
   getTeacherIdsForChild,
@@ -27,6 +29,11 @@ export {
   getAttendanceForLesson,
   getGuestSummary,
 } from "./access";
-export type { GuestSummary } from "./access";
+export type {
+  GuestSummary,
+  ChildStatusLevel,
+  ChildStatusSummary,
+  ChildOverviewItem,
+} from "./access";
 
 export { getMockUser, getUserById } from "./session";

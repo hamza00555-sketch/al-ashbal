@@ -1,16 +1,18 @@
 /*
-  Parent overview (Phase 01 · Task 6.3/6.4) — /parent.
-  Calm at-a-glance entry with a clear path to approvals. Notifications live ONLY
-  in the top bell (no standalone section). Viewer-scoped accessors only.
+  Parent overview (/parent) — starts with "أطفالي": the linked children as
+  avatars with status rings, each linking to their detail page. Plus a pending
+  approvals shortcut. Notifications stay in the top bell only.
 */
 import Link from "next/link";
-import { Avatar, Card, PageHeader, StatCard } from "@/components";
-import { getPendingParentApprovals } from "@/lib/data";
-import { IconUsers, IconVideo } from "./_icons";
-import { getParentContext } from "./_shared";
+import { Avatar, Badge, Card, PageHeader, SectionTitle } from "@/components";
+import { getParentChildOverview, getPendingParentApprovals } from "@/lib/data";
+import { ChildStatusAvatar } from "./ChildStatusAvatar";
+import { CHILD_STATUS, getParentContext } from "./_shared";
+import { IconVideo } from "./_icons";
 
 export default function ParentOverviewPage() {
-  const { viewer, children } = getParentContext();
+  const { viewer } = getParentContext();
+  const overview = getParentChildOverview(viewer);
   const pending = getPendingParentApprovals(viewer);
 
   return (
@@ -22,55 +24,41 @@ export default function ParentOverviewPage() {
         leading={<Avatar name={viewer.displayName} size="lg" />}
       />
 
-      {/* Clear path to approvals when something is pending */}
       {pending.length > 0 && (
-        <Link
-          href="/parent/approvals"
-          className="block rounded-lg transition hover:brightness-110"
-        >
-          <Card variant="contrast" className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-pill bg-purple/15 p-2.5 text-purple">
-                <IconVideo />
+        <Link href="/parent/approvals" className="block rounded-lg transition hover:brightness-110">
+          <Card variant="contrast" className="flex items-center gap-3">
+            <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-pill bg-purple/15 p-2.5 text-purple">
+              <IconVideo />
+            </span>
+            <div className="flex min-w-0 flex-col gap-1">
+              <span className="text-card-title font-bold break-words">
+                لديك {pending.length} فيديو بانتظار موافقتك
               </span>
-              <div className="flex min-w-0 flex-col gap-1">
-                <span className="text-card-title font-bold break-words">
-                  لديك {pending.length} فيديو بانتظار موافقتك
-                </span>
-                <span className="text-caption opacity-70">اضغط لمراجعة الموافقات</span>
-              </div>
+              <span className="text-caption opacity-70">اضغط لمراجعة الموافقات</span>
             </div>
           </Card>
         </Link>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Link href="/parent/children" className="block rounded-lg transition hover:brightness-110">
-          <StatCard
-            label="أطفالك"
-            value={children.length}
-            tone="purple"
-            icon={<span className="inline-flex size-6"><IconUsers /></span>}
-            hint="عرض التفاصيل"
-          />
-        </Link>
-        <Link href="/parent/approvals" className="block rounded-lg transition hover:brightness-110">
-          <StatCard
-            label="بانتظار موافقتك"
-            value={pending.length}
-            tone={pending.length > 0 ? "gold" : "success"}
-            icon={<span className="inline-flex size-6"><IconVideo /></span>}
-            hint="مراجعة الفيديوهات"
-          />
-        </Link>
-      </div>
-
-      <Card>
-        <p className="text-body text-on-dark-muted">
-          الفيديو لا يصل للمعلم إلا بعد موافقتك. تابع تقدّم أبنائك من قسم «أطفالي»،
-          وراجع التسميعات الجديدة من «الموافقات».
-        </p>
-      </Card>
+      <section className="flex flex-col gap-3">
+        <SectionTitle title="أطفالي" subtitle={`${overview.length} مرتبطون بك`} />
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+          {overview.map(({ child, summary }) => (
+            <Link
+              key={child.id}
+              href={`/parent/children/${child.id}`}
+              className="flex flex-col items-center gap-2 rounded-lg bg-surface p-4 text-center shadow-card transition hover:bg-surface-raised"
+            >
+              <ChildStatusAvatar name={child.displayName} level={summary.level} size="lg" />
+              <span className="text-card-title font-bold break-words">{child.displayName}</span>
+              <Badge tone={CHILD_STATUS[summary.level].tone}>{CHILD_STATUS[summary.level].label}</Badge>
+              <span className="line-clamp-2 text-caption text-on-dark-muted break-words">
+                {summary.lastActivity}
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
     </>
   );
 }
