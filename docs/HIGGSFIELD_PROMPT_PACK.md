@@ -25,6 +25,25 @@ soft purple #9F84FF, light lavender #D8CCFF, warm cream #FFF8EA, accent gold
 (gentle alert only).
 ```
 
+**COLOR LOGIC (إلزامي — اللون حسب الوظيفة، لا تُصبغ كل شيء بنفسجيًا):**
+
+```
+Use brand purple for main bodies, surfaces, calm/support elements and
+backgrounds ONLY. Functional colors must read correctly:
+- stars / "shiny" elements: VIBRANT warm gold #F6C65B or bright yellow — never
+  dull purple.
+- white parts (book pages, eye-whites): TRUE white #FFFFFF / cream #FFF8EA —
+  never greyish-purple.
+- heart / warm emotional element: red / peach / coral #F97373 — never purple.
+- reward / medal / achievement: vivid gold #F6C65B.
+- success / check / approval: mint #63D9A0.
+- warning / attention: coral #F97373.
+HUMAN characters (child / teacher / parent): NATURAL human skin tone (realistic
+beige/tan), natural hair/eye colors. Put brand colors on CLOTHING, headwear,
+accessories and background — NEVER on the skin. (A non-human mascot like a lion
+cub may use brand colors on its fur/cap.)
+```
+
 **SMALL-ASSET SUFFIX (للأيقونات/الأوسمة/الأفاتارات/الرسومات الصغيرة — للقص لاحقًا):**
 
 ```
@@ -42,7 +61,9 @@ no realistic human face, no photoreal, no photograph, real people, heavy
 realistic 3D, glossy plastic glare, harsh reflections, over-detailed render,
 busy scene, cluttered composition, multiple objects, religious calligraphy,
 detailed mosque, praying figures, neon, harsh gradient, watermark, logo, UI
-frame, drop shadow text, matte halo, white edges.
+frame, drop shadow text, matte halo, white edges,
+purple skin, purple human face, color-tinted skin, purple star, dull/desaturated
+star, greyish-purple white, purple heart, purple-tinted white pages.
 ```
 
 **Output:** PNG. naming من `ASSET_INVENTORY.md`. مربّع للأيقونات/الأوسمة/الأفاتارات؛
@@ -67,57 +88,61 @@ distance, very low contrast, large empty safe area in the center.
 ### 2) `icon_recitation` — أيقونة التسميع (transparent)
 ```
 A cute soft 3D app icon of a small rounded open book with a soft glowing
-sound-wave arc rising from it, purple book with lavender pages, friendly and
-clean.
+sound-wave arc rising from it. The book cover is purple, the pages are TRUE
+white/cream; the sound-wave is soft lavender. Friendly and clean.
 ```
 
 ### 3) `icon_points` — أيقونة النقاط (transparent)
 ```
-A cute soft 3D app icon of a single puffy rounded five-point star inside a soft
-3D ring, purple ring with a warm gold #F6C65B star, friendly and clean.
+A cute soft 3D app icon: a single puffy rounded five-point star in VIBRANT warm
+gold #F6C65B (bright and glossy, clearly shiny), sitting inside a soft 3D purple
+ring. Friendly and clean.
 ```
 
 ### 4) `badge_recitation_master` — وسام التسميع المميز (transparent)
 ```
-A cute soft 3D achievement medal: a rounded glossy-matte circular badge with a
-soft gold #F6C65B rim and a purple #2B1763 core, a small rounded open book with a
-tiny star floating above it in the center, gentle inner glow, premium but simple.
+A cute soft 3D achievement medal: a rounded badge with a VIVID gold #F6C65B rim
+and a purple #2B1763 core; in the center a small rounded open book (purple cover,
+true-white pages) with a tiny bright-gold star floating above it; gentle inner
+glow, premium but simple.
 ```
 
 ### 5) `badge_good_behavior` — وسام حسن السلوك (transparent)
 ```
-A cute soft 3D achievement medal: a rounded circular badge with a soft mint
-#63D9A0 ring and a purple #2B1763 core, a simple puffy rounded heart in the
-center, gentle glow, warm and clean.
+A cute soft 3D achievement medal: a rounded badge with a soft mint #63D9A0 ring
+and a purple #2B1763 core; in the center a simple puffy rounded heart in warm
+coral / soft red #F97373 (NOT purple); gentle glow, warm and clean.
 ```
 
 ### 6) `avatar_child_01` — أفاتار طفل (transparent)
 ```
-A cute soft 3D character avatar of a friendly little lion cub mascot wearing a
-soft purple cap, big rounded head, simple dot eyes and a gentle smile (symbolic,
-not realistic), modest and warm, head-and-shoulders bust, purple and lavender.
+A cute soft 3D mascot avatar of a friendly little lion cub with NATURAL warm
+sandy/golden fur and a small cream muzzle, wearing a soft purple cap (brand color
+on the cap, NOT on the fur skin tone), big rounded head, simple dot eyes and a
+gentle smile, head-and-shoulders bust, modest and warm.
 ```
 
 ### 7) `avatar_teacher_01` — أفاتار معلم (transparent)
 ```
-A cute soft 3D character avatar of a kind dignified teacher mascot with a soft
-simplified turban/cap, big rounded head, simple dot eyes and a gentle calm smile
-(symbolic, not realistic), modest and respectful, head-and-shoulders bust, deep
-purple and soft purple with a small gold accent.
+A cute soft 3D character avatar of a kind dignified teacher with NATURAL human
+skin tone (realistic beige/tan), natural dark hair/short beard, simple friendly
+features (symbolic, not photoreal), wearing a soft purple turban/cap and robe
+(brand color on the clothing only, never on the skin), with a small gold accent,
+head-and-shoulders bust, modest and respectful.
 ```
 
 ### 8) `empty_tasks` — حالة فارغة: لا مهام (transparent)
 ```
 A cute soft 3D object for an empty state: a closed rounded purple book resting,
-with a single small sleeping puffy star with closed eyes floating above it,
-calm and gentle, soft lavender highlights.
+with a single small sleeping puffy star (soft warm gold/cream, eyes closed)
+floating above it; calm and gentle, soft lavender highlights on the book.
 ```
 
 ### 9) `illustration_parent_approval` — موافقة ولي الأمر (transparent)
 ```
 A cute soft 3D mini scene (objects only, no faces): a rounded purple shield with
-a soft mint #63D9A0 check mark, next to a small rounded play-circle and a tiny
-puffy sound-wave, gently grouped together, calm and reassuring.
+a clear mint #63D9A0 check mark, next to a small rounded purple play-circle and a
+tiny soft lavender sound-wave, gently grouped together, calm and reassuring.
 ```
 
 ---
