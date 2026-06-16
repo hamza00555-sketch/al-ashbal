@@ -19,6 +19,8 @@ Style: cute soft 3D render, rounded clay-like forms, smooth matte surfaces,
 gentle soft studio lighting from above, subtle depth, soft contact shadow,
 premium yet warm toy-like educational app asset, purple-first, minimal,
 single clear subject, very readable silhouette.
+FRONT-FACING: the subject faces the camera directly, centered, symmetrical,
+straight-on view, calm clear pose; characters look straight ahead at the viewer.
 Palette: deep purple #1A1038, royal purple #2B1763, primary purple #6D4CFF,
 soft purple #9F84FF, light lavender #D8CCFF, warm cream #FFF8EA, accent gold
 #F6C65B (achievements only), mint #63D9A0 (success only), coral #F97373
@@ -52,8 +54,9 @@ skin or the white thawb.
 **SMALL-ASSET SUFFIX (للأيقونات/الأوسمة/الأفاتارات/الرسومات الصغيرة — للقص لاحقًا):**
 
 ```
-centered, isolated single object, on a plain flat light-gray (#EDEDED) studio
-backdrop, even lighting, no scene, no props, no cast shadow on the backdrop.
+centered, front-facing, straight-on view, symmetrical, isolated single object,
+on a plain flat light-gray (#EDEDED) studio backdrop, even lighting, no scene,
+no props, no cast shadow on the backdrop.
 ```
 > ثم مرّر الناتج على `remove_background` → PNG شفاف مقصوص.
 
@@ -69,7 +72,9 @@ detailed mosque, praying figures, neon, harsh gradient, watermark, logo, UI
 frame, drop shadow text, matte halo, white edges,
 purple skin, purple human face, color-tinted skin, purple star, dull/desaturated
 star, greyish-purple white, purple heart, purple-tinted white pages,
-turquoise, teal, cyan, mint green, green accent, green turban.
+turquoise, teal, cyan, mint green, green accent, green turban,
+side view, profile view, 3/4 angle, dramatic perspective, extreme angle, tilted/
+rotated asset, looking away, head turned, complex pose, dynamic action pose.
 ```
 
 **Output:** PNG. naming من `ASSET_INVENTORY.md`. مربّع للأيقونات/الأوسمة/الأفاتارات؛
@@ -126,7 +131,8 @@ no teal, no green.
 A cute soft 3D character avatar of a young Yemeni Hadrami boy with NATURAL warm
 tan skin, big rounded head, simple friendly dot eyes and a gentle smile (symbolic,
 not photoreal), wearing a clean WHITE thawb and a white embroidered kufi cap,
-head-and-shoulders bust, modest and warm. No turquoise, no green.
+head-and-shoulders bust, FRONT-FACING and looking straight at the camera,
+centered and symmetrical, modest and warm. No turquoise, no green, no side view.
 ```
 
 ### 7) `avatar_teacher_01` — أفاتار معلم (transparent)
@@ -134,8 +140,9 @@ head-and-shoulders bust, modest and warm. No turquoise, no green.
 A cute soft 3D character avatar of a kind dignified Yemeni Hadrami male teacher
 (scholar style) with NATURAL warm tan skin and a short trimmed dark beard, simple
 friendly features (symbolic, not photoreal), wearing a WHITE thawb and a WHITE
-turban (imamah), calm and respectful, head-and-shoulders bust. No turquoise, no
-green turban, no purple skin.
+turban (imamah), calm and respectful, head-and-shoulders bust, FRONT-FACING and
+looking straight at the camera, centered and symmetrical. No turquoise, no green
+turban, no purple skin, no side view.
 ```
 
 ### 8) `empty_tasks` — حالة فارغة: لا مهام (transparent)
