@@ -72,9 +72,9 @@ export function NotificationBell({
         type="button"
         aria-label="التنبيهات"
         onClick={() => setOpen(true)}
-        className="relative inline-flex size-12 items-center justify-center rounded-pill bg-surface-raised text-on-dark-muted transition hover:text-on-dark"
+        className="relative inline-flex items-center justify-center text-on-dark-muted transition hover:text-on-dark"
       >
-        <span className="inline-flex size-10 items-center justify-center overflow-hidden"><AppIcon name="icon_notifications" fallback={<BellIcon />} className="scale-[1.25]" /></span>
+        <span className="inline-flex size-12 items-center justify-center overflow-hidden"><AppIcon name="icon_notifications" fallback={<BellIcon />} className="scale-[1.35]" /></span>
         {unread > 0 && (
           <span className="absolute -top-0.5 -end-0.5 size-2.5 rounded-pill bg-coral" />
         )}
