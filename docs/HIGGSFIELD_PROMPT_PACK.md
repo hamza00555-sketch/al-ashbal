@@ -36,12 +36,17 @@ backgrounds ONLY. Functional colors must read correctly:
   never greyish-purple.
 - heart / warm emotional element: red / peach / coral #F97373 — never purple.
 - reward / medal / achievement: vivid gold #F6C65B.
-- success / check / approval: mint #63D9A0.
+- success / check / approval: GOLD #F6C65B or cream #FFF8EA — NO turquoise/teal/mint.
 - warning / attention: coral #F97373.
 HUMAN characters (child / teacher / parent): NATURAL human skin tone (realistic
-beige/tan), natural hair/eye colors. Put brand colors on CLOTHING, headwear,
-accessories and background — NEVER on the skin. (A non-human mascot like a lion
-cub may use brand colors on its fur/cap.)
+beige/tan, Yemeni/Hadrami complexion), natural hair/eye colors. NEVER tint skin.
+Wardrobe = traditional Yemeni Hadrami:
+- male teacher: white thawb + white turban/imamah (or white kufi cap), short
+  trimmed beard, dignified and kind.
+- female teacher / girls: modest hijab.
+- boys: white thawb + white kufi/embroidered cap.
+Dress is white/traditional; brand purple lives in the background/frame, not the
+skin or the white thawb.
 ```
 
 **SMALL-ASSET SUFFIX (للأيقونات/الأوسمة/الأفاتارات/الرسومات الصغيرة — للقص لاحقًا):**
@@ -63,7 +68,8 @@ busy scene, cluttered composition, multiple objects, religious calligraphy,
 detailed mosque, praying figures, neon, harsh gradient, watermark, logo, UI
 frame, drop shadow text, matte halo, white edges,
 purple skin, purple human face, color-tinted skin, purple star, dull/desaturated
-star, greyish-purple white, purple heart, purple-tinted white pages.
+star, greyish-purple white, purple heart, purple-tinted white pages,
+turquoise, teal, cyan, mint green, green accent, green turban.
 ```
 
 **Output:** PNG. naming من `ASSET_INVENTORY.md`. مربّع للأيقونات/الأوسمة/الأفاتارات؛
@@ -109,26 +115,27 @@ glow, premium but simple.
 
 ### 5) `badge_good_behavior` — وسام حسن السلوك (transparent)
 ```
-A cute soft 3D achievement medal: a rounded badge with a soft mint #63D9A0 ring
+A cute soft 3D achievement medal: a rounded badge with a warm GOLD #F6C65B rim
 and a purple #2B1763 core; in the center a simple puffy rounded heart in warm
-coral / soft red #F97373 (NOT purple); gentle glow, warm and clean.
+coral / soft red #F97373 (NOT purple); gentle glow, warm and clean. No turquoise,
+no teal, no green.
 ```
 
 ### 6) `avatar_child_01` — أفاتار طفل (transparent)
 ```
-A cute soft 3D mascot avatar of a friendly little lion cub with NATURAL warm
-sandy/golden fur and a small cream muzzle, wearing a soft purple cap (brand color
-on the cap, NOT on the fur skin tone), big rounded head, simple dot eyes and a
-gentle smile, head-and-shoulders bust, modest and warm.
+A cute soft 3D character avatar of a young Yemeni Hadrami boy with NATURAL warm
+tan skin, big rounded head, simple friendly dot eyes and a gentle smile (symbolic,
+not photoreal), wearing a clean WHITE thawb and a white embroidered kufi cap,
+head-and-shoulders bust, modest and warm. No turquoise, no green.
 ```
 
 ### 7) `avatar_teacher_01` — أفاتار معلم (transparent)
 ```
-A cute soft 3D character avatar of a kind dignified teacher with NATURAL human
-skin tone (realistic beige/tan), natural dark hair/short beard, simple friendly
-features (symbolic, not photoreal), wearing a soft purple turban/cap and robe
-(brand color on the clothing only, never on the skin), with a small gold accent,
-head-and-shoulders bust, modest and respectful.
+A cute soft 3D character avatar of a kind dignified Yemeni Hadrami male teacher
+(scholar style) with NATURAL warm tan skin and a short trimmed dark beard, simple
+friendly features (symbolic, not photoreal), wearing a WHITE thawb and a WHITE
+turban (imamah), calm and respectful, head-and-shoulders bust. No turquoise, no
+green turban, no purple skin.
 ```
 
 ### 8) `empty_tasks` — حالة فارغة: لا مهام (transparent)
@@ -141,8 +148,9 @@ floating above it; calm and gentle, soft lavender highlights on the book.
 ### 9) `illustration_parent_approval` — موافقة ولي الأمر (transparent)
 ```
 A cute soft 3D mini scene (objects only, no faces): a rounded purple shield with
-a clear mint #63D9A0 check mark, next to a small rounded purple play-circle and a
-tiny soft lavender sound-wave, gently grouped together, calm and reassuring.
+a clear warm GOLD #F6C65B check mark, next to a small rounded purple play-circle
+and a tiny soft lavender sound-wave, gently grouped together, calm and reassuring.
+No turquoise, no teal, no green.
 ```
 
 ---
