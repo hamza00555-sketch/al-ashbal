@@ -4,7 +4,7 @@
   approvals shortcut. Notifications stay in the top bell only.
 */
 import Link from "next/link";
-import { Avatar, Badge, Card, PageHeader, SectionTitle } from "@/components";
+import { AppIcon, Avatar, Badge, Card, PageHeader, SectionTitle } from "@/components";
 import { getParentChildOverview, getPendingParentApprovals } from "@/lib/data";
 import { ChildStatusAvatar } from "./ChildStatusAvatar";
 import { CHILD_STATUS, getParentContext } from "./_shared";
@@ -21,14 +21,14 @@ export default function ParentOverviewPage() {
         eyebrow="أهلاً"
         title={viewer.displayName}
         subtitle="متابعة أبنائك باطمئنان"
-        leading={<Avatar name={viewer.displayName} size="lg" />}
+        leading={<Avatar name={viewer.displayName} size="lg" src="/assets/avatars/avatar_parent_father_01.png" />}
       />
 
       {pending.length > 0 && (
         <Link href="/parent/approvals" className="block rounded-lg transition hover:brightness-110">
           <Card variant="contrast" className="flex items-center gap-3">
             <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-pill bg-purple/15 p-2.5 text-purple">
-              <IconVideo />
+              <AppIcon name="icon_record_video" fallback={<IconVideo />} />
             </span>
             <div className="flex min-w-0 flex-col gap-1">
               <span className="text-card-title font-bold break-words">

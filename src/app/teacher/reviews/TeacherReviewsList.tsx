@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, RecitationPreview } from "@/components";
+import { AppIcon, AppIllustration, Card, RecitationPreview } from "@/components";
 import { useReviews } from "@/lib/demo/workflow";
 import { IconVideo } from "../_icons";
 import { ReviewActions, type ReviewItem } from "./ReviewActions";
@@ -32,9 +32,15 @@ export function TeacherReviewsList({ dbItems }: { dbItems: ReviewItem[] }) {
   if (items.length === 0) {
     return (
       <Card className="flex items-center gap-3">
-        <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-pill bg-mint/15 p-2.5 text-mint">
-          <IconVideo />
-        </span>
+        <AppIllustration
+          name="illustration_waiting_review"
+          className="size-16 shrink-0"
+          fallback={
+            <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-pill bg-mint/15 p-2.5 text-mint">
+              <IconVideo />
+            </span>
+          }
+        />
         <p className="text-body text-on-dark-muted">لا توجد تسميعات بانتظار المراجعة الآن.</p>
       </Card>
     );
@@ -46,7 +52,7 @@ export function TeacherReviewsList({ dbItems }: { dbItems: ReviewItem[] }) {
         <Card key={item.recitationId} className="flex flex-col gap-4">
           <div className="flex items-center gap-3">
             <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-pill bg-purple/15 p-2.5 text-purple-soft">
-              <IconVideo />
+              <AppIcon name="icon_record_video" fallback={<IconVideo />} />
             </span>
             <div className="flex min-w-0 flex-col gap-1">
               <span className="text-card-title font-bold break-words">{item.title}</span>

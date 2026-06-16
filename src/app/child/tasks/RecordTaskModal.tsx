@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Badge, Button, Modal } from "@/components";
+import { AppIcon, Badge, Button, Modal } from "@/components";
 import { cn } from "@/lib/cn";
+import { IconMic, IconVideo } from "../_icons";
 import { pushNotification } from "@/lib/demo/notifications";
 import { saveRecording } from "@/lib/demo/recordings";
 import { upsertSubmission } from "@/lib/demo/submissions";
@@ -226,10 +227,16 @@ export function RecordTaskModal({
                 onClick={() => setMode(m)}
                 aria-pressed={mode === m}
                 className={cn(
-                  "rounded-pill px-4 py-1 text-caption font-bold transition",
+                  "inline-flex items-center gap-1.5 rounded-pill px-4 py-1 text-caption font-bold transition",
                   mode === m ? "gradient-cta text-cream" : "bg-surface-raised text-on-dark-muted hover:text-on-dark",
                 )}
               >
+                <span className="inline-flex size-4">
+                  <AppIcon
+                    name={m === "audio" ? "icon_record_audio" : "icon_record_video"}
+                    fallback={m === "audio" ? <IconMic /> : <IconVideo />}
+                  />
+                </span>
                 {m === "audio" ? "تسجيل صوت" : "تسجيل فيديو"}
               </button>
             ))}

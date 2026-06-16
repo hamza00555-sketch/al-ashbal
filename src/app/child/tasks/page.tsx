@@ -1,5 +1,5 @@
 /* Child tasks (/child/tasks) — "مهامي": recitation / memorization / review. */
-import { Badge, Card, PageHeader } from "@/components";
+import { AppIllustration, Badge, Card, PageHeader } from "@/components";
 import { cn } from "@/lib/cn";
 import { getTasksForChild, getTeacherIdsForChild } from "@/lib/data";
 import type { ChildTaskStatus } from "@/types";
@@ -98,7 +98,8 @@ export default async function ChildTasksPage({
           })}
         </div>
       ) : (
-        <Card>
+        <Card className="flex flex-col items-center gap-3 text-center">
+          <AppIllustration name="illustration_no_tasks" className="size-28" />
           <p className="text-body text-on-dark-muted">لا توجد مهام الآن.</p>
         </Card>
       )}

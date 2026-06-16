@@ -37,7 +37,7 @@ export default function ChildHomePage() {
         eyebrow="مرحباً"
         title={child.displayName}
         subtitle="هذه لوحتك المختصرة"
-        leading={<Avatar name={child.displayName} size="lg" />}
+        leading={<Avatar name={child.displayName} size="lg" src="/assets/avatars/avatar_child_boy_01.png" />}
       />
 
       <div className="grid gap-6 lg:grid-cols-3">

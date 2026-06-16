@@ -44,7 +44,7 @@ export default function TeacherOverviewPage() {
         eyebrow={halaqaName}
         title={viewer.displayName}
         subtitle="لوحة المعلم — متابعة الحلقة"
-        leading={<Avatar name={viewer.displayName} size="lg" />}
+        leading={<Avatar name={viewer.displayName} size="lg" src="/assets/avatars/avatar_teacher_male_01.png" />}
       />
 
       <TeacherReviewAlert teacherId={viewer.id} dbPendingReviews={pendingReviews.length} />

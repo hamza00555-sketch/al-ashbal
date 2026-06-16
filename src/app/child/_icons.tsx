@@ -46,6 +46,14 @@ export function IconTasks() {
     </svg>
   );
 }
+export function IconVideo() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden className={base}>
+      <rect x="3" y="6" width="12" height="12" rx="2.5" stroke="currentColor" strokeWidth="1.8" />
+      <path d="m15 10 5-3v10l-5-3z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+    </svg>
+  );
+}
 export function IconBell() {
   return (
     <svg viewBox="0 0 24 24" fill="none" aria-hidden className={base}>

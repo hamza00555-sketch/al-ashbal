@@ -11,6 +11,7 @@ export { Avatar } from "./ui/Avatar";
 export type { AvatarProps, AvatarSize } from "./ui/Avatar";
 export { AssetImage } from "./ui/AssetImage";
 export { AppIcon } from "./ui/AppIcon";
+export { AppIllustration } from "./ui/AppIllustration";
 export { BadgeMedal } from "./ui/BadgeMedal";
 export { SectionTitle } from "./ui/SectionTitle";
 export type { SectionTitleProps } from "./ui/SectionTitle";

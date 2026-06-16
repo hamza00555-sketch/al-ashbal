@@ -1,7 +1,8 @@
 "use client";
 
-import { Badge, Card, SectionTitle } from "@/components";
+import { AppIcon, Badge, Card, SectionTitle } from "@/components";
 import { POINT_CATEGORY_LABEL, usePointsForChild } from "@/lib/demo/points";
+import { IconStar } from "../_icons";
 
 function dayLabel(iso: string): string {
   try {
@@ -20,7 +21,10 @@ export function ChildPoints({ childId }: { childId: string }) {
   return (
     <Card className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <SectionTitle title="نقاطي" />
+        <div className="flex items-center gap-2">
+          <span className="inline-flex size-6 text-gold"><AppIcon name="icon_points" fallback={<IconStar />} /></span>
+          <SectionTitle title="نقاطي" />
+        </div>
         {points.length > 0 && <Badge tone="gold">إجمالي {total}</Badge>}
       </div>
       {recent.length > 0 ? (

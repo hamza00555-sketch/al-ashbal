@@ -1,5 +1,5 @@
 /* Parent approvals (/parent/approvals) — pending video approvals (mock actions). */
-import { Card, PageHeader, RecitationPreview } from "@/components";
+import { AppIcon, AppIllustration, Card, PageHeader, RecitationPreview } from "@/components";
 import { getPendingParentApprovals, getTeacherIdsForChild } from "@/lib/data";
 import { ApprovalActions, type ApprovalItem } from "../ApprovalActions";
 import { IconVideo } from "../_icons";
@@ -40,7 +40,7 @@ export default async function ParentApprovalsPage({
             <Card key={item.recitationId} variant="contrast" className="flex flex-col gap-3">
               <div className="flex items-center gap-3">
                 <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-pill bg-purple/15 p-2.5 text-purple">
-                  <IconVideo />
+                  <AppIcon name="icon_record_video" fallback={<IconVideo />} />
                 </span>
                 <div className="flex min-w-0 flex-col gap-1">
                   <span className="text-card-title font-bold break-words">{item.title}</span>
@@ -57,9 +57,15 @@ export default async function ParentApprovalsPage({
         </div>
       ) : (
         <Card className="flex items-center gap-3">
-          <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-pill bg-mint/15 p-2.5 text-mint">
-            <IconVideo />
-          </span>
+          <AppIllustration
+            name="illustration_parent_approval"
+            className="size-16 shrink-0"
+            fallback={
+              <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-pill bg-mint/15 p-2.5 text-mint">
+                <IconVideo />
+              </span>
+            }
+          />
           <p className="text-body text-on-dark-muted">لا يوجد فيديو بانتظار موافقتك الآن.</p>
         </Card>
       )}
