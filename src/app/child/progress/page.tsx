@@ -1,8 +1,15 @@
 /* Child progress (/child/progress) — rings, cub-journey bar, badges. */
-import { Badge, Card, PageHeader, ProgressBar, ProgressRing, SectionTitle } from "@/components";
+import { BadgeMedal, Card, PageHeader, ProgressBar, ProgressRing, SectionTitle } from "@/components";
 import { getBadgesForChild, getProgressForChild } from "@/lib/data";
 import { getChildContext } from "../_shared";
 import { ChildPoints } from "./ChildPoints";
+
+/** Map a badge's category to a medal asset key (falls back to a text pill). */
+const BADGE_ASSET: Record<string, string | undefined> = {
+  quran: "badge_recitation",
+  behavior: "badge_good_behavior",
+  progress: "badge_progress",
+};
 
 export default function ChildProgressPage() {
   const { viewer, child } = getChildContext();
@@ -36,9 +43,9 @@ export default function ChildProgressPage() {
         <Card className="flex flex-col gap-3">
           <SectionTitle title="أوسمتي" />
           {badges.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap items-center gap-3">
               {badges.map((b) => (
-                <Badge key={b.id} tone="gold">{b.title}</Badge>
+                <BadgeMedal key={b.id} assetKey={BADGE_ASSET[b.category]} label={b.title} />
               ))}
             </div>
           ) : (

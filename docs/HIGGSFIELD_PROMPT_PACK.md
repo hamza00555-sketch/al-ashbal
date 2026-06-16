@@ -162,6 +162,46 @@ No turquoise, no teal, no green.
 
 ---
 
+## 1b. BATCH 02 — Core UI Assets (production · transparent)
+
+> لكل أصل: `<SUBJECT>` + STYLE SUFFIX + SMALL-ASSET SUFFIX (خلفية سادة للقص) +
+> GLOBAL NEGATIVE، ثم `remove_background` → PNG شفاف في `public/assets/<cat>/`.
+> النموذج: `flux_2`. الكل **front-facing, centered**.
+
+### Avatars (head-and-shoulders bust, front-facing, natural skin, Hadrami)
+- `avatar_child_boy_01`: young Yemeni Hadrami boy, white thawb + white embroidered kufi cap, natural warm tan skin, gentle smile.
+- `avatar_child_girl_01`: young Yemeni girl wearing a soft modest hijab (lavender/cream), natural skin, gentle smile.
+- `avatar_teacher_male_01`: dignified Yemeni Hadrami male teacher, white thawb + white turban (imamah) + short trimmed beard, natural skin, calm kind.
+- `avatar_teacher_female_01`: female teacher wearing a modest hijab (soft purple), natural skin, calm kind.
+- `avatar_parent_father_01`: Yemeni Hadrami father, white thawb + white cap + short beard, natural skin, warm.
+- `avatar_parent_mother_01`: mother wearing a modest hijab (lavender), natural skin, warm.
+
+### Badges (rounded soft-3D medal, gold-led, single central symbol)
+- `badge_recitation`: gold rim + purple core, open book with a small bright-gold star above.
+- `badge_good_behavior`: gold rim + purple core, a warm coral heart in the center.
+- `badge_attendance`: gold rim + purple core, a small calendar with a gold/cream check.
+- `badge_progress`: gold rim + purple core, a rising progress ring with a small gold up-arrow.
+- `badge_participation`: gold rim + purple core, a small raised-hand / spark symbol.
+
+### Icons (single centered front-facing 3D symbol, readable tiny)
+- `icon_home`: rounded house. · `icon_lessons`: open book / board. · `icon_tasks`:
+  checklist with a check. · `icon_progress`: ring with a rising arrow. · `icon_wishes`:
+  a soft wish star / lamp. · `icon_notifications`: a rounded bell. · `icon_points`:
+  a bright gold star in a ring. · `icon_record_audio`: a rounded microphone. ·
+  `icon_record_video`: a rounded video camera. · `icon_review`: a play-circle with a
+  check. · `icon_activity`: a soft spark/lightning. · `icon_preparation`: a lesson card
+  with a pen. · `icon_attendance`: a calendar with a check. · `icon_children`: two small
+  rounded figures. · `icon_demo_tools`: a rounded gear/wrench.
+  (الأيقونات أجسام لا بشر؛ علامات الصح ذهبية/كريمية — لا تركوازي.)
+
+### Support illustrations (objects-only mini scene, no faces)
+- `illustration_parent_approval`: purple shield with a gold check + small play-circle + tiny lavender sound-wave.
+- `illustration_no_tasks`: a closed purple book with a small sleeping gold/cream star above.
+- `illustration_waiting_review`: a calm play-circle with a small hourglass / soft dots.
+- `illustration_success`: a bright gold star burst with a soft gold check, celebratory but calm.
+
+---
+
 ## 2. Per-category SUBJECT templates + AVOID (لبقية الأصول لاحقًا)
 
 > القالب العام: `<SUBJECT>` + STYLE SUFFIX (+ SMALL-ASSET SUFFIX للصغار) + GLOBAL

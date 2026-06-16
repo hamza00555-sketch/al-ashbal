@@ -1,5 +1,6 @@
 import type { HTMLAttributes } from "react";
 import { cn } from "@/lib/cn";
+import { AssetImage } from "./AssetImage";
 
 export type AvatarSize = "sm" | "md" | "lg" | "xl";
 
@@ -22,25 +23,28 @@ function getInitials(name: string): string {
 export interface AvatarProps extends HTMLAttributes<HTMLSpanElement> {
   name: string;
   size?: AvatarSize;
+  /** Optional avatar image (e.g. /assets/avatars/avatar_child_boy_01.png).
+   *  Falls back to the initials circle if missing — so it never breaks. */
+  src?: string;
 }
 
+const ringClasses =
+  "inline-flex select-none items-center justify-center overflow-hidden rounded-pill bg-surface-raised font-bold text-on-dark ring-2 ring-purple-soft/40";
+
 /**
- * Initials avatar (circular). Image support can be layered on later via
- * next/image; the mock phase intentionally uses initials only.
+ * Initials avatar (circular). When `src` is provided it shows the image and
+ * falls back to initials if the file is missing.
  */
-export function Avatar({ name, size = "md", className, ...rest }: AvatarProps) {
-  return (
-    <span
-      role="img"
-      aria-label={name}
-      className={cn(
-        "inline-flex select-none items-center justify-center rounded-pill bg-surface-raised font-bold text-on-dark ring-2 ring-purple-soft/40",
-        sizeClasses[size],
-        className,
-      )}
-      {...rest}
-    >
+export function Avatar({ name, size = "md", src, className, ...rest }: AvatarProps) {
+  const initials = (
+    <span role="img" aria-label={name} className={cn(ringClasses, sizeClasses[size], className)} {...rest}>
       {getInitials(name)}
+    </span>
+  );
+  if (!src) return initials;
+  return (
+    <span className={cn(ringClasses, "p-0", sizeClasses[size], className)} aria-label={name} role="img">
+      <AssetImage src={src} alt={name} className="size-full object-cover" fallback={<span aria-hidden>{getInitials(name)}</span>} />
     </span>
   );
 }
