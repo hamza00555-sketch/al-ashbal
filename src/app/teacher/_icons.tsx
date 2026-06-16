@@ -48,3 +48,10 @@ export function IconPrep() {
     </svg>
   );
 }
+export function IconActivity() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden className={base}>
+      <path d="M13 3 5 13h6l-1 8 8-10h-6z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+    </svg>
+  );
+}

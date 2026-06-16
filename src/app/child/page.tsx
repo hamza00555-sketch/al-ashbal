@@ -6,7 +6,6 @@
 import Link from "next/link";
 import { Avatar, Badge, Card, PageHeader, ProgressBar, SectionTitle } from "@/components";
 import {
-  getActiveActivity,
   getAttendanceForChild,
   getNextLessonForChild,
   getProgressForChild,
@@ -14,7 +13,7 @@ import {
 } from "@/lib/data";
 import { IconStar, IconTasks } from "./_icons";
 import { ATTENDANCE_STATUS, getChildContext, isOpenTask } from "./_shared";
-import { ActivityCard } from "./ActivityCard";
+import { ChildActivity } from "./ChildActivity";
 
 const ctaLink =
   "gradient-cta flex min-h-12 w-full items-center justify-center rounded-lg px-8 text-button font-bold text-cream shadow-glow transition hover:brightness-110";
@@ -31,7 +30,6 @@ export default function ChildHomePage() {
   const openTasks = tasks.filter((t) => isOpenTask(t.status)).length;
   const attendance = getAttendanceForChild(viewer, child.id);
   const latestAttendance = attendance[attendance.length - 1] ?? null;
-  const activity = getActiveActivity();
 
   return (
     <>
@@ -77,7 +75,12 @@ export default function ChildHomePage() {
             </Card>
           )}
 
-          {activity && <ActivityCard title={activity.title} description={activity.description} />}
+          <ChildActivity
+            halaqaId={child.halaqaId}
+            childId={child.id}
+            childName={child.displayName}
+            childUserId={child.userId ?? ""}
+          />
         </div>
 
         {/* side column */}
