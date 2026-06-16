@@ -36,7 +36,7 @@ export type { StatCardProps, StatTone } from "./cards/StatCard";
 export { PageHeader } from "./layout/PageHeader";
 export type { PageHeaderProps } from "./layout/PageHeader";
 export { AppShell } from "./layout/AppShell";
-export type { AppShellProps } from "./layout/AppShell";
+export type { AppShellProps, AppBackgroundKey } from "./layout/AppShell";
 export { MobileNav } from "./layout/MobileNav";
 export type { MobileNavProps } from "./layout/MobileNav";
 export { DesktopSidebar } from "./layout/DesktopSidebar";
