@@ -9,7 +9,6 @@ import {
   type Activity,
   type ActivityAnswer,
   type ActivityQuestion,
-  type MatchPair,
   type QuestionAnswer,
 } from "@/lib/demo/activities";
 import type { HalaqaChild } from "./ActivitiesManager";
@@ -28,10 +27,6 @@ function formatValue(a: QuestionAnswer): string {
       return a.value === "true" ? "صح" : a.value === "false" ? "خطأ" : "—";
     case "ordering":
       return Array.isArray(a.value) ? (a.value as string[]).join(" ← ") : "—";
-    case "matching":
-      return Array.isArray(a.value)
-        ? (a.value as MatchPair[]).map((p) => `${p.left} ⟵ ${p.right || "—"}`).join("، ")
-        : "—";
     case "task_acknowledgement": {
       const v = a.value as { acknowledged: boolean; note?: string };
       const base = v?.acknowledged ? "تم التنفيذ" : "لم يُنفّذ";

@@ -6,6 +6,7 @@ import {
   ACTIVITY_TYPE_LABEL,
   closeActivity,
   QUESTION_TYPE_LABEL,
+  resetActivitiesData,
   useActiveActivityForHalaqa,
   useTeacherActivities,
   type Activity,
@@ -49,6 +50,27 @@ export function ActivitiesManager({
         hasActive={Boolean(active)}
       />
       {current && <StudentAnswers activity={current} halaqaChildren={halaqaChildren} />}
+
+      <Card className="flex flex-col gap-3">
+        <span className="text-card-title font-bold">بيانات تجريبية</span>
+        <p className="text-caption text-on-dark-muted">
+          يمسح أنشطة الحلقات وإجاباتها فقط على هذا الجهاز. لا يؤثر على التسجيلات أو الإشعارات أو التحضير أو الحضور أو الموافقات.
+        </p>
+        <div className="sm:max-w-xs">
+          <Button
+            variant="secondary"
+            size="sm"
+            fullWidth
+            onClick={() => {
+              if (window.confirm("هل تريد مسح بيانات الأنشطة وإجاباتها التجريبية؟")) {
+                resetActivitiesData();
+              }
+            }}
+          >
+            إعادة ضبط بيانات الأنشطة التجريبية
+          </Button>
+        </div>
+      </Card>
     </div>
   );
 }

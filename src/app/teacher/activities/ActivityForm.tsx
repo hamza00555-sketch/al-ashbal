@@ -30,7 +30,6 @@ const QUESTION_TYPES: QuestionType[] = [
   "short_answer",
   "task_acknowledgement",
   "ordering",
-  "matching",
 ];
 
 export function ActivityForm({
@@ -63,10 +62,6 @@ export function ActivityForm({
   const [qOptions, setQOptions] = useState<string[]>(["", ""]);
   const [qCorrect, setQCorrect] = useState("");
   const [qItems, setQItems] = useState<string[]>(["", ""]);
-  const [qPairs, setQPairs] = useState<{ left: string; right: string }[]>([
-    { left: "", right: "" },
-    { left: "", right: "" },
-  ]);
   const [qError, setQError] = useState<string | null>(null);
 
   function resetDraft() {
@@ -75,7 +70,6 @@ export function ActivityForm({
     setQOptions(["", ""]);
     setQCorrect("");
     setQItems(["", ""]);
-    setQPairs([{ left: "", right: "" }, { left: "", right: "" }]);
     setQError(null);
   }
 
@@ -117,22 +111,6 @@ export function ActivityForm({
           return;
         }
         q = { ...base, items, correctOrder: items };
-        break;
-      }
-      case "matching": {
-        const pairs = qPairs
-          .map((p) => ({ left: p.left.trim(), right: p.right.trim() }))
-          .filter((p) => p.left && p.right);
-        if (pairs.length < 2) {
-          setQError("أضف زوجين مكتملين على الأقل.");
-          return;
-        }
-        q = {
-          ...base,
-          leftItems: pairs.map((p) => p.left),
-          rightItems: pairs.map((p) => p.right),
-          correctPairs: pairs,
-        };
         break;
       }
       default:
@@ -250,7 +228,7 @@ export function ActivityForm({
           </label>
           <label className="flex flex-col gap-2 sm:col-span-2">
             <span className={fieldLabel}>{qType === "task_acknowledgement" ? "التعليمات" : "نص السؤال"}</span>
-            <textarea value={qPrompt} onChange={(e) => setQPrompt(e.target.value)} rows={2} placeholder={qType === "ordering" ? "مثال: رتب خطوات الوضوء" : qType === "matching" ? "مثال: صل كل كلمة بمعناها" : "اكتب السؤال"} className={`${inputClass} min-h-16 py-2`} />
+            <textarea value={qPrompt} onChange={(e) => setQPrompt(e.target.value)} rows={2} placeholder={qType === "ordering" ? "مثال: رتب خطوات الوضوء" : "اكتب السؤال"} className={`${inputClass} min-h-16 py-2`} />
           </label>
         </div>
 
@@ -301,24 +279,7 @@ export function ActivityForm({
                 <Button type="button" variant="ghost" size="sm" onClick={() => setQItems((p) => [...p, ""])}>إضافة عنصر</Button>
               </div>
             )}
-            <p className="text-caption text-on-dark-muted">سيُحفظ الترتيب الحالي كترتيب صحيح، ويُعرض للطفل مخلوطًا.</p>
-          </div>
-        )}
-
-        {qType === "matching" && (
-          <div className="flex flex-col gap-2">
-            <span className={fieldLabel}>أزواج المطابقة</span>
-            {qPairs.map((p, i) => (
-              <div key={i} className="grid gap-2 sm:grid-cols-2">
-                <input value={p.left} onChange={(e) => setQPairs((arr) => arr.map((x, idx) => (idx === i ? { ...x, left: e.target.value } : x)))} placeholder="العنصر (يمين)" className={inputClass} />
-                <input value={p.right} onChange={(e) => setQPairs((arr) => arr.map((x, idx) => (idx === i ? { ...x, right: e.target.value } : x)))} placeholder="المطابق (يسار)" className={inputClass} />
-              </div>
-            ))}
-            {qPairs.length < 5 && (
-              <div className="sm:max-w-xs">
-                <Button type="button" variant="ghost" size="sm" onClick={() => setQPairs((arr) => [...arr, { left: "", right: "" }])}>إضافة زوج</Button>
-              </div>
-            )}
+            <p className="text-caption text-on-dark-muted">يُحفظ الترتيب الحالي كترتيب صحيح، ويُعرض للطفل بترتيب مختلف.</p>
           </div>
         )}
 

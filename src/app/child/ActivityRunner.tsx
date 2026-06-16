@@ -12,10 +12,8 @@ import {
   type Activity,
   type ActivityAnswer,
   type ActivityQuestion,
-  type MatchPair,
   type QuestionValue,
 } from "@/lib/demo/activities";
-import { MatchingInput } from "./MatchingInput";
 import { OrderingInput } from "./OrderingInput";
 
 type Phase = "intro" | "run" | "done";
@@ -199,15 +197,6 @@ function QuestionView({
     }
     case "ordering":
       return <OrderingInput items={(value as string[]) ?? []} onChange={onChange} />;
-    case "matching":
-      return (
-        <MatchingInput
-          leftItems={question.leftItems ?? []}
-          rightItems={question.rightItems ?? []}
-          value={(value as MatchPair[]) ?? []}
-          onChange={onChange}
-        />
-      );
     default:
       return null;
   }

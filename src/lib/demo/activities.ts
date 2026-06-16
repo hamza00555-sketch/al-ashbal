@@ -1,12 +1,12 @@
 "use client";
 
 /*
-  الأشبال — client-side demo activities store (Phase 01 · Task A5 → A5.1).
-  PROTOTYPE ONLY: a teacher activates a TEMPORARY in-class activity that now
-  carries SEVERAL questions of different types. It surfaces on the child's HOME
+  الأشبال — client-side demo activities store (Phase 01 · Task A5 → A5.1 → A5.1-R).
+  PROTOTYPE ONLY: a teacher activates a TEMPORARY in-class activity that carries
+  SEVERAL SAFE questions (no drag, no matching). It surfaces on the child's HOME
   (/child) for the same halaqa; the child answers per-question and the teacher
   sees each child's answers. Everything lives in localStorage — no backend, no
-  mock-db writes. A5 single-prompt activities are migrated on read.
+  mock-db writes. Older A5 / A5.1 data is migrated safely on read.
 */
 import { useCallback, useRef, useSyncExternalStore } from "react";
 
@@ -18,18 +18,13 @@ export type ActivityType =
 
 export type ActivityStatus = "active" | "closed";
 
+/** SAFE question types only — drag & matching were removed in A5.1-R. */
 export type QuestionType =
   | "single_choice"
   | "true_false"
   | "short_answer"
   | "task_acknowledgement"
-  | "ordering"
-  | "matching";
-
-export interface MatchPair {
-  left: string;
-  right: string;
-}
+  | "ordering";
 
 export interface ActivityQuestion {
   questionId: string;
@@ -40,9 +35,6 @@ export interface ActivityQuestion {
   correctAnswer?: string; // single_choice (option text) | true_false ("true"/"false")
   items?: string[]; // ordering
   correctOrder?: string[]; // ordering (optional)
-  leftItems?: string[]; // matching
-  rightItems?: string[]; // matching
-  correctPairs?: MatchPair[]; // matching (optional)
 }
 
 export interface Activity {
@@ -69,7 +61,6 @@ export interface Activity {
 export type QuestionValue =
   | string // single_choice | true_false ("true"/"false") | short_answer
   | string[] // ordering
-  | MatchPair[] // matching
   | { acknowledged: boolean; note?: string }; // task_acknowledgement
 
 export interface QuestionAnswer {
@@ -101,8 +92,7 @@ export const QUESTION_TYPE_LABEL: Record<QuestionType, string> = {
   true_false: "صح / خطأ",
   short_answer: "إجابة قصيرة",
   task_acknowledgement: "مهمة تنفيذية",
-  ordering: "ترتيب بالسحب",
-  matching: "مطابقة",
+  ordering: "ترتيب",
 };
 
 /** Stable unique id for a freshly-authored question (module scope = pure-safe). */
@@ -127,13 +117,6 @@ export function gradeQuestion(q: ActivityQuestion, value: QuestionValue): boolea
       return q.correctOrder && Array.isArray(value)
         ? arraysEqual(value as string[], q.correctOrder)
         : undefined;
-    case "matching": {
-      if (!q.correctPairs || !Array.isArray(value)) return undefined;
-      const pairs = value as MatchPair[];
-      return q.correctPairs.every(
-        (cp) => pairs.find((p) => p.left === cp.left)?.right === cp.right,
-      );
-    }
     default:
       return undefined; // short_answer, task_acknowledgement
   }
@@ -152,12 +135,6 @@ export function isQuestionAnswered(q: ActivityQuestion, value: QuestionValue | u
       return typeof value === "object" && !Array.isArray(value) && value.acknowledged === true;
     case "ordering":
       return Array.isArray(value) && value.length > 0;
-    case "matching":
-      return (
-        Array.isArray(value) &&
-        value.length > 0 &&
-        (value as MatchPair[]).every((p) => Boolean(p.right))
-      );
     default:
       return false;
   }
@@ -170,8 +147,6 @@ export function defaultValue(q: ActivityQuestion): QuestionValue {
       return { acknowledged: false };
     case "ordering":
       return [...(q.items ?? [])];
-    case "matching":
-      return (q.leftItems ?? []).map((l) => ({ left: l, right: "" }));
     default:
       return "";
   }
@@ -203,18 +178,47 @@ export function answerStats(activity: Activity, ans: ActivityAnswer): AnswerStat
 
 /* ----------------------------------------------------------------- migration */
 
-/** Ensure any stored activity has a `questions[]` (migrate A5 single-prompt). */
+/**
+ * Normalize a stored question into a SAFE shape:
+ *  - A5.1 "matching" questions are downgraded to short_answer (drag removed).
+ *  - matching-only fields (leftItems/rightItems/correctPairs) are dropped.
+ *  - ordering keeps its items/correctOrder (now arrows-only).
+ */
+function normalizeQuestion(raw: ActivityQuestion): ActivityQuestion {
+  const base = {
+    questionId: raw.questionId || newQuestionId(),
+    prompt: typeof raw.prompt === "string" ? raw.prompt : "",
+    required: Boolean(raw.required),
+  };
+  switch (raw.type) {
+    case "single_choice":
+      return { ...base, type: "single_choice", options: raw.options ?? [], correctAnswer: raw.correctAnswer };
+    case "true_false":
+      return { ...base, type: "true_false", correctAnswer: raw.correctAnswer };
+    case "ordering":
+      return { ...base, type: "ordering", items: raw.items ?? [], correctOrder: raw.correctOrder };
+    case "task_acknowledgement":
+      return { ...base, type: "task_acknowledgement" };
+    default:
+      // short_answer + any removed type (e.g. legacy "matching")
+      return { ...base, type: "short_answer" };
+  }
+}
+
+/** Ensure any stored activity has a SAFE `questions[]` (migrate A5 / A5.1). */
 function normalizeActivity(raw: Activity): Activity {
-  if (Array.isArray(raw.questions) && raw.questions.length > 0) return raw;
+  if (Array.isArray(raw.questions) && raw.questions.length > 0) {
+    return { ...raw, questions: raw.questions.map(normalizeQuestion) };
+  }
   const hasOptions = Array.isArray(raw.options) && raw.options.length > 0;
-  const legacy: ActivityQuestion = {
+  const legacy = normalizeQuestion({
     questionId: `${raw.activityId}-q1`,
     type: hasOptions ? "single_choice" : "short_answer",
     prompt: raw.prompt?.trim() || raw.title,
     required: false,
     options: hasOptions ? raw.options : undefined,
     correctAnswer: raw.correctAnswer,
-  };
+  } as ActivityQuestion);
   return { ...raw, questions: [legacy] };
 }
 
@@ -229,8 +233,11 @@ function readAll(): Activity[] {
   try {
     const raw = window.localStorage.getItem(KEY);
     if (!raw) return EMPTY;
-    return (JSON.parse(raw) as Activity[]).map(normalizeActivity);
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return EMPTY;
+    return parsed.map(normalizeActivity);
   } catch {
+    // Corrupt data must never crash the page.
     return EMPTY;
   }
 }
@@ -308,6 +315,15 @@ export function closeActivity(activityId: string) {
   );
 }
 
+/** Wipe ONLY the demo activities + activity answers (nothing else). */
+export function resetActivitiesData() {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(KEY);
+  window.localStorage.removeItem(ANSWERS_KEY);
+  window.dispatchEvent(new CustomEvent(EVENT));
+  window.dispatchEvent(new CustomEvent(ANSWERS_EVENT));
+}
+
 export function useActiveActivityForHalaqa(halaqaId: string): Activity | null {
   const cache = useRef<{ sig: string; value: Activity | null }>({ sig: "∅", value: null });
   const getSnapshot = useCallback((): Activity | null => {
@@ -345,7 +361,9 @@ function readAnswers(): ActivityAnswer[] {
   if (typeof window === "undefined") return EMPTY_ANSWERS;
   try {
     const raw = window.localStorage.getItem(ANSWERS_KEY);
-    return raw ? (JSON.parse(raw) as ActivityAnswer[]) : EMPTY_ANSWERS;
+    if (!raw) return EMPTY_ANSWERS;
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? (parsed as ActivityAnswer[]) : EMPTY_ANSWERS;
   } catch {
     return EMPTY_ANSWERS;
   }
