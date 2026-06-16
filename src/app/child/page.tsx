@@ -4,14 +4,14 @@
   open-tasks alert (→ /child/tasks), and the active class activity (if any).
 */
 import Link from "next/link";
-import { Avatar, Badge, Card, PageHeader, ProgressBar, SectionTitle } from "@/components";
+import { AppIcon, Avatar, Badge, Card, PageHeader, ProgressBar, SectionTitle } from "@/components";
 import {
   getAttendanceForChild,
   getNextLessonForChild,
   getProgressForChild,
   getTasksForChild,
 } from "@/lib/data";
-import { IconStar, IconTasks } from "./_icons";
+import { IconSparkle, IconStar, IconTasks } from "./_icons";
 import { ATTENDANCE_STATUS, getChildContext, isOpenTask } from "./_shared";
 import { ChildActivity } from "./ChildActivity";
 
@@ -113,6 +113,33 @@ export default function ChildHomePage() {
           </Card>
         </div>
       </div>
+
+      {/* مساحتي — روابط تقدّمي وأمنياتي (خرجت من البار السفلي). تظهر في الرئيسية فقط. */}
+      <section className="flex flex-col gap-4">
+        <SectionTitle title="مساحتي" />
+        <div className="grid grid-cols-2 gap-3">
+          <Link
+            href="/child/progress"
+            className="flex flex-col gap-2 rounded-lg bg-surface-raised p-4 transition hover:bg-white/5"
+          >
+            <span className="inline-flex size-10 items-center justify-center rounded-pill bg-gold/15 p-2 text-gold">
+              <AppIcon name="icon_progress" fallback={<IconStar />} />
+            </span>
+            <span className="text-card-title font-bold">تقدّمي</span>
+            <span className="text-caption text-on-dark-muted">تابع نقاطك وأوسمتك</span>
+          </Link>
+          <Link
+            href="/child/wishes"
+            className="flex flex-col gap-2 rounded-lg bg-surface-raised p-4 transition hover:bg-white/5"
+          >
+            <span className="inline-flex size-10 items-center justify-center rounded-pill bg-purple/15 p-2 text-purple-soft">
+              <AppIcon name="icon_wishes" fallback={<IconSparkle />} />
+            </span>
+            <span className="text-card-title font-bold">أمنياتي</span>
+            <span className="text-caption text-on-dark-muted">اكتب ما تتمنى تحقيقه</span>
+          </Link>
+        </div>
+      </section>
     </>
   );
 }
