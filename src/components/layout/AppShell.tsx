@@ -41,15 +41,16 @@ export function AppShell({
   sidebar,
   mobileNav,
   header,
-  backgroundKey = "abstract",
+  backgroundKey = "none",
   children,
   className,
 }: AppShellProps) {
   return (
     <div
       className={cn(
-        "flex min-h-dvh bg-surface bg-cover bg-center bg-no-repeat text-on-dark",
-        BACKGROUND_CLASS[backgroundKey],
+        "flex min-h-dvh bg-cover bg-center bg-no-repeat text-on-dark",
+        // Calm dark base by default; image keys (ref/abstract/journey) are opt-in.
+        backgroundKey === "none" ? "app-surface" : cn("bg-surface", BACKGROUND_CLASS[backgroundKey]),
         className,
       )}
     >

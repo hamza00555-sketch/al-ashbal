@@ -112,6 +112,28 @@
 }
 
 /* ------------------------------------------------------------------
+   Elevated card finish — the app's primary visual surface.
+   Rich purple gradient (light top → deep bottom) + soft depth shadow
+   + top highlight + faint lavender hairline border. `card-glow` adds a
+   subtle edge glow for hero/emphasis cards.
+   ------------------------------------------------------------------ */
+@utility card-elevated {
+  background-image: var(--gradient-card);
+  box-shadow: var(--shadow-card), var(--card-top-highlight), var(--card-border);
+}
+@utility card-glow {
+  background-image: var(--gradient-card);
+  box-shadow: var(--shadow-card), var(--card-top-highlight), var(--card-border), var(--card-edge-glow);
+}
+
+/* Calm, non-distracting app background: a single dark purple base with a very
+   soft glow near the top — the cards (not the background) carry the richness. */
+@utility app-surface {
+  background-color: var(--color-deep-purple);
+  background-image: radial-gradient(120% 85% at 50% -8%, rgba(91, 52, 168, 0.45) 0%, rgba(27, 16, 56, 0) 55%);
+}
+
+/* ------------------------------------------------------------------
    RTL-safe helper.
    The app is RTL globally (dir="rtl" on <html>), so prefer Tailwind's
    logical utilities for layout — ms / me, ps / pe, start / end,

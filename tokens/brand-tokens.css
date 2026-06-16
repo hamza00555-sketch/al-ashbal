@@ -14,28 +14,29 @@
 
   /* ---------- Colors ---------- */
   --color-night-purple: #0D0820; /* darkest depth */
-  --color-deep-purple: #1A1038;  /* main background */
-  --color-royal-purple: #2B1763; /* raised panels / dark cards */
-  --color-panel-purple: #3A207C; /* mid purple (card gradient start) */
+  --color-deep-purple: #1B1038;  /* main background (calm, dark) */
+  --color-royal-purple: #2B1763; /* raised panels / small surfaces */
+  --color-panel-purple: #3A207C; /* mid purple */
   --color-main-purple: #6D4CFF;  /* primary action / active */
   --color-soft-purple: #9F84FF;  /* secondary / rings / accents */
-  --color-lavender-mist: #D8CCFF;/* helper text / soft surfaces */
-  --color-warm-white: #FFF8EA;   /* limited light cards / bright text */
-  --color-badge-gold: #F6C65B;   /* badges & achievements only */
-  --color-success-mint: #63D9A0; /* success / attendance / approved */
-  --color-alert-coral: #F97373;  /* gentle alerts / rejection */
+  --color-lavender-mist: #C9AEFF;/* card highlight / soft surfaces */
+  --color-warm-white: #FFF8EA;   /* limited light cards */
+  --color-badge-gold: #F0C75E;   /* badges & achievements only */
+  --color-success-mint: #63D9A0; /* success / attendance / approved (semantic only) */
+  --color-alert-coral: #E9897E;  /* gentle alerts / rejection */
 
   /* ---------- Text ---------- */
-  --text-on-dark: #FFF8EA;
-  --text-muted-on-dark: #D8CCFF;
-  --text-on-light: #1A1038;
-  --text-muted: #AFA4D9;
+  --text-on-dark: #F7F1EA;
+  --text-muted-on-dark: #D9CCF4;
+  --text-on-light: #1B1038;
+  --text-muted: #CDBEEB;
 
   /* ---------- Gradients ---------- */
-  --gradient-hero: radial-gradient(circle at 50% 20%, #6D4CFF 0%, #2B1763 42%, #0D0820 100%);
-  --gradient-card: linear-gradient(145deg, #3A207C 0%, #1A1038 100%);
-  --gradient-button: linear-gradient(135deg, #8B6CFF 0%, #6D4CFF 55%, #4B2BC7 100%);
-  --gradient-badge: linear-gradient(135deg, #F8D77A 0%, #F6C65B 45%, #B98221 100%);
+  /* Cards are the visual hero: light lavender top → rich purple → deep bottom. */
+  --gradient-hero: linear-gradient(150deg, #B58CFF 0%, #7B3FF2 38%, #4C1FA6 100%);
+  --gradient-card: linear-gradient(155deg, #6E3AE6 0%, #5226BE 44%, #371A82 100%);
+  --gradient-button: linear-gradient(135deg, #B58CFF 0%, #7B3FF2 45%, #4C1FA6 100%);
+  --gradient-badge: linear-gradient(135deg, #F8D77A 0%, #F0C75E 45%, #B98221 100%);
 
   /* ---------- Radius ---------- */
   --radius-small: 12px;
@@ -45,10 +46,15 @@
   --radius-pill: 999px;
 
   /* ---------- Shadows / Glow ---------- */
-  --shadow-soft: 0 18px 45px rgba(9, 3, 30, 0.28);
-  --shadow-card: 0 12px 30px rgba(13, 8, 32, 0.22);
-  --shadow-glow: 0 0 32px rgba(109, 76, 255, 0.35);
-  --shadow-glow-strong: 0 0 48px rgba(109, 76, 255, 0.55);
+  --shadow-soft: 0 18px 45px rgba(9, 3, 30, 0.4);
+  --shadow-card: 0 14px 34px rgba(9, 4, 26, 0.45);
+  --shadow-glow: 0 0 30px rgba(123, 63, 242, 0.4);
+  --shadow-glow-strong: 0 0 48px rgba(123, 63, 242, 0.6);
+
+  /* ---------- Card finish (highlight + hairline border) ---------- */
+  --card-top-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  --card-border: inset 0 0 0 1px rgba(201, 174, 255, 0.18);
+  --card-edge-glow: 0 0 26px rgba(123, 63, 242, 0.22);
 
   /* ---------- Typography scale (size · line-height · weight) ---------- */
   --fw-medium: 500;
