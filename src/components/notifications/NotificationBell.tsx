@@ -74,7 +74,7 @@ export function NotificationBell({
         onClick={() => setOpen(true)}
         className="relative inline-flex items-center justify-center text-on-dark-muted transition hover:text-on-dark"
       >
-        <span className="inline-flex size-14 items-center justify-center"><AppIcon name="icon_notifications" fallback={<BellIcon />} className="scale-[1.35] drop-shadow-[0_3px_6px_rgba(0,0,0,0.35)]" /></span>
+        <span className="inline-flex size-[70px] items-center justify-center"><AppIcon name="icon_notifications" fallback={<BellIcon />} className="scale-[1.35] drop-shadow-[0_3px_6px_rgba(0,0,0,0.35)]" /></span>
         {unread > 0 && (
           <span className="absolute -top-0.5 -end-0.5 size-2.5 rounded-pill bg-coral" />
         )}
