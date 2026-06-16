@@ -46,6 +46,8 @@ export interface Activity {
   type: ActivityType;
   description: string;
   durationMinutes?: number;
+  /** Points available for the whole activity; 0/undefined ⇒ no auto points. */
+  maxPoints?: number;
   questions: ActivityQuestion[];
   status: ActivityStatus;
   createdAt: string;
@@ -176,6 +178,40 @@ export function answerStats(activity: Activity, ans: ActivityAnswer): AnswerStat
   return { total: activity.questions.length, answered, correct, correctable };
 }
 
+/** A question is auto-gradable only if it carries a correct answer/order. */
+export function isGradableQuestion(q: ActivityQuestion): boolean {
+  if (q.type === "single_choice" || q.type === "true_false") return Boolean(q.correctAnswer);
+  if (q.type === "ordering") return Boolean(q.correctOrder && q.correctOrder.length > 0);
+  return false; // short_answer, task_acknowledgement
+}
+
+export interface ActivityResult {
+  gradable: number; // # of auto-gradable questions
+  correct: number; // # answered correctly among gradable
+  points: number; // calculated points (rounded), 0 when not auto-gradable
+  autoGradable: boolean; // gradable > 0 && maxPoints > 0
+}
+
+/**
+ * Auto-points for an activity: distribute maxPoints EQUALLY over the
+ * auto-gradable questions → round(correct / gradable * maxPoints).
+ * When there are no gradable questions (or no maxPoints) it needs manual review.
+ */
+export function activityResult(activity: Activity, ans: ActivityAnswer | null): ActivityResult {
+  const gradableQs = activity.questions.filter(isGradableQuestion);
+  const gradable = gradableQs.length;
+  const max = activity.maxPoints ?? 0;
+  let correct = 0;
+  if (ans) {
+    for (const q of gradableQs) {
+      const a = ans.answers.find((x) => x.questionId === q.questionId);
+      if (a && a.isCorrect === true) correct += 1;
+    }
+  }
+  const points = gradable > 0 && max > 0 ? Math.round((correct / gradable) * max) : 0;
+  return { gradable, correct, points, autoGradable: gradable > 0 && max > 0 };
+}
+
 /* ----------------------------------------------------------------- migration */
 
 /**
@@ -288,6 +324,7 @@ export function createActivity(input: {
   type: ActivityType;
   description: string;
   durationMinutes?: number;
+  maxPoints?: number;
   questions: ActivityQuestion[];
 }): Activity {
   const now = new Date().toISOString();

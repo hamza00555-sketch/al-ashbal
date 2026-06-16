@@ -52,6 +52,7 @@ export function ActivityForm({
   const [type, setType] = useState<ActivityType>("quick_question");
   const [description, setDescription] = useState("");
   const [duration, setDuration] = useState("");
+  const [maxPoints, setMaxPoints] = useState("");
   const [questions, setQuestions] = useState<ActivityQuestion[]>([]);
   const [message, setMessage] = useState<string | null>(null);
 
@@ -139,6 +140,7 @@ export function ActivityForm({
       type,
       description: description.trim(),
       durationMinutes: duration.trim() ? Number(duration) : undefined,
+      maxPoints: maxPoints.trim() ? Math.max(0, Number(maxPoints) || 0) : 0,
       questions,
     });
     for (const child of halaqaChildren) {
@@ -155,6 +157,7 @@ export function ActivityForm({
     setTitle("");
     setDescription("");
     setDuration("");
+    setMaxPoints("");
     setQuestions([]);
     resetDraft();
   }
@@ -184,6 +187,11 @@ export function ActivityForm({
         <label className="flex flex-col gap-2">
           <span className={fieldLabel}>مدة النشاط بالدقائق (اختياري)</span>
           <input value={duration} onChange={(e) => setDuration(e.target.value)} inputMode="numeric" placeholder="مثال: 5" className={inputClass} />
+        </label>
+        <label className="flex flex-col gap-2 sm:col-span-2">
+          <span className={fieldLabel}>النقاط المتاحة لهذا النشاط</span>
+          <input value={maxPoints} onChange={(e) => setMaxPoints(e.target.value)} inputMode="numeric" placeholder="0 = بدون نقاط" className={inputClass} />
+          <span className="text-caption text-on-dark-muted">توزيع تلقائي بالتساوي على الأسئلة القابلة للتصحيح (اختيار/صح-خطأ/ترتيب).</span>
         </label>
       </div>
 

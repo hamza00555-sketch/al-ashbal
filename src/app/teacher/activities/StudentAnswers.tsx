@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Badge, Button, Card, SectionTitle } from "@/components";
 import {
+  activityResult,
   answerStats,
   QUESTION_TYPE_LABEL,
   useAnswersForActivity,
@@ -11,6 +12,7 @@ import {
   type ActivityQuestion,
   type QuestionAnswer,
 } from "@/lib/demo/activities";
+import { usePointsForChild } from "@/lib/demo/points";
 import type { HalaqaChild } from "./ActivitiesManager";
 
 function timeLabel(iso: string): string {
@@ -64,6 +66,12 @@ function ChildAnswerCard({ activity, child, answer }: { activity: Activity; chil
   const [open, setOpen] = useState(false);
   const stats = answer ? answerStats(activity, answer) : null;
   const byId = answer ? new Map(answer.answers.map((a) => [a.questionId, a])) : null;
+  const result = answer ? activityResult(activity, answer) : null;
+  const childPoints = usePointsForChild(child.id);
+  const granted = childPoints.some(
+    (p) => p.sourceType === "activity" && p.sourceId === activity.activityId && p.value > 0,
+  );
+  const hasMax = (activity.maxPoints ?? 0) > 0;
 
   return (
     <Card className="flex flex-col gap-2">
@@ -78,6 +86,18 @@ function ChildAnswerCard({ activity, child, answer }: { activity: Activity; chil
             {stats.correctable > 0 && <Badge tone="purple">الصحيح: {stats.correct}/{stats.correctable}</Badge>}
             <Badge tone="neutral">{timeLabel(answer.submittedAt)}</Badge>
           </div>
+          {hasMax && result && (
+            <div className="flex flex-wrap gap-2">
+              {result.autoGradable ? (
+                <>
+                  <Badge tone="gold">النقاط المحتسبة: {result.points} من {activity.maxPoints}</Badge>
+                  <Badge tone={granted ? "success" : "neutral"}>{granted ? "تم منح النقاط" : "بدون نقاط"}</Badge>
+                </>
+              ) : (
+                <Badge tone="warning">يحتاج مراجعة يدوية</Badge>
+              )}
+            </div>
+          )}
           <div className="sm:max-w-xs">
             <Button variant="ghost" size="sm" onClick={() => setOpen((v) => !v)}>
               {open ? "إخفاء الإجابات" : "عرض الإجابات"}

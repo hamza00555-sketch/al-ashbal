@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Badge, Button } from "@/components";
 import { cn } from "@/lib/cn";
 import {
+  activityResult,
   defaultValue,
   gradeQuestion,
   isQuestionAnswered,
@@ -12,8 +13,10 @@ import {
   type Activity,
   type ActivityAnswer,
   type ActivityQuestion,
+  type ActivityResult,
   type QuestionValue,
 } from "@/lib/demo/activities";
+import { recordSourcedPoints } from "@/lib/demo/points";
 import { OrderingInput } from "./OrderingInput";
 
 type Phase = "intro" | "run" | "done";
@@ -50,6 +53,7 @@ export function ActivityRunner({
   const [phase, setPhase] = useState<Phase>("intro");
   const [step, setStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<ActivityResult | null>(null);
 
   function setValue(questionId: string, value: QuestionValue) {
     setValues((prev) => ({ ...prev, [questionId]: value }));
@@ -64,17 +68,39 @@ export function ActivityRunner({
       setError("أكمل الأسئلة المطلوبة أولًا.");
       return;
     }
-    submitAnswer({
+    const answers = questions.map((q) => {
+      const value = values[q.questionId];
+      return { questionId: q.questionId, type: q.type, value, isCorrect: gradeQuestion(q, value) };
+    });
+    const ansObj: ActivityAnswer = {
       activityId: activity.activityId,
       childId,
       childName,
       childUserId,
       halaqaId,
-      answers: questions.map((q) => {
-        const value = values[q.questionId];
-        return { questionId: q.questionId, type: q.type, value, isCorrect: gradeQuestion(q, value) };
-      }),
-    });
+      answers,
+      submittedAt: new Date().toISOString(),
+    };
+    submitAnswer(ansObj);
+
+    const res = activityResult(activity, ansObj);
+    // Auto-points (equal split over gradable questions). recordSourcedPoints
+    // de-dupes by (activity, child), so re-submitting replaces instead of stacking.
+    if ((activity.maxPoints ?? 0) > 0) {
+      recordSourcedPoints({
+        childId,
+        teacherId: activity.teacherId,
+        teacherName: activity.teacherName,
+        halaqaId,
+        value: res.points,
+        reason: `نتيجة نشاط: ${activity.title}`,
+        category: "activity",
+        note: `حصل على ${res.correct} من ${res.gradable} في الأسئلة القابلة للتصحيح`,
+        sourceType: "activity",
+        sourceId: activity.activityId,
+      });
+    }
+    setResult(res);
     setPhase("done");
   }
 
@@ -101,7 +127,11 @@ export function ActivityRunner({
       <div className="flex flex-col items-center gap-4 py-4 text-center">
         <span className="inline-flex size-14 items-center justify-center rounded-pill bg-mint/15 text-mint text-h2">✓</span>
         <h3 className="text-h2">تم إرسال إجاباتك تجريبيًا</h3>
-        <p className="text-body text-on-dark-muted">شكرًا لك! يستطيع معلمك الآن رؤية إجاباتك.</p>
+        {result && (activity.maxPoints ?? 0) > 0 && result.autoGradable ? (
+          <span><Badge tone="gold">نتيجتك: {result.points} من {activity.maxPoints} نقطة</Badge></span>
+        ) : (
+          <p className="text-body text-on-dark-muted">تم إرسال إجاباتك، وسيتم مراجعتها من المعلم.</p>
+        )}
         <Button variant="primary" fullWidth onClick={onClose}>إغلاق</Button>
       </div>
     );

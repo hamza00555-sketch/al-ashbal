@@ -1,105 +1,51 @@
 /*
-  Teacher · children (/teacher/children) — table of the teacher's halaqa only.
-  Shows attendance + Quran/Tajweed/Behavior + last activity. NEVER wishes.
+  Teacher · children (/teacher/children) — Phase 01 · Task A6.1.
+  A simple VISUAL grid of the teacher's halaqa children (avatar + status ring +
+  name). Tapping a child opens their detail page. No table, no inline points.
 */
 import Link from "next/link";
-import { Avatar, Badge, Card, PageHeader } from "@/components";
-import {
-  getAttendanceForLesson,
-  getLessonsForTeacher,
-  getProgressForChild,
-  getRecitationsForViewer,
-} from "@/lib/data";
-import { ATTENDANCE_STATUS, getTeacherContext, RECITATION_STATUS } from "../_shared";
-import { AddPointsButton } from "./AddPointsButton";
+import { Avatar, Card, PageHeader } from "@/components";
+import { cn } from "@/lib/cn";
+import { getChildStatusSummary } from "@/lib/data";
+import type { ChildStatusLevel } from "@/lib/data";
+import { getTeacherContext } from "../_shared";
+
+const RING: Record<ChildStatusLevel, string> = {
+  excellent: "ring-mint",
+  follow_up: "ring-gold",
+  intervene: "ring-coral",
+};
 
 export default function TeacherChildrenPage() {
   const { viewer, children } = getTeacherContext();
-  const lessons = getLessonsForTeacher(viewer);
-  const lastLesson =
-    lessons
-      .filter((l) => l.status === "completed")
-      .sort((a, b) => `${b.date}${b.startTime}`.localeCompare(`${a.date}${a.startTime}`))[0] ??
-    null;
-  const attendance = lastLesson ? getAttendanceForLesson(viewer, lastLesson.id) : [];
-
-  const rows = children.map((child) => {
-    const progress = getProgressForChild(viewer, child.id);
-    const record = attendance.find((a) => a.childId === child.id) ?? null;
-    const lastRecitation = getRecitationsForViewer(viewer, child.id)[0] ?? null;
-    return { child, progress, record, lastRecitation };
-  });
-
-  const th = "p-4 text-start text-caption font-bold text-on-dark-muted whitespace-nowrap";
-  const td = "p-4 align-middle whitespace-nowrap";
 
   return (
     <>
-      <PageHeader title="أطفال الحلقة" subtitle={`${children.length} طفلًا في حلقتك`} />
+      <PageHeader title="أطفال الحلقة" subtitle={`${children.length} طفلًا — اضغط على الطفل لعرض تفاصيله`} />
 
-      <Card padded={false} className="overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[680px] border-collapse text-body">
-            <thead>
-              <tr className="border-b border-white/10">
-                <th className={th}>الطفل</th>
-                <th className={th}>الحضور</th>
-                <th className={th}>القرآن</th>
-                <th className={th}>التجويد</th>
-                <th className={th}>السلوك</th>
-                <th className={th}>آخر نشاط</th>
-                <th className={th}>إجراءات</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map(({ child, progress, record, lastRecitation }) => (
-                <tr key={child.id} className="border-b border-white/5 last:border-0">
-                  <td className={td}>
-                    <Link href={`/teacher/children/${child.id}`} className="flex items-center gap-3 transition hover:text-purple-soft">
-                      <Avatar name={child.displayName} size="sm" />
-                      <span className="font-bold">{child.displayName}</span>
-                    </Link>
-                  </td>
-                  <td className={td}>
-                    {record ? (
-                      <Badge tone={ATTENDANCE_STATUS[record.status].tone}>
-                        {ATTENDANCE_STATUS[record.status].label}
-                      </Badge>
-                    ) : (
-                      <Badge tone="neutral">—</Badge>
-                    )}
-                  </td>
-                  <td className={td}>{progress?.quranPercent ?? 0}%</td>
-                  <td className={td}>{progress?.tajweedPercent ?? 0}%</td>
-                  <td className={td}>{progress?.behaviorPercent ?? 0}%</td>
-                  <td className={td}>
-                    {lastRecitation ? (
-                      <Badge tone={RECITATION_STATUS[lastRecitation.status].tone}>
-                        {RECITATION_STATUS[lastRecitation.status].label}
-                      </Badge>
-                    ) : (
-                      <span className="text-on-dark-muted">—</span>
-                    )}
-                  </td>
-                  <td className={td}>
-                    <AddPointsButton
-                      target={{
-                        childId: child.id,
-                        childName: child.displayName,
-                        childUserId: child.userId ?? "",
-                        parentUserIds: child.parentIds,
-                        halaqaId: child.halaqaId,
-                        teacherId: viewer.id,
-                        teacherName: viewer.displayName,
-                      }}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {children.length > 0 ? (
+        <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
+          {children.map((child) => {
+            const level = getChildStatusSummary(viewer, child.id)?.level ?? "follow_up";
+            return (
+              <Link
+                key={child.id}
+                href={`/teacher/children/${child.id}`}
+                className="flex flex-col items-center gap-2 rounded-lg p-2 text-center transition hover:bg-white/5"
+              >
+                <span className={cn("rounded-pill p-1 ring-2", RING[level])}>
+                  <Avatar name={child.displayName} size="lg" />
+                </span>
+                <span className="w-full break-words text-caption font-bold">{child.displayName}</span>
+              </Link>
+            );
+          })}
         </div>
-      </Card>
+      ) : (
+        <Card>
+          <p className="text-body text-on-dark-muted">لا يوجد أطفال في حلقتك.</p>
+        </Card>
+      )}
     </>
   );
 }

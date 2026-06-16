@@ -16,7 +16,7 @@ export default async function TeacherReviewsPage({
   searchParams: Promise<{ submissionId?: string }>;
 }) {
   const { submissionId } = await searchParams;
-  const { viewer, children } = getTeacherContext();
+  const { viewer, halaqas, children } = getTeacherContext();
   const pending = getPendingTeacherReviews(viewer);
 
   const dbItems: ReviewItem[] = pending.map((r) => {
@@ -34,7 +34,12 @@ export default async function TeacherReviewsPage({
   return (
     <>
       <PageHeader title="مراجعة التسميع" subtitle="تظهر فقط الفيديوهات المعتمدة من ولي الأمر" />
-      <TeacherSubmissions teacherId={viewer.id} highlightSubmissionId={submissionId} />
+      <TeacherSubmissions
+        teacherId={viewer.id}
+        teacherName={viewer.displayName}
+        halaqaId={halaqas[0]?.id ?? ""}
+        highlightSubmissionId={submissionId}
+      />
       <TeacherReviewsList dbItems={dbItems} />
     </>
   );

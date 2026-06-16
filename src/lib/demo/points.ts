@@ -15,7 +15,12 @@ export type PointCategory =
   | "behavior"
   | "improvement"
   | "attendance"
-  | "needs_follow_up";
+  | "needs_follow_up"
+  | "activity";
+
+/** Where a points entry came from (used to prevent duplicates). Optional for
+ *  backward-compatibility with A6 entries that have neither field. */
+export type PointSourceType = "manual" | "recitation" | "activity";
 
 export interface PointEntry {
   pointId: string;
@@ -28,6 +33,8 @@ export interface PointEntry {
   category: PointCategory;
   note?: string;
   createdAt: string;
+  sourceType?: PointSourceType;
+  sourceId?: string;
 }
 
 export const POINT_CATEGORY_LABEL: Record<PointCategory, string> = {
@@ -37,6 +44,7 @@ export const POINT_CATEGORY_LABEL: Record<PointCategory, string> = {
   improvement: "تحسّن",
   attendance: "حضور",
   needs_follow_up: "يحتاج متابعة",
+  activity: "نشاط",
 };
 
 /** Quick presets shown in the "add points" sheet. */
@@ -90,10 +98,42 @@ function newId(): string {
   return `pt-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 }
 
-/** Add a points entry (newest first). */
+/** Add a points entry (newest first). Used by the manual quick-add sheet. */
 export function addPoints(entry: Omit<PointEntry, "pointId" | "createdAt">): PointEntry {
   const item: PointEntry = { ...entry, pointId: newId(), createdAt: new Date().toISOString() };
   writeAll([item, ...readAll()]);
+  return item;
+}
+
+/**
+ * Add OR replace a points entry tied to a source (recitation submission /
+ * activity). Prevents duplicates: re-accepting the same recitation or
+ * re-submitting the same activity updates the single entry instead of stacking.
+ * A value <= 0 removes any existing source entry (and adds nothing).
+ */
+export function recordSourcedPoints(
+  entry: Omit<PointEntry, "pointId" | "createdAt"> & { sourceType: PointSourceType; sourceId: string },
+): PointEntry | null {
+  const list = readAll();
+  const idx = list.findIndex(
+    (p) => p.childId === entry.childId && p.sourceType === entry.sourceType && p.sourceId === entry.sourceId,
+  );
+  if (entry.value <= 0) {
+    if (idx >= 0) writeAll(list.filter((_, i) => i !== idx));
+    return null;
+  }
+  const item: PointEntry = {
+    ...entry,
+    pointId: idx >= 0 ? list[idx].pointId : newId(),
+    createdAt: new Date().toISOString(),
+  };
+  if (idx >= 0) {
+    const next = [...list];
+    next[idx] = item;
+    writeAll(next);
+  } else {
+    writeAll([item, ...list]);
+  }
   return item;
 }
 

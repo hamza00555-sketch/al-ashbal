@@ -1,23 +1,81 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Badge, Button, Card, RecordingPlayer, SectionTitle } from "@/components";
+import { Badge, Button, Card, Modal, RecordingPlayer, SectionTitle } from "@/components";
 import { cn } from "@/lib/cn";
 import { pushNotification } from "@/lib/demo/notifications";
+import { recordSourcedPoints } from "@/lib/demo/points";
 import { updateSubmission, useSubmissions, type Submission } from "@/lib/demo/submissions";
 
-function SubmissionCard({ sub, highlighted }: { sub: Submission; highlighted: boolean }) {
+interface RecitationRating {
+  label: string;
+  value: number;
+  reason: string;
+}
+const RECITATION_RATINGS: RecitationRating[] = [
+  { label: "ممتاز — +5 نقاط", value: 5, reason: "تسميع ممتاز" },
+  { label: "جيد — +3 نقاط", value: 3, reason: "تسميع جيد" },
+  { label: "مقبول — +1 نقطة", value: 1, reason: "تسميع مقبول" },
+  { label: "قبول بدون نقاط", value: 0, reason: "" },
+];
+
+function SubmissionCard({
+  sub,
+  highlighted,
+  teacherName,
+  halaqaId,
+}: {
+  sub: Submission;
+  highlighted: boolean;
+  teacherName: string;
+  halaqaId: string;
+}) {
   const [noteOpen, setNoteOpen] = useState(false);
   const [note, setNote] = useState(sub.note ?? "");
+  const [rateOpen, setRateOpen] = useState(false);
+  const [rating, setRating] = useState<number | null>(null);
+  const [rateNote, setRateNote] = useState("");
   const resolved = sub.state === "accepted" || sub.state === "rerecord";
 
-  function accept() {
+  function confirmAccept() {
+    if (rating === null) return;
+    const chosen = RECITATION_RATINGS[rating];
     updateSubmission(sub.taskId, { state: "accepted" });
-    pushNotification({ userId: sub.childUserId, title: "تم قبول تسميعك", body: "أحسنت! تم قبول تسميعك.", type: "review_accepted", href: `/child/tasks?taskId=${sub.taskId}` });
-    if (sub.parentUserId) {
-      pushNotification({ userId: sub.parentUserId, title: "تم قبول تسميع الطفل", body: `قَبِل المعلم تسميع ${sub.childName}.`, type: "review_accepted", href: `/parent/children/${sub.childId}` });
+    if (chosen.value > 0 && sub.teacherId) {
+      // de-duped by (recitation, child) so accepting twice never double-counts.
+      recordSourcedPoints({
+        childId: sub.childId,
+        teacherId: sub.teacherId,
+        teacherName,
+        halaqaId,
+        value: chosen.value,
+        reason: chosen.reason,
+        category: "recitation",
+        note: rateNote.trim() || undefined,
+        sourceType: "recitation",
+        sourceId: sub.id,
+      });
     }
+    const earned = chosen.value > 0;
+    pushNotification({
+      userId: sub.childUserId,
+      title: "تم قبول تسميعك",
+      body: earned ? `أحسنت! وحصلت على ${chosen.value} نقاط.` : "أحسنت! تم قبول تسميعك.",
+      type: "review_accepted",
+      href: `/child/tasks?taskId=${sub.taskId}`,
+    });
+    if (sub.parentUserId) {
+      pushNotification({
+        userId: sub.parentUserId,
+        title: "تم قبول تسميع طفلك",
+        body: earned ? `${sub.childName}: وحصل على ${chosen.value} نقاط.` : `قَبِل المعلم تسميع ${sub.childName}.`,
+        type: "review_accepted",
+        href: `/parent/children/${sub.childId}`,
+      });
+    }
+    setRateOpen(false);
   }
+
   function requestRerecord() {
     updateSubmission(sub.taskId, { state: "rerecord" });
     pushNotification({ userId: sub.childUserId, title: "المعلم طلب إعادة التسميع", body: "خلّينا نعيد التسميع بشكل أوضح.", type: "review_rerecord", href: `/child/tasks?taskId=${sub.taskId}` });
@@ -55,10 +113,49 @@ function SubmissionCard({ sub, highlighted }: { sub: Submission; highlighted: bo
         </span>
       ) : (
         <div className="flex flex-wrap gap-2">
-          <Button variant="primary" size="sm" onClick={accept}>قبول التسميع</Button>
+          <Button variant="primary" size="sm" onClick={() => { setRating(null); setRateNote(""); setRateOpen(true); }}>قبول التسميع</Button>
           <Button variant="danger" size="sm" onClick={requestRerecord}>طلب إعادة التسميع</Button>
           <Button variant="ghost" size="sm" onClick={() => setNoteOpen((v) => !v)}>إضافة ملاحظة</Button>
         </div>
+      )}
+
+      {rateOpen && (
+        <Modal open onClose={() => setRateOpen(false)} title="تقييم التسميع">
+          <div className="flex flex-col gap-4">
+            <p className="text-caption text-on-dark-muted">اختر مستوى الأداء (يحدد النقاط):</p>
+            <div className="flex flex-col gap-2">
+              {RECITATION_RATINGS.map((r, i) => {
+                const active = rating === i;
+                return (
+                  <button
+                    key={r.label}
+                    type="button"
+                    onClick={() => setRating(i)}
+                    className={cn(
+                      "min-h-11 w-full rounded-md border px-4 text-start text-body font-bold transition",
+                      active ? "border-purple-soft bg-purple/15 text-on-dark" : "border-white/10 bg-surface-raised text-on-dark-muted hover:text-on-dark",
+                    )}
+                  >
+                    {r.label}
+                  </button>
+                );
+              })}
+            </div>
+            <label className="flex flex-col gap-2">
+              <span className="text-caption text-on-dark-muted">ملاحظة (اختياري)</span>
+              <input
+                value={rateNote}
+                onChange={(e) => setRateNote(e.target.value)}
+                placeholder="ملاحظة للطفل / ولي الأمر"
+                className="min-h-11 rounded-md border border-white/10 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft"
+              />
+            </label>
+            <div className="flex flex-wrap gap-2">
+              <Button variant="primary" onClick={confirmAccept} disabled={rating === null}>تأكيد القبول</Button>
+              <Button variant="ghost" onClick={() => setRateOpen(false)}>إلغاء</Button>
+            </div>
+          </div>
+        </Modal>
       )}
       {noteOpen && !resolved && (
         <div className="flex flex-col gap-2">
@@ -78,9 +175,13 @@ function SubmissionCard({ sub, highlighted }: { sub: Submission; highlighted: bo
 /** Recorded recitations approved by the parent and awaiting THIS teacher's review. */
 export function TeacherSubmissions({
   teacherId,
+  teacherName,
+  halaqaId,
   highlightSubmissionId,
 }: {
   teacherId: string;
+  teacherName: string;
+  halaqaId: string;
   highlightSubmissionId?: string;
 }) {
   const submissions = useSubmissions();
@@ -101,7 +202,13 @@ export function TeacherSubmissions({
       <SectionTitle title="تسميعات مُسجّلة" subtitle="معتمدة من ولي الأمر" />
       <div className="grid gap-6 lg:grid-cols-2">
         {items.map((s) => (
-          <SubmissionCard key={s.taskId} sub={s} highlighted={s.id === highlightSubmissionId} />
+          <SubmissionCard
+            key={s.taskId}
+            sub={s}
+            highlighted={s.id === highlightSubmissionId}
+            teacherName={teacherName}
+            halaqaId={halaqaId}
+          />
         ))}
       </div>
     </section>
