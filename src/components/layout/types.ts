@@ -7,4 +7,6 @@ export interface NavItem {
   icon?: ReactNode;
   /** When set, the item renders as a link; otherwise it calls onSelect. */
   href?: string;
+  /** Optional count pill (e.g. pending reviews). Hidden when 0/undefined. */
+  badge?: number;
 }

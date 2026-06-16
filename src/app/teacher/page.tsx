@@ -12,6 +12,7 @@ import {
 } from "@/lib/data";
 import { IconBook, IconCalendar, IconUsers, IconVideo } from "./_icons";
 import { getTeacherContext } from "./_shared";
+import { TeacherReviewAlert } from "./TeacherReviewAlert";
 
 const chip = "inline-flex size-6 items-center justify-center";
 
@@ -45,6 +46,8 @@ export default function TeacherOverviewPage() {
         subtitle="لوحة المعلم — متابعة الحلقة"
         leading={<Avatar name={viewer.displayName} size="lg" />}
       />
+
+      <TeacherReviewAlert teacherId={viewer.id} dbPendingReviews={pendingReviews.length} />
 
       <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard label="حلقة اليوم" value={todayLesson ? todayLesson.startTime : "—"} tone="purple" icon={<span className={chip}><IconCalendar /></span>} hint={todayLesson?.title ?? "لا حلقة اليوم"} />

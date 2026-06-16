@@ -51,6 +51,11 @@ export function DesktopSidebar({
                 </span>
               )}
               <span>{item.label}</span>
+              {item.badge ? (
+                <span className="ms-auto inline-flex min-w-5 items-center justify-center rounded-pill bg-coral px-1.5 text-caption font-bold text-cream">
+                  {item.badge}
+                </span>
+              ) : null}
             </>
           );
 

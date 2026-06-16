@@ -30,8 +30,13 @@ export function MobileNav({ items, activeId, onSelect, className }: MobileNavPro
         const inner = (
           <>
             {item.icon && (
-              <span className="inline-flex size-6 items-center justify-center">
+              <span className="relative inline-flex size-6 items-center justify-center">
                 {item.icon}
+                {item.badge ? (
+                  <span className="absolute -top-1 -end-1 inline-flex min-w-4 items-center justify-center rounded-pill bg-coral px-1 text-[0.625rem] font-bold leading-none text-cream">
+                    {item.badge}
+                  </span>
+                ) : null}
               </span>
             )}
             <span>{item.label}</span>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import type { AppNotification } from "@/types";
 import {
   ensureSeed,
@@ -9,7 +10,7 @@ import {
   type DemoNotification,
 } from "@/lib/demo/notifications";
 import { Drawer } from "../ui/Drawer";
-import { NotificationList } from "./NotificationList";
+import { NotificationList, type NotificationListItem } from "./NotificationList";
 
 function BellIcon() {
   return (
@@ -38,6 +39,15 @@ export function NotificationBell({
   seed: AppNotification[];
 }) {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
+
+  function handleSelect(item: NotificationListItem) {
+    markNotificationRead(item.id);
+    if (item.href) {
+      setOpen(false);
+      router.push(item.href);
+    }
+  }
 
   useEffect(() => {
     const mapped: DemoNotification[] = seed.map((n) => ({
@@ -69,7 +79,7 @@ export function NotificationBell({
         )}
       </button>
       <Drawer open={open} onClose={() => setOpen(false)} title="الإشعارات">
-        <NotificationList notifications={notifications} onRead={markNotificationRead} />
+        <NotificationList notifications={notifications} onSelect={handleSelect} />
       </Drawer>
     </>
   );

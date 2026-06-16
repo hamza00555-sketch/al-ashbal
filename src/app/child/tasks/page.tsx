@@ -1,5 +1,6 @@
 /* Child tasks (/child/tasks) — "مهامي": recitation / memorization / review. */
 import { Badge, Card, PageHeader } from "@/components";
+import { cn } from "@/lib/cn";
 import { getTasksForChild, getTeacherIdsForChild } from "@/lib/data";
 import type { ChildTaskStatus } from "@/types";
 import {
@@ -10,11 +11,17 @@ import {
 } from "../_shared";
 import { PrepTasks } from "./PrepTasks";
 import { RecitationTaskAction } from "./RecitationTaskAction";
+import { ScrollToId } from "./ScrollToId";
 import { TaskActionButton } from "./TaskActionButton";
 
 const RECORDABLE: ChildTaskStatus[] = ["not_started", "in_progress", "rerecord_needed"];
 
-export default function ChildTasksPage() {
+export default async function ChildTasksPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ taskId?: string }>;
+}) {
+  const { taskId: highlightTaskId } = await searchParams;
   const { viewer, child } = getChildContext();
   if (!child) return <p className="text-body text-on-dark-muted">لا توجد بيانات لعرضها.</p>;
 
@@ -38,8 +45,14 @@ export default function ChildTasksPage() {
 
       {tasks.length > 0 ? (
         <div className="grid gap-4 lg:grid-cols-2">
-          {tasks.map((task) => (
-            <Card key={task.id} className="flex flex-col gap-3">
+          {tasks.map((task) => {
+            const highlighted = task.id === highlightTaskId;
+            return (
+            <Card
+              key={task.id}
+              id={`task-${task.id}`}
+              className={cn("flex flex-col gap-3", highlighted && "ring-2 ring-purple-soft")}
+            >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 flex-col gap-1">
                   <span className="text-card-title font-bold break-words">{task.title}</span>
@@ -50,6 +63,11 @@ export default function ChildTasksPage() {
                   </div>
                 </div>
               </div>
+              {highlighted && (
+                <span>
+                  <Badge tone="purple">وصلت من الإشعار</Badge>
+                </span>
+              )}
               {task.description && (
                 <p className="text-body text-on-dark-muted break-words">{task.description}</p>
               )}
@@ -76,13 +94,16 @@ export default function ChildTasksPage() {
                 />
               )}
             </Card>
-          ))}
+            );
+          })}
         </div>
       ) : (
         <Card>
           <p className="text-body text-on-dark-muted">لا توجد مهام الآن.</p>
         </Card>
       )}
+
+      {highlightTaskId && <ScrollToId targetId={`task-${highlightTaskId}`} />}
     </>
   );
 }

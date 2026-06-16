@@ -6,15 +6,19 @@
 */
 import type { ReactNode } from "react";
 import { AppShell, DemoExperienceSwitcher, NotificationBell } from "@/components";
-import { getMockUser, getNotificationsForViewer } from "@/lib/data";
+import { getMockUser, getNotificationsForViewer, getPendingTeacherReviews } from "@/lib/data";
 import { TeacherDesktopNav } from "./TeacherDesktopNav";
 import { TeacherMobileNav } from "./TeacherMobileNav";
 
 export default function TeacherLayout({ children }: { children: ReactNode }) {
   const viewer = getMockUser("teacher");
   const seed = getNotificationsForViewer(viewer);
+  const dbPendingReviews = getPendingTeacherReviews(viewer).length;
   return (
-    <AppShell sidebar={<TeacherDesktopNav />} mobileNav={<TeacherMobileNav />}>
+    <AppShell
+      sidebar={<TeacherDesktopNav teacherId={viewer.id} dbPendingReviews={dbPendingReviews} />}
+      mobileNav={<TeacherMobileNav teacherId={viewer.id} dbPendingReviews={dbPendingReviews} />}
+    >
       <div className="mx-auto flex w-full max-w-[1180px] flex-col gap-6">
         <div className="flex items-center justify-between gap-2">
           <DemoExperienceSwitcher current="teacher" />

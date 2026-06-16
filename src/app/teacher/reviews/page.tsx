@@ -10,7 +10,12 @@ import { TeacherReviewsList } from "./TeacherReviewsList";
 import { TeacherSubmissions } from "./TeacherSubmissions";
 import type { ReviewItem } from "./ReviewActions";
 
-export default function TeacherReviewsPage() {
+export default async function TeacherReviewsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ submissionId?: string }>;
+}) {
+  const { submissionId } = await searchParams;
   const { viewer, children } = getTeacherContext();
   const pending = getPendingTeacherReviews(viewer);
 
@@ -29,7 +34,7 @@ export default function TeacherReviewsPage() {
   return (
     <>
       <PageHeader title="مراجعة التسميع" subtitle="تظهر فقط الفيديوهات المعتمدة من ولي الأمر" />
-      <TeacherSubmissions teacherId={viewer.id} />
+      <TeacherSubmissions teacherId={viewer.id} highlightSubmissionId={submissionId} />
       <TeacherReviewsList dbItems={dbItems} />
     </>
   );

@@ -1,44 +1,50 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Badge, Button, Card, RecordingPlayer, SectionTitle } from "@/components";
+import { cn } from "@/lib/cn";
 import { pushNotification } from "@/lib/demo/notifications";
 import { updateSubmission, useSubmissions, type Submission } from "@/lib/demo/submissions";
 
-function SubmissionCard({ sub }: { sub: Submission }) {
+function SubmissionCard({ sub, highlighted }: { sub: Submission; highlighted: boolean }) {
   const [noteOpen, setNoteOpen] = useState(false);
   const [note, setNote] = useState(sub.note ?? "");
   const resolved = sub.state === "accepted" || sub.state === "rerecord";
 
   function accept() {
     updateSubmission(sub.taskId, { state: "accepted" });
-    pushNotification({ userId: sub.childUserId, title: "تم قبول تسميعك", body: "أحسنت! تم قبول تسميعك.", type: "review_accepted" });
+    pushNotification({ userId: sub.childUserId, title: "تم قبول تسميعك", body: "أحسنت! تم قبول تسميعك.", type: "review_accepted", href: `/child/tasks?taskId=${sub.taskId}` });
     if (sub.parentUserId) {
-      pushNotification({ userId: sub.parentUserId, title: "تم قبول تسميع الطفل", body: `قَبِل المعلم تسميع ${sub.childName}.`, type: "review_accepted" });
+      pushNotification({ userId: sub.parentUserId, title: "تم قبول تسميع الطفل", body: `قَبِل المعلم تسميع ${sub.childName}.`, type: "review_accepted", href: `/parent/children/${sub.childId}` });
     }
   }
   function requestRerecord() {
     updateSubmission(sub.taskId, { state: "rerecord" });
-    pushNotification({ userId: sub.childUserId, title: "المعلم طلب إعادة التسميع", body: "خلّينا نعيد التسميع بشكل أوضح.", type: "review_rerecord" });
+    pushNotification({ userId: sub.childUserId, title: "المعلم طلب إعادة التسميع", body: "خلّينا نعيد التسميع بشكل أوضح.", type: "review_rerecord", href: `/child/tasks?taskId=${sub.taskId}` });
     if (sub.parentUserId) {
-      pushNotification({ userId: sub.parentUserId, title: "المعلم طلب إعادة التسميع", body: `طلب المعلم إعادة تسميع ${sub.childName}.`, type: "review_rerecord" });
+      pushNotification({ userId: sub.parentUserId, title: "المعلم طلب إعادة التسميع", body: `طلب المعلم إعادة تسميع ${sub.childName}.`, type: "review_rerecord", href: `/parent/children/${sub.childId}` });
     }
   }
   function saveNote() {
     const trimmed = note.trim();
     updateSubmission(sub.taskId, { note: trimmed || undefined });
     if (trimmed) {
-      pushNotification({ userId: sub.childUserId, title: "لديك ملاحظة جديدة على التسميع", body: trimmed, type: "review_note" });
+      pushNotification({ userId: sub.childUserId, title: "لديك ملاحظة جديدة على التسميع", body: trimmed, type: "review_note", href: `/child/tasks?taskId=${sub.taskId}` });
     }
     setNoteOpen(false);
   }
 
   return (
-    <Card className="flex flex-col gap-3">
+    <Card id={`submission-${sub.id}`} className={cn("flex flex-col gap-3", highlighted && "ring-2 ring-purple-soft")}>
       <div className="flex min-w-0 flex-col gap-1">
         <span className="text-card-title font-bold break-words">{sub.title}</span>
         <span className="text-caption text-on-dark-muted">{sub.childName} · {sub.recordingType === "video" ? "فيديو" : "صوت"}</span>
       </div>
+      {highlighted && (
+        <span>
+          <Badge tone="purple">وصلت من الإشعار</Badge>
+        </span>
+      )}
       <RecordingPlayer recordingId={sub.recordingId} />
       {sub.note && <p className="text-caption text-on-dark-muted">ملاحظة: {sub.note}</p>}
       {resolved ? (
@@ -70,11 +76,24 @@ function SubmissionCard({ sub }: { sub: Submission }) {
 }
 
 /** Recorded recitations approved by the parent and awaiting THIS teacher's review. */
-export function TeacherSubmissions({ teacherId }: { teacherId: string }) {
+export function TeacherSubmissions({
+  teacherId,
+  highlightSubmissionId,
+}: {
+  teacherId: string;
+  highlightSubmissionId?: string;
+}) {
   const submissions = useSubmissions();
   const items = Object.values(submissions).filter(
     (s) => s.teacherId === teacherId && (s.state === "pending_teacher" || s.state === "accepted" || s.state === "rerecord"),
   );
+
+  useEffect(() => {
+    if (!highlightSubmissionId) return;
+    const el = document.getElementById(`submission-${highlightSubmissionId}`);
+    el?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [highlightSubmissionId, items.length]);
+
   if (items.length === 0) return null;
 
   return (
@@ -82,7 +101,7 @@ export function TeacherSubmissions({ teacherId }: { teacherId: string }) {
       <SectionTitle title="تسميعات مُسجّلة" subtitle="معتمدة من ولي الأمر" />
       <div className="grid gap-6 lg:grid-cols-2">
         {items.map((s) => (
-          <SubmissionCard key={s.taskId} sub={s} />
+          <SubmissionCard key={s.taskId} sub={s} highlighted={s.id === highlightSubmissionId} />
         ))}
       </div>
     </section>

@@ -7,18 +7,19 @@ export interface NotificationListItem {
   title: string;
   body: string;
   readAt?: string;
+  href?: string;
 }
 
 /**
  * Presentational notifications list. Read state is driven by `readAt`; clicking
- * an item calls `onRead` (the demo store persists it). No internal state.
+ * an item calls `onSelect` (the bell marks it read and follows any href).
  */
 export function NotificationList({
   notifications,
-  onRead,
+  onSelect,
 }: {
   notifications: NotificationListItem[];
-  onRead?: (id: string) => void;
+  onSelect?: (item: NotificationListItem) => void;
 }) {
   return (
     <div className="flex flex-col gap-2">
@@ -29,7 +30,7 @@ export function NotificationList({
             <button
               key={n.id}
               type="button"
-              onClick={() => onRead?.(n.id)}
+              onClick={() => onSelect?.(n)}
               className={cn(
                 "flex w-full items-start gap-3 rounded-md p-3 text-start transition hover:bg-white/5",
                 read && "opacity-60",
@@ -44,6 +45,7 @@ export function NotificationList({
               <span className="flex min-w-0 flex-col gap-1">
                 <span className="text-body font-bold break-words">{n.title}</span>
                 <span className="text-caption text-on-dark-muted break-words">{n.body}</span>
+                {n.href && <span className="text-caption text-purple-soft">اضغط للانتقال ←</span>}
                 {read && <span className="text-caption text-mint">تمت القراءة</span>}
               </span>
             </button>

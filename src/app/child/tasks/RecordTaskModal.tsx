@@ -52,6 +52,8 @@ export function RecordTaskModal({
   const [seconds, setSeconds] = useState(0);
   const [recordedUrl, setRecordedUrl] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
+  const [streaming, setStreaming] = useState(false);
+  const [previewNote, setPreviewNote] = useState<string | null>(null);
 
   const recorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -82,6 +84,18 @@ export function RecordTaskModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Attach the live stream to the <video> element once it is mounted (fixes the
+  // black-screen issue where srcObject was set before the element existed).
+  useEffect(() => {
+    const video = liveVideoRef.current;
+    if (mode === "video" && streaming && video && streamRef.current) {
+      video.srcObject = streamRef.current;
+      video.play().catch(() => {
+        setPreviewNote("الكاميرا تعمل، لكن المعاينة الحية غير متاحة في هذا المتصفح.");
+      });
+    }
+  }, [mode, streaming]);
+
   async function startRecording() {
     setError(null);
     if (typeof MediaRecorder === "undefined" || !navigator.mediaDevices?.getUserMedia) {
@@ -92,9 +106,8 @@ export function RecordTaskModal({
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: mode === "video" });
       streamRef.current = stream;
-      if (mode === "video" && liveVideoRef.current) {
-        liveVideoRef.current.srcObject = stream;
-      }
+      setPreviewNote(null);
+      if (mode === "video") setStreaming(true); // renders the live <video>; effect attaches the stream
       const mime = pickMime(mode === "video");
       const recorder = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
       mimeRef.current = recorder.mimeType || mime || (mode === "video" ? "video/webm" : "audio/webm");
@@ -108,6 +121,7 @@ export function RecordTaskModal({
         setRecordedUrl(URL.createObjectURL(blob));
         setPhase("recorded");
         stopTracks();
+        setStreaming(false);
       };
       recorderRef.current = recorder;
       recorder.start();
@@ -118,6 +132,7 @@ export function RecordTaskModal({
       setError("لم يتم السماح باستخدام الميكروفون أو الكاميرا.");
       setPhase("error");
       stopTracks();
+      setStreaming(false);
     }
   }
 
@@ -132,6 +147,9 @@ export function RecordTaskModal({
     blobRef.current = null;
     setSeconds(0);
     setError(null);
+    setPreviewNote(null);
+    stopTracks();
+    setStreaming(false);
     setPhase("idle");
   }
 
@@ -140,6 +158,7 @@ export function RecordTaskModal({
     if (!blob) return;
     setSending(true);
     const recordingId = `rec-${Date.now()}`;
+    const submissionId = `sub-${Date.now()}`;
     try {
       await saveRecording({
         recordingId,
@@ -157,7 +176,7 @@ export function RecordTaskModal({
       return;
     }
     upsertSubmission({
-      id: `sub-${Date.now()}`,
+      id: submissionId,
       taskId: task.taskId,
       childId: task.childId,
       childName: task.childName,
@@ -175,12 +194,14 @@ export function RecordTaskModal({
       title: "تسميع جديد بانتظار موافقتك",
       body: `${task.title} — بانتظار مراجعتك.`,
       type: "video_pending_parent",
+      href: `/parent/approvals?submissionId=${submissionId}`,
     });
     pushNotification({
       userId: task.childUserId,
       title: "تم إرسال تسميعك لولي الأمر",
       body: "بانتظار موافقة ولي أمرك قبل إرساله للمعلم.",
       type: "submitted",
+      href: `/child/tasks?taskId=${task.taskId}`,
     });
     setSending(false);
     onSent();
@@ -215,10 +236,11 @@ export function RecordTaskModal({
           </div>
         )}
 
-        {/* Live video preview while recording */}
-        {mode === "video" && phase === "recording" && (
+        {/* Live camera preview (while the stream is active). */}
+        {mode === "video" && streaming && (
           <video ref={liveVideoRef} muted playsInline autoPlay className="aspect-video w-full rounded-md bg-night" />
         )}
+        {previewNote && <p className="text-caption text-on-dark-muted">{previewNote}</p>}
 
         {/* Recorded preview */}
         {phase === "recorded" && recordedUrl && (

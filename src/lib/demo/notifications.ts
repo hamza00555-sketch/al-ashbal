@@ -14,6 +14,7 @@ export interface DemoNotification {
   title: string;
   body: string;
   type?: string;
+  href?: string;
   createdAt: string;
   readAt?: string;
 }
@@ -54,6 +55,7 @@ export function pushNotification(input: {
   title: string;
   body: string;
   type?: string;
+  href?: string;
 }) {
   const item: DemoNotification = {
     id: `dn-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,

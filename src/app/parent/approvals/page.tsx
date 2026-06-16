@@ -6,7 +6,12 @@ import { IconVideo } from "../_icons";
 import { getParentContext } from "../_shared";
 import { ParentSubmissions } from "./ParentSubmissions";
 
-export default function ParentApprovalsPage() {
+export default async function ParentApprovalsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ submissionId?: string }>;
+}) {
+  const { submissionId } = await searchParams;
   const { viewer, children } = getParentContext();
   const pending = getPendingParentApprovals(viewer);
 
@@ -27,7 +32,7 @@ export default function ParentApprovalsPage() {
     <>
       <PageHeader title="الموافقات" subtitle="الفيديو لا يصل للمعلم إلا بعد موافقتك" />
 
-      <ParentSubmissions parentUserId={viewer.id} />
+      <ParentSubmissions parentUserId={viewer.id} highlightSubmissionId={submissionId} />
 
       {items.length > 0 ? (
         <div className="grid gap-6 lg:grid-cols-2">
