@@ -222,6 +222,19 @@ function normalizeActivity(raw: Activity): Activity {
   return { ...raw, questions: [legacy] };
 }
 
+/**
+ * Ensure a stored answer has a SAFE `answers[]`. A5 answers stored a single
+ * `answer` string (no array) — without this guard, reading them crashes the
+ * page (`for (const a of ans.answers)` on undefined). We coerce to an array and
+ * drop malformed entries; unrecoverable A5 single-answers become an empty set.
+ */
+function normalizeAnswer(raw: ActivityAnswer): ActivityAnswer {
+  const answers = Array.isArray(raw.answers)
+    ? raw.answers.filter((a) => a && typeof a === "object" && typeof a.questionId === "string")
+    : [];
+  return { ...raw, answers };
+}
+
 /* ----------------------------------------------------------------- activities */
 
 const KEY = "alashbal:activities";
@@ -235,7 +248,15 @@ function readAll(): Activity[] {
     if (!raw) return EMPTY;
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return EMPTY;
-    return parsed.map(normalizeActivity);
+    return (parsed as Activity[])
+      .map((a) => {
+        try {
+          return normalizeActivity(a);
+        } catch {
+          return null;
+        }
+      })
+      .filter((a): a is Activity => a !== null);
   } catch {
     // Corrupt data must never crash the page.
     return EMPTY;
@@ -363,7 +384,16 @@ function readAnswers(): ActivityAnswer[] {
     const raw = window.localStorage.getItem(ANSWERS_KEY);
     if (!raw) return EMPTY_ANSWERS;
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? (parsed as ActivityAnswer[]) : EMPTY_ANSWERS;
+    if (!Array.isArray(parsed)) return EMPTY_ANSWERS;
+    return (parsed as ActivityAnswer[])
+      .map((a) => {
+        try {
+          return normalizeAnswer(a);
+        } catch {
+          return null;
+        }
+      })
+      .filter((a): a is ActivityAnswer => a !== null);
   } catch {
     return EMPTY_ANSWERS;
   }
