@@ -33,8 +33,8 @@ function SideLink({
         active ? "font-bold text-purple-soft" : "text-on-dark-muted hover:text-on-dark",
       )}
     >
-      <span className="inline-flex size-12 items-center justify-center">
-        <AppIcon name={iconName} fallback={fallback} />
+      <span className="inline-flex size-6 items-center justify-center">
+        <AppIcon name={iconName} fallback={fallback} className="scale-150" />
       </span>
       <span className="w-full truncate text-center">{label}</span>
     </Link>
@@ -70,15 +70,15 @@ export function ChildMobileNav() {
         >
           <span
             className={cn(
-              "-mt-6 inline-flex size-24 items-center justify-center rounded-full ring-4 ring-surface transition",
+              "-mt-8 inline-flex size-16 items-center justify-center rounded-full ring-4 ring-surface transition",
               "shadow-[0_10px_24px_-6px_rgba(123,76,217,0.65)]",
               isHome
                 ? "gradient-cta text-cream"
                 : "bg-surface-raised text-purple-soft hover:brightness-110",
             )}
           >
-            <span className="inline-flex size-18 items-center justify-center">
-              <AppIcon name="icon_home" fallback={<IconHome />} />
+            <span className="inline-flex size-9 items-center justify-center">
+              <AppIcon name="icon_home" fallback={<IconHome />} className="scale-150" />
             </span>
           </span>
           <span className={cn("text-caption", isHome ? "font-bold text-purple-soft" : "text-on-dark-muted")}>
