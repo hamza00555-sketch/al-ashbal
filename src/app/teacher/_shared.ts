@@ -1,7 +1,13 @@
 /* Shared helpers + label maps for the teacher pages (keeps pages thin). */
 import type { BadgeTone } from "@/components";
-import { getMockUser, getTeacherHalaqas, getVisibleChildren } from "@/lib/data";
+import { getMockUser, getTeacherHalaqas, getVisibleChildren, type ChildStatusLevel } from "@/lib/data";
 import type { AttendanceStatus, ChildProfile, Halaqa, RecitationStatus, User } from "@/types";
+
+export const CHILD_STATUS: Record<ChildStatusLevel, { label: string; tone: BadgeTone }> = {
+  excellent: { label: "ممتاز", tone: "success" },
+  follow_up: { label: "يحتاج متابعة", tone: "warning" },
+  intervene: { label: "يحتاج تدخل", tone: "danger" },
+};
 
 /** Resolve the current (mock) teacher viewer + their halaqa(s) + halaqa children. */
 export function getTeacherContext(): {

@@ -23,6 +23,7 @@ import {
   RECITATION_STATUS,
   TASK_STATUS,
 } from "../../_shared";
+import { ParentPoints } from "./ParentPoints";
 import { ParentPrepInfo } from "./ParentPrepInfo";
 
 export function generateStaticParams() {
@@ -152,6 +153,9 @@ export default async function ParentChildDetailPage({
             <p className="text-body text-on-dark-muted">لا تسميعات بعد.</p>
           )}
         </Card>
+
+        {/* Points (demo store, client) */}
+        <ParentPoints childId={child.id} />
 
         {/* Teacher note */}
         <Card className="flex flex-col gap-3">

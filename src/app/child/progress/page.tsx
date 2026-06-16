@@ -2,6 +2,7 @@
 import { Badge, Card, PageHeader, ProgressBar, ProgressRing, SectionTitle } from "@/components";
 import { getBadgesForChild, getProgressForChild } from "@/lib/data";
 import { getChildContext } from "../_shared";
+import { ChildPoints } from "./ChildPoints";
 
 export default function ChildProgressPage() {
   const { viewer, child } = getChildContext();
@@ -29,6 +30,8 @@ export default function ChildProgressPage() {
           <ProgressBar value={progress?.currentProgressBar.current ?? 0} tone="purple" />
           <p className="text-caption text-on-dark-muted">باقي القليل على الإنجاز القادم.</p>
         </Card>
+
+        <ChildPoints childId={child.id} />
 
         <Card className="flex flex-col gap-3">
           <SectionTitle title="أوسمتي" />

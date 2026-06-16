@@ -2,6 +2,7 @@
   Teacher · children (/teacher/children) — table of the teacher's halaqa only.
   Shows attendance + Quran/Tajweed/Behavior + last activity. NEVER wishes.
 */
+import Link from "next/link";
 import { Avatar, Badge, Card, PageHeader } from "@/components";
 import {
   getAttendanceForLesson,
@@ -10,6 +11,7 @@ import {
   getRecitationsForViewer,
 } from "@/lib/data";
 import { ATTENDANCE_STATUS, getTeacherContext, RECITATION_STATUS } from "../_shared";
+import { AddPointsButton } from "./AddPointsButton";
 
 export default function TeacherChildrenPage() {
   const { viewer, children } = getTeacherContext();
@@ -46,16 +48,17 @@ export default function TeacherChildrenPage() {
                 <th className={th}>التجويد</th>
                 <th className={th}>السلوك</th>
                 <th className={th}>آخر نشاط</th>
+                <th className={th}>إجراءات</th>
               </tr>
             </thead>
             <tbody>
               {rows.map(({ child, progress, record, lastRecitation }) => (
                 <tr key={child.id} className="border-b border-white/5 last:border-0">
                   <td className={td}>
-                    <span className="flex items-center gap-3">
+                    <Link href={`/teacher/children/${child.id}`} className="flex items-center gap-3 transition hover:text-purple-soft">
                       <Avatar name={child.displayName} size="sm" />
                       <span className="font-bold">{child.displayName}</span>
-                    </span>
+                    </Link>
                   </td>
                   <td className={td}>
                     {record ? (
@@ -77,6 +80,19 @@ export default function TeacherChildrenPage() {
                     ) : (
                       <span className="text-on-dark-muted">—</span>
                     )}
+                  </td>
+                  <td className={td}>
+                    <AddPointsButton
+                      target={{
+                        childId: child.id,
+                        childName: child.displayName,
+                        childUserId: child.userId ?? "",
+                        parentUserIds: child.parentIds,
+                        halaqaId: child.halaqaId,
+                        teacherId: viewer.id,
+                        teacherName: viewer.displayName,
+                      }}
+                    />
                   </td>
                 </tr>
               ))}
