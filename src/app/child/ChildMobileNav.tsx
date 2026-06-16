@@ -20,12 +20,15 @@ function SideLink({
   active,
   iconName,
   fallback,
+  iconScale = "scale-[1.35]",
 }: {
   href: string;
   label: string;
   active: boolean;
   iconName: string;
   fallback: React.ReactNode;
+  /** Per-icon artwork scale (some PNGs have more transparent margin than others). */
+  iconScale?: string;
 }) {
   return (
     <Link
@@ -37,7 +40,7 @@ function SideLink({
       )}
     >
       <span className="flex size-14 items-center justify-center overflow-hidden">
-        <AppIcon name={iconName} fallback={fallback} className="scale-[1.35]" />
+        <AppIcon name={iconName} fallback={fallback} className={iconScale} />
       </span>
       <span className="w-full truncate text-center">{label}</span>
     </Link>
@@ -64,6 +67,7 @@ export function ChildMobileNav() {
           active={isLessons}
           iconName="icon_lessons"
           fallback={<IconBook />}
+          iconScale="scale-[1.75]"
         />
 
         {/* الرئيسية — المنتصف: الأيقونة فقط (بدون دائرة)، أكبر من الجانبين */}
