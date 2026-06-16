@@ -1,10 +1,12 @@
 "use client";
 
 /*
-  الأشبال — client-side demo activities store (Phase 01 · Task A5).
-  PROTOTYPE ONLY: a teacher activates a temporary in-class activity/quiz that
-  surfaces on the child's HOME (/child) for the same halaqa, and children submit
-  mock answers. Everything lives in localStorage — no backend, no mock-db writes.
+  الأشبال — client-side demo activities store (Phase 01 · Task A5 → A5.1).
+  PROTOTYPE ONLY: a teacher activates a TEMPORARY in-class activity that now
+  carries SEVERAL questions of different types. It surfaces on the child's HOME
+  (/child) for the same halaqa; the child answers per-question and the teacher
+  sees each child's answers. Everything lives in localStorage — no backend, no
+  mock-db writes. A5 single-prompt activities are migrated on read.
 */
 import { useCallback, useRef, useSyncExternalStore } from "react";
 
@@ -16,6 +18,33 @@ export type ActivityType =
 
 export type ActivityStatus = "active" | "closed";
 
+export type QuestionType =
+  | "single_choice"
+  | "true_false"
+  | "short_answer"
+  | "task_acknowledgement"
+  | "ordering"
+  | "matching";
+
+export interface MatchPair {
+  left: string;
+  right: string;
+}
+
+export interface ActivityQuestion {
+  questionId: string;
+  type: QuestionType;
+  prompt: string;
+  required: boolean;
+  options?: string[]; // single_choice
+  correctAnswer?: string; // single_choice (option text) | true_false ("true"/"false")
+  items?: string[]; // ordering
+  correctOrder?: string[]; // ordering (optional)
+  leftItems?: string[]; // matching
+  rightItems?: string[]; // matching
+  correctPairs?: MatchPair[]; // matching (optional)
+}
+
 export interface Activity {
   activityId: string;
   teacherId: string;
@@ -24,14 +53,30 @@ export interface Activity {
   title: string;
   type: ActivityType;
   description: string;
-  prompt: string;
-  options: string[]; // empty ⇒ free-text answer
-  correctAnswer?: string; // optional in the demo
-  durationMinutes?: number; // optional
+  durationMinutes?: number;
+  questions: ActivityQuestion[];
   status: ActivityStatus;
   createdAt: string;
   activatedAt?: string;
   closedAt?: string;
+  // Legacy (pre-A5.1) single-prompt fields — kept ONLY for migration on read.
+  prompt?: string;
+  options?: string[];
+  correctAnswer?: string;
+}
+
+/** A child's per-question answer value (shape depends on the question type). */
+export type QuestionValue =
+  | string // single_choice | true_false ("true"/"false") | short_answer
+  | string[] // ordering
+  | MatchPair[] // matching
+  | { acknowledged: boolean; note?: string }; // task_acknowledgement
+
+export interface QuestionAnswer {
+  questionId: string;
+  type: QuestionType;
+  value: QuestionValue;
+  isCorrect?: boolean; // undefined ⇒ not auto-correctable
 }
 
 export interface ActivityAnswer {
@@ -40,7 +85,7 @@ export interface ActivityAnswer {
   childName: string;
   childUserId: string;
   halaqaId: string;
-  answer: string;
+  answers: QuestionAnswer[];
   submittedAt: string;
 }
 
@@ -50,6 +95,128 @@ export const ACTIVITY_TYPE_LABEL: Record<ActivityType, string> = {
   memorization_challenge: "تحدي حفظ",
   group_activity: "نشاط جماعي",
 };
+
+export const QUESTION_TYPE_LABEL: Record<QuestionType, string> = {
+  single_choice: "اختيار واحد",
+  true_false: "صح / خطأ",
+  short_answer: "إجابة قصيرة",
+  task_acknowledgement: "مهمة تنفيذية",
+  ordering: "ترتيب بالسحب",
+  matching: "مطابقة",
+};
+
+/** Stable unique id for a freshly-authored question (module scope = pure-safe). */
+export function newQuestionId(): string {
+  return `q-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+}
+
+/* --------------------------------------------------------- grading & helpers */
+
+function arraysEqual(a: string[], b: string[]): boolean {
+  return a.length === b.length && a.every((x, i) => x === b[i]);
+}
+
+/** Auto-grade a question. Returns undefined when it is not auto-correctable. */
+export function gradeQuestion(q: ActivityQuestion, value: QuestionValue): boolean | undefined {
+  switch (q.type) {
+    case "single_choice":
+      return q.correctAnswer ? value === q.correctAnswer : undefined;
+    case "true_false":
+      return q.correctAnswer ? String(value) === q.correctAnswer : undefined;
+    case "ordering":
+      return q.correctOrder && Array.isArray(value)
+        ? arraysEqual(value as string[], q.correctOrder)
+        : undefined;
+    case "matching": {
+      if (!q.correctPairs || !Array.isArray(value)) return undefined;
+      const pairs = value as MatchPair[];
+      return q.correctPairs.every(
+        (cp) => pairs.find((p) => p.left === cp.left)?.right === cp.right,
+      );
+    }
+    default:
+      return undefined; // short_answer, task_acknowledgement
+  }
+}
+
+/** Whether the child has meaningfully answered a question (for required gating). */
+export function isQuestionAnswered(q: ActivityQuestion, value: QuestionValue | undefined): boolean {
+  if (value === undefined) return false;
+  switch (q.type) {
+    case "single_choice":
+    case "true_false":
+      return typeof value === "string" && value !== "";
+    case "short_answer":
+      return typeof value === "string" && value.trim() !== "";
+    case "task_acknowledgement":
+      return typeof value === "object" && !Array.isArray(value) && value.acknowledged === true;
+    case "ordering":
+      return Array.isArray(value) && value.length > 0;
+    case "matching":
+      return (
+        Array.isArray(value) &&
+        value.length > 0 &&
+        (value as MatchPair[]).every((p) => Boolean(p.right))
+      );
+    default:
+      return false;
+  }
+}
+
+/** The starting value the child UI uses for a question. */
+export function defaultValue(q: ActivityQuestion): QuestionValue {
+  switch (q.type) {
+    case "task_acknowledgement":
+      return { acknowledged: false };
+    case "ordering":
+      return [...(q.items ?? [])];
+    case "matching":
+      return (q.leftItems ?? []).map((l) => ({ left: l, right: "" }));
+    default:
+      return "";
+  }
+}
+
+export interface AnswerStats {
+  total: number;
+  answered: number;
+  correct: number;
+  correctable: number;
+}
+
+/** Lightweight stats (NOT full scoring): answered count + correct/correctable. */
+export function answerStats(activity: Activity, ans: ActivityAnswer): AnswerStats {
+  const byId = new Map(activity.questions.map((q) => [q.questionId, q]));
+  let answered = 0;
+  let correct = 0;
+  let correctable = 0;
+  for (const a of ans.answers) {
+    const q = byId.get(a.questionId);
+    if (q && isQuestionAnswered(q, a.value)) answered += 1;
+    if (a.isCorrect !== undefined) {
+      correctable += 1;
+      if (a.isCorrect) correct += 1;
+    }
+  }
+  return { total: activity.questions.length, answered, correct, correctable };
+}
+
+/* ----------------------------------------------------------------- migration */
+
+/** Ensure any stored activity has a `questions[]` (migrate A5 single-prompt). */
+function normalizeActivity(raw: Activity): Activity {
+  if (Array.isArray(raw.questions) && raw.questions.length > 0) return raw;
+  const hasOptions = Array.isArray(raw.options) && raw.options.length > 0;
+  const legacy: ActivityQuestion = {
+    questionId: `${raw.activityId}-q1`,
+    type: hasOptions ? "single_choice" : "short_answer",
+    prompt: raw.prompt?.trim() || raw.title,
+    required: false,
+    options: hasOptions ? raw.options : undefined,
+    correctAnswer: raw.correctAnswer,
+  };
+  return { ...raw, questions: [legacy] };
+}
 
 /* ----------------------------------------------------------------- activities */
 
@@ -61,7 +228,8 @@ function readAll(): Activity[] {
   if (typeof window === "undefined") return EMPTY;
   try {
     const raw = window.localStorage.getItem(KEY);
-    return raw ? (JSON.parse(raw) as Activity[]) : EMPTY;
+    if (!raw) return EMPTY;
+    return (JSON.parse(raw) as Activity[]).map(normalizeActivity);
   } catch {
     return EMPTY;
   }
@@ -83,7 +251,7 @@ function subscribe(callback: () => void) {
   };
 }
 
-/** Create and activate an activity. Only one activity stays active per halaqa. */
+/** Create and activate a multi-question activity. One active per halaqa. */
 export function createActivity(input: {
   teacherId: string;
   teacherName: string;
@@ -91,10 +259,8 @@ export function createActivity(input: {
   title: string;
   type: ActivityType;
   description: string;
-  prompt: string;
-  options: string[];
-  correctAnswer?: string;
   durationMinutes?: number;
+  questions: ActivityQuestion[];
 }): Activity {
   const now = new Date().toISOString();
   const activity: Activity = {
@@ -104,7 +270,6 @@ export function createActivity(input: {
     activatedAt: now,
     ...input,
   };
-  // Close any other active activity in the same halaqa first.
   const others = readAll().map((a) =>
     a.halaqaId === input.halaqaId && a.status === "active"
       ? { ...a, status: "closed" as const, closedAt: now }
@@ -143,7 +308,6 @@ export function closeActivity(activityId: string) {
   );
 }
 
-/** The single active activity for a halaqa (what the child sees), or null. */
 export function useActiveActivityForHalaqa(halaqaId: string): Activity | null {
   const cache = useRef<{ sig: string; value: Activity | null }>({ sig: "∅", value: null });
   const getSnapshot = useCallback((): Activity | null => {
@@ -157,7 +321,6 @@ export function useActiveActivityForHalaqa(halaqaId: string): Activity | null {
   return useSyncExternalStore(subscribe, getSnapshot, () => null);
 }
 
-/** All activities created by a teacher, newest first (active + closed). */
 export function useTeacherActivities(teacherId: string): Activity[] {
   const cache = useRef<{ sig: string; value: Activity[] }>({ sig: "∅", value: EMPTY });
   const getSnapshot = useCallback((): Activity[] => {
@@ -204,7 +367,7 @@ function subscribeAnswers(callback: () => void) {
   };
 }
 
-/** Record (or replace) a child's answer to an activity. */
+/** Record (or replace) a child's full set of answers to an activity. */
 export function submitAnswer(input: Omit<ActivityAnswer, "submittedAt">) {
   const rest = readAnswers().filter(
     (a) => !(a.activityId === input.activityId && a.childId === input.childId),
@@ -212,7 +375,6 @@ export function submitAnswer(input: Omit<ActivityAnswer, "submittedAt">) {
   writeAnswers([{ ...input, submittedAt: new Date().toISOString() }, ...rest]);
 }
 
-/** All answers for an activity (teacher view — caller scopes to its halaqa). */
 export function useAnswersForActivity(activityId: string | undefined): ActivityAnswer[] {
   const cache = useRef<{ sig: string; value: ActivityAnswer[] }>({ sig: "∅", value: EMPTY_ANSWERS });
   const getSnapshot = useCallback((): ActivityAnswer[] => {
@@ -227,7 +389,6 @@ export function useAnswersForActivity(activityId: string | undefined): ActivityA
   return useSyncExternalStore(subscribeAnswers, getSnapshot, () => EMPTY_ANSWERS);
 }
 
-/** A single child's own answer to an activity (child confirmation only). */
 export function useChildAnswer(
   activityId: string | undefined,
   childId: string,
