@@ -48,6 +48,14 @@ export function IconPrep() {
     </svg>
   );
 }
+export function IconTools() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden className={base}>
+      <path d="M14.5 5.5a3.5 3.5 0 0 0 4.7 4.2l-9 9a2 2 0 0 1-2.8-2.8l9-9a3.5 3.5 0 0 0-1.9-1.4z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="6.5" cy="6.5" r="2.5" stroke="currentColor" strokeWidth="1.8" />
+    </svg>
+  );
+}
 export function IconActivity() {
   return (
     <svg viewBox="0 0 24 24" fill="none" aria-hidden className={base}>

@@ -70,6 +70,19 @@ export async function deleteRecording(recordingId: string): Promise<void> {
   db.close();
 }
 
+/** Demo reset: deletes ALL recordings from this device's IndexedDB store. */
+export async function clearAllRecordings(): Promise<void> {
+  if (typeof indexedDB === "undefined") return;
+  const db = await openDb();
+  await new Promise<void>((resolve, reject) => {
+    const tx = db.transaction(STORE, "readwrite");
+    tx.objectStore(STORE).clear();
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+  db.close();
+}
+
 export interface RecordingMedia {
   url: string;
   type: "audio" | "video";

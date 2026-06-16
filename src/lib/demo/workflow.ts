@@ -32,7 +32,11 @@ function readAll(): ReviewMap {
   if (typeof window === "undefined") return EMPTY;
   try {
     const raw = window.localStorage.getItem(KEY);
-    return raw ? (JSON.parse(raw) as ReviewMap) : EMPTY;
+    if (!raw) return EMPTY;
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed)
+      ? (parsed as ReviewMap)
+      : EMPTY;
   } catch {
     return EMPTY;
   }

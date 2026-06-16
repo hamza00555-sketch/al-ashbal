@@ -27,10 +27,19 @@ function readAll(): DemoNotification[] {
   if (typeof window === "undefined") return EMPTY;
   try {
     const raw = window.localStorage.getItem(KEY);
-    return raw ? (JSON.parse(raw) as DemoNotification[]) : EMPTY;
+    if (!raw) return EMPTY;
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? (parsed as DemoNotification[]) : EMPTY;
   } catch {
     return EMPTY;
   }
+}
+
+/** Demo reset: clears ONLY the notifications store. */
+export function resetNotifications() {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(KEY);
+  window.dispatchEvent(new CustomEvent(EVENT));
 }
 
 function writeAll(list: DemoNotification[]) {

@@ -56,10 +56,19 @@ function readAll(): LessonPrep[] {
   if (typeof window === "undefined") return EMPTY;
   try {
     const raw = window.localStorage.getItem(KEY);
-    return raw ? (JSON.parse(raw) as LessonPrep[]) : EMPTY;
+    if (!raw) return EMPTY;
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? (parsed as LessonPrep[]) : EMPTY;
   } catch {
     return EMPTY;
   }
+}
+
+/** Demo reset: clears ONLY the lesson-prep store. */
+export function resetLessonPrep() {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(KEY);
+  window.dispatchEvent(new CustomEvent(EVENT));
 }
 
 function writeAll(list: LessonPrep[]) {

@@ -85,6 +85,7 @@ function ActiveActivityCard({ activity, halaqaChildren }: { activity: Activity; 
         title: "انتهى النشاط",
         body: `انتهى نشاط: ${activity.title}`,
         type: "activity_closed",
+        href: "/child",
       });
     }
   }

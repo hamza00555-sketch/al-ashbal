@@ -24,7 +24,7 @@ export function MobileNav({ items, activeId, onSelect, className }: MobileNavPro
       {items.map((item) => {
         const active = item.id === activeId;
         const itemClass = cn(
-          "flex flex-1 flex-col items-center justify-center gap-1 rounded-md py-2 text-caption transition",
+          "flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-md px-0.5 py-2 text-caption transition",
           active ? "text-purple-soft" : "text-on-dark-muted hover:text-on-dark",
         );
         const inner = (
@@ -39,7 +39,7 @@ export function MobileNav({ items, activeId, onSelect, className }: MobileNavPro
                 ) : null}
               </span>
             )}
-            <span>{item.label}</span>
+            <span className="w-full truncate text-center">{item.label}</span>
           </>
         );
 

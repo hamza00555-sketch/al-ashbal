@@ -382,6 +382,20 @@ export function resetActivitiesData() {
   window.dispatchEvent(new CustomEvent(ANSWERS_EVENT));
 }
 
+/** Wipe ONLY the activities (keeps any stored answers). */
+export function resetActivities() {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(KEY);
+  window.dispatchEvent(new CustomEvent(EVENT));
+}
+
+/** Wipe ONLY the activity answers (keeps the activities). */
+export function resetActivityAnswers() {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(ANSWERS_KEY);
+  window.dispatchEvent(new CustomEvent(ANSWERS_EVENT));
+}
+
 export function useActiveActivityForHalaqa(halaqaId: string): Activity | null {
   const cache = useRef<{ sig: string; value: Activity | null }>({ sig: "∅", value: null });
   const getSnapshot = useCallback((): Activity | null => {

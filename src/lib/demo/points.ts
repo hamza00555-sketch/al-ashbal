@@ -98,6 +98,13 @@ function newId(): string {
   return `pt-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 }
 
+/** Demo reset: clears ONLY the points store. */
+export function resetPoints() {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(KEY);
+  window.dispatchEvent(new CustomEvent(EVENT));
+}
+
 /** Add a points entry (newest first). Used by the manual quick-add sheet. */
 export function addPoints(entry: Omit<PointEntry, "pointId" | "createdAt">): PointEntry {
   const item: PointEntry = { ...entry, pointId: newId(), createdAt: new Date().toISOString() };

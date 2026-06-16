@@ -35,10 +35,21 @@ function readAll(): SubmissionMap {
   if (typeof window === "undefined") return EMPTY;
   try {
     const raw = window.localStorage.getItem(KEY);
-    return raw ? (JSON.parse(raw) as SubmissionMap) : EMPTY;
+    if (!raw) return EMPTY;
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed)
+      ? (parsed as SubmissionMap)
+      : EMPTY;
   } catch {
     return EMPTY;
   }
+}
+
+/** Demo reset: clears ONLY the recitation submissions workflow store. */
+export function resetSubmissions() {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(KEY);
+  window.dispatchEvent(new CustomEvent(EVENT));
 }
 
 function writeAll(map: SubmissionMap) {
