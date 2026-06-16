@@ -4,9 +4,13 @@
 بأسلوب **cute soft 3D · front-facing** وقواعد `docs/VISUAL_ASSET_STYLE_LOCK.md`.
 برومبت كل أصل في `docs/HIGGSFIELD_PROMPT_PACK.md` (Batch 02).
 
-- **prompt:** `ready` = برومبت جاهز · **file:** `pending` = الـ PNG لم يُضف بعد
-  (الشبكة محجوبة، يُولَّد ويُقص عبر Higgsfield ثم يوضع في المسار).
+- **prompt:** `ready` = برومبت جاهز · **file:** `pending` = الـ PNG لم يُضف بعد.
 - **wired:** هل رُبط في التطبيق بـ fallback آمن الآن؟
+
+> ✅ **تحديث:** الـ30 أصلًا وُلّدت كلها عبر Higgsfield وقُصّت خلفياتها (PNG شفاف).
+> روابط التنزيل في `public/assets/DOWNLOAD_LINKS.md`، أو نفّذ
+> `bash scripts/download-assets.sh` لجلبها كلها إلى مجلداتها مرة واحدة.
+> (`file: pending` أدناه تعني فقط أنها لم تُحفظ محليًا داخل المستودع بعد.)
 
 مسار الوضع: `public/assets/<category>/<file>.png`. البديل الآمن مذكور لكل نوع.
 
