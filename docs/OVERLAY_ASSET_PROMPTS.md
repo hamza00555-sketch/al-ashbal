@@ -198,9 +198,15 @@ text, no UI, no border, no square background. Must stay clearly readable at
 
 | asset | usage | motif | size | bg | الحالة |
 |---|---|---|---|---|---|
-| `overlay_wishes_star.png` | أمنياتي (child / wishes) | flat star + 3–5 sparkles | 1024² | transparent | بانتظار التوليد |
+| `overlay_wishes_star.png` | أمنياتي (child / wishes) | flat star + 3–5 sparkles | 1024² | transparent | ✅ **معتمد — Option A** (flat، بدون stroke) |
 | `overlay_progress_ring.png` | تقدّمي (child / progress) | flat open progress ring | 1024² | transparent | بانتظار التوليد |
 | `overlay_badge_silhouette.png` | أوسمتي / النقاط | flat medal silhouette | 1024² | transparent | بانتظار التوليد |
 | `overlay_child_halo.png` | بطاقات أطفال ولي الأمر | flat halo + dots (مركز شفاف) | 1024² | transparent | بانتظار التوليد |
 
-**الوجهة لاحقًا:** `public/assets/overlays/`. الاتجاه **flat 2D vector watermark** (لا أي 3D). لم يُولَّد أي أصل، ولم يُطبَّق أي contrast card — توثيق فقط.
+**الوجهة لاحقًا:** `public/assets/overlays/`. الاتجاه **flat 2D vector watermark** (لا أي 3D).
+
+## المعتمد حتى الآن
+- **`overlay_wishes_star.png`** ← **Option A** (flat two-tone، بدون stroke). الرابط الشفاف:
+  `https://d8j0ntlcm91z4.cloudfront.net/user_3E1uwg09F9UoCSTlAoXJKL9reW5/hf_20260617_164709_424a1376-9ae8-4f2a-bba3-4321732c27d2.png`
+  يُحفظ لاحقًا باسم `public/assets/overlays/overlay_wishes_star.png`.
+- البقية (progress / badge / halo): بانتظار التوليد بنفس الاتجاه الفلات. لم يُطبَّق أي contrast card بعد.
