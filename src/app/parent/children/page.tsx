@@ -22,10 +22,10 @@ export default function ParentChildrenPage() {
             </span>
             <div className="relative z-10 flex min-w-0 flex-1 flex-col gap-1">
               <span className="text-card-title font-bold break-words">{child.displayName}</span>
-              <span className="text-caption break-words text-[#5F4B7A]">{summary.lastActivity}</span>
+              <span className="text-caption text-pretty text-[#5F4B7A]">{summary.lastActivity}</span>
             </div>
             <div className="relative z-10 flex shrink-0 flex-col items-end gap-2">
-              <Badge tone={CHILD_STATUS[summary.level].tone}>{CHILD_STATUS[summary.level].label}</Badge>
+              <Badge tone={CHILD_STATUS[summary.level].tone} onLight>{CHILD_STATUS[summary.level].label}</Badge>
               <Link
                 href={`/parent/children/${child.id}`}
                 className="text-caption font-bold text-purple transition hover:brightness-90"

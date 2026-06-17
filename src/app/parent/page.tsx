@@ -27,7 +27,7 @@ export default function ParentOverviewPage() {
 
       {pending.length > 0 && (
         <Link href="/parent/approvals" className="block rounded-lg transition hover:brightness-110">
-          <Card variant="contrast" className="flex items-center gap-3">
+          <Card className="flex items-center gap-3">
             <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-pill bg-purple/15 p-2.5 text-purple">
               <AppIcon name="icon_record_video" fallback={<IconVideo />} />
             </span>
@@ -55,8 +55,8 @@ export default function ParentOverviewPage() {
                 <ChildStatusAvatar name={child.displayName} level={summary.level} size="childCard" src={childAvatarSrc(child.gender)} />
               </span>
               <span className="relative z-10 text-card-title font-bold break-words">{child.displayName}</span>
-              <Badge className="relative z-10" tone={CHILD_STATUS[summary.level].tone}>{CHILD_STATUS[summary.level].label}</Badge>
-              <span className="relative z-10 line-clamp-2 text-caption break-words text-[#5F4B7A]">
+              <Badge className="relative z-10" tone={CHILD_STATUS[summary.level].tone} onLight>{CHILD_STATUS[summary.level].label}</Badge>
+              <span className="relative z-10 line-clamp-2 text-caption text-pretty text-[#5F4B7A]">
                 {summary.lastActivity}
               </span>
             </Link>

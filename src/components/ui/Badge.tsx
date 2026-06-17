@@ -20,14 +20,27 @@ const toneClasses: Record<BadgeTone, string> = {
   neutral: "bg-[rgba(247,241,234,0.16)] text-cream ring-1 ring-[rgba(247,241,234,0.30)]", // اليوم / وقت / عام
 };
 
+// Light-card variant: darker text + light fill, readable ON cream contrast cards.
+const toneClassesLight: Record<BadgeTone, string> = {
+  gold: "gradient-badge text-on-light",
+  success: "bg-[#E3F3EA] text-[#1E5C3A] ring-1 ring-[#1E5C3A]/30",
+  warning: "bg-[#FBEFD0] text-[#7A4B00] ring-1 ring-[#7A4B00]/35",
+  danger: "bg-[#FBE2DD] text-[#8A2C20] ring-1 ring-[#8A2C20]/35",
+  purple: "bg-[#ECE3FF] text-[#3A1A6E] ring-1 ring-[#3A1A6E]/25",
+  neutral: "bg-[#ECE6F5] text-[#3A2E55] ring-1 ring-[#3A2E55]/20",
+};
+
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   tone?: BadgeTone;
   icon?: ReactNode;
+  /** Use the darker light-card palette (for cream contrast cards). */
+  onLight?: boolean;
 }
 
 export function Badge({
   tone = "neutral",
   icon,
+  onLight = false,
   className,
   children,
   ...rest
@@ -36,7 +49,7 @@ export function Badge({
     <span
       className={cn(
         "inline-flex items-center gap-1 rounded-pill px-3 py-1.5 text-caption font-bold leading-none",
-        toneClasses[tone],
+        (onLight ? toneClassesLight : toneClasses)[tone],
         className,
       )}
       {...rest}
