@@ -68,7 +68,7 @@ export default function TeacherOverviewPage() {
               href={t.href}
               className="card-elevated flex aspect-square flex-col items-center justify-center gap-2 rounded-lg p-4 text-center text-on-dark transition hover:brightness-110"
             >
-              <AppAssetIcon src={`/assets/icons/${t.icon}.png`} size="lg" fallback={t.fallback} />
+              <AppAssetIcon src={`/assets/icons/${t.icon}.png`} size="hero" fallback={t.fallback} />
               <span className="text-card-title font-bold">{t.label}</span>
             </Link>
           ))}

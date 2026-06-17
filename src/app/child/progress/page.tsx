@@ -43,11 +43,11 @@ export default function ChildProgressPage() {
         <section className="flex flex-col gap-3">
           <SectionTitle title="أوسمتي" />
           <Card variant="contrast" className="relative isolate overflow-hidden">
-            <CardOverlayMotif motif="badge" className="bottom-2 end-3 size-20 text-gold opacity-[0.12]" />
+            <CardOverlayMotif motif="badge" className="bottom-2 end-3 size-20 text-gold opacity-[0.18]" />
             {badges.length > 0 ? (
               <div className="relative z-10 flex flex-wrap items-center gap-3">
                 {badges.map((b) => (
-                  <BadgeMedal key={b.id} assetKey={BADGE_ASSET[b.category]} label={b.title} />
+                  <BadgeMedal key={b.id} assetKey={BADGE_ASSET[b.category]} label={b.title} size={68} />
                 ))}
               </div>
             ) : (

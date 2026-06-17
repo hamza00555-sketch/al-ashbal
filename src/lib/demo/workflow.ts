@@ -20,6 +20,8 @@ export interface ReviewEntry {
   teacherId?: string;
   state: ReviewState;
   note?: string;
+  /** Last-activity timestamp (ms) — used to sort the teacher review list. */
+  updatedAt?: number;
 }
 
 type ReviewMap = Record<string, ReviewEntry>;
@@ -61,7 +63,10 @@ function subscribe(callback: () => void) {
 /** Create or update a review entry (merges with the existing one). */
 export function upsertReview(entry: ReviewEntry) {
   const map = readAll();
-  writeAll({ ...map, [entry.recitationId]: { ...map[entry.recitationId], ...entry } });
+  writeAll({
+    ...map,
+    [entry.recitationId]: { ...map[entry.recitationId], ...entry, updatedAt: entry.updatedAt ?? Date.now() },
+  });
 }
 
 export function useReviews(): ReviewMap {

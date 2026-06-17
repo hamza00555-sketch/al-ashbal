@@ -35,8 +35,12 @@ export function TeacherReviewsList({ dbItems }: { dbItems: ReviewItem[] }) {
     const s = reviews[it.recitationId]?.state;
     return s === "accepted" || s === "rerecord";
   };
-  const pendingItems = items.filter((it) => !isProcessed(it));
-  const processedItems = items.filter(isProcessed);
+  // Within each group: newest activity first (db-seed items without a store
+  // entry have no timestamp → treated as oldest, so they sit below fresh ones).
+  const tsOf = (it: ReviewItem) => reviews[it.recitationId]?.updatedAt ?? 0;
+  const byNewest = (a: ReviewItem, b: ReviewItem) => tsOf(b) - tsOf(a);
+  const pendingItems = items.filter((it) => !isProcessed(it)).sort(byNewest);
+  const processedItems = items.filter(isProcessed).sort(byNewest);
 
   const renderReviewCard = (item: ReviewItem) => (
     <Card key={item.recitationId} className="flex flex-col gap-4">

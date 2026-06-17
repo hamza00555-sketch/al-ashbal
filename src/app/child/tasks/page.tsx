@@ -55,24 +55,23 @@ export default async function ChildTasksPage({
         <div className="flex items-start gap-3">
           <AppAssetIcon
             src={`/assets/icons/${TASK_ICON[task.type].name}.png`}
-            size="md"
+            size="lg"
             className="rounded-full bg-purple/15 text-purple-soft"
             fallback={TASK_ICON[task.type].fallback}
           />
           <div className="flex min-w-0 flex-col gap-1">
             <span className="text-card-title font-bold break-words">{task.title}</span>
-            <div className="flex flex-wrap gap-2">
-              <Badge tone="purple">{TASK_TYPE_LABEL[task.type]}</Badge>
-              <Badge tone="neutral">{TASK_SUBJECT_LABEL[task.subject]}</Badge>
-              <Badge tone="neutral">{task.dueLabel}</Badge>
-            </div>
+            {/* meta هادئ في سطر واحد بدل رصّ التاقات */}
+            <p className="text-caption text-on-dark-muted break-words">
+              {TASK_TYPE_LABEL[task.type]} · {TASK_SUBJECT_LABEL[task.subject]} · {task.dueLabel}
+            </p>
+            {highlighted && (
+              <span className="mt-1">
+                <Badge tone="purple">وصلت من الإشعار</Badge>
+              </span>
+            )}
           </div>
         </div>
-        {highlighted && (
-          <span>
-            <Badge tone="purple">وصلت من الإشعار</Badge>
-          </span>
-        )}
         {task.description && (
           <p className="text-body text-on-dark-muted break-words">{task.description}</p>
         )}
