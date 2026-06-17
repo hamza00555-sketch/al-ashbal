@@ -12,11 +12,3 @@ export const teacherNavItems: NavItem[] = [
   { id: "reviews", label: "المراجعات", href: "/teacher/reviews", icon: <AppIcon name="icon_review" fallback={<IconVideo />} /> },
   { id: "activities", label: "الأنشطة", href: "/teacher/activities", icon: <AppIcon name="icon_activity" fallback={<IconActivity />} /> },
 ];
-
-/** Simplified MOBILE bottom nav — only the daily essentials (الحضور · الرئيسية · المراجعات).
- *  The rest of the teacher pages are reached from the cards on /teacher. */
-export const teacherBottomNavItems: NavItem[] = [
-  { id: "attendance", label: "الحضور", href: "/teacher/attendance", icon: <AppIcon name="icon_attendance" fallback={<IconCalendar />} /> },
-  { id: "home", label: "الرئيسية", href: "/teacher", icon: <AppIcon name="icon_home" fallback={<IconHome />} /> },
-  { id: "reviews", label: "المراجعات", href: "/teacher/reviews", icon: <AppIcon name="icon_review" fallback={<IconVideo />} /> },
-];

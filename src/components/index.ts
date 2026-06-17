@@ -45,6 +45,8 @@ export { AppShell } from "./layout/AppShell";
 export type { AppShellProps, AppBackgroundKey } from "./layout/AppShell";
 export { MobileNav } from "./layout/MobileNav";
 export type { MobileNavProps } from "./layout/MobileNav";
+export { AppBottomNav } from "./layout/AppBottomNav";
+export type { BottomNavItem } from "./layout/AppBottomNav";
 export { DesktopSidebar } from "./layout/DesktopSidebar";
 export type { DesktopSidebarProps } from "./layout/DesktopSidebar";
 export { DemoExperienceSwitcher } from "./layout/DemoExperienceSwitcher";

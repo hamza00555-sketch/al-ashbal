@@ -1,11 +1,11 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { MobileNav } from "@/components";
-import { teacherBottomNavItems } from "./_nav";
+import { AppBottomNav, type BottomNavItem } from "@/components";
+import { IconCalendar, IconHome, IconVideo } from "./_icons";
 import { useTeacherReviewCount } from "./useReviewCount";
 
-/** Teacher bottom nav (mobile) — slimmed to the daily essentials. */
+/** Teacher bottom nav (mobile) — الحضور · الرئيسية (وسط) · المراجعات. */
 export function TeacherMobileNav({
   teacherId,
   dbPendingReviews,
@@ -15,9 +15,11 @@ export function TeacherMobileNav({
 }) {
   const pathname = usePathname();
   const reviewCount = useTeacherReviewCount(teacherId, dbPendingReviews);
-  const items = teacherBottomNavItems.map((item) =>
-    item.id === "reviews" ? { ...item, badge: reviewCount } : item,
-  );
-  const active = teacherBottomNavItems.find((item) => item.href === pathname)?.id ?? "";
-  return <MobileNav items={items} activeId={active} />;
+  const items: BottomNavItem[] = [
+    { id: "attendance", label: "الحضور", href: "/teacher/attendance", src: "/assets/icons/icon_attendance.png", fallback: <IconCalendar /> },
+    { id: "home", label: "الرئيسية", href: "/teacher", src: "/assets/icons/icon_home.png", fallback: <IconHome />, center: true },
+    { id: "reviews", label: "المراجعات", href: "/teacher/reviews", src: "/assets/icons/icon_review.png", fallback: <IconVideo />, badge: reviewCount },
+  ];
+  const active = items.find((i) => i.href === pathname)?.id ?? "";
+  return <AppBottomNav items={items} activeId={active} />;
 }
