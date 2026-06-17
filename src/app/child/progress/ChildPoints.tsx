@@ -22,7 +22,7 @@ export function ChildPoints({ childId }: { childId: string }) {
     <Card className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <AppAssetIcon src="/assets/icons/icon_points.png" size="lg" className="text-gold" fallback={<IconStar />} />
+          <AppAssetIcon src="/assets/icons/icon_points.png" size="hero" artworkScale={1.6} className="text-gold" fallback={<IconStar />} />
           <SectionTitle title="نقاطي" />
         </div>
         {points.length > 0 && <Badge tone="gold">إجمالي {total}</Badge>}

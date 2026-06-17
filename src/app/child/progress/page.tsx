@@ -43,15 +43,31 @@ export default function ChildProgressPage() {
         <section className="flex flex-col gap-3">
           <SectionTitle title="أوسمتي" />
           <Card variant="contrast" className="relative isolate overflow-hidden">
-            <CardOverlayMotif motif="badge" className="bottom-2 end-3 size-20 text-gold opacity-[0.18]" />
+            <CardOverlayMotif motif="badge" className="-bottom-2 -end-1 size-28 text-gold opacity-[0.22]" />
             {badges.length > 0 ? (
-              <div className="relative z-10 flex flex-wrap items-center gap-3">
-                {badges.map((b) => (
-                  <BadgeMedal key={b.id} assetKey={BADGE_ASSET[b.category]} label={b.title} size={68} />
-                ))}
+              <div className="relative z-10 flex flex-wrap items-start gap-5">
+                {badges.map((b) => {
+                  const asset = BADGE_ASSET[b.category];
+                  return (
+                    <div key={b.id} className="flex w-20 flex-col items-center gap-1.5 text-center">
+                      <BadgeMedal assetKey={asset} label={b.title} size={80} />
+                      {asset && (
+                        <span className="text-caption font-bold leading-tight text-[#241248] break-words">{b.title}</span>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             ) : (
-              <p className="relative z-10 text-body text-[#5F4B7A]">لا أوسمة بعد — أحسنت واستمر!</p>
+              <div className="relative z-10 flex items-center gap-4">
+                <span className="shrink-0 opacity-60">
+                  <BadgeMedal assetKey="badge_progress" label="وسام قادم" size={80} />
+                </span>
+                <div className="flex flex-col gap-1">
+                  <span className="text-card-title font-bold text-[#241248]">واصل لتفتح أوسمة جديدة</span>
+                  <span className="text-caption text-[#5F4B7A]">أوسمتك القادمة تظهر هنا.</span>
+                </div>
+              </div>
             )}
           </Card>
         </section>
