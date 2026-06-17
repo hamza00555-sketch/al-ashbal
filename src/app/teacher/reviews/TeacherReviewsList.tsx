@@ -1,6 +1,7 @@
 "use client";
 
-import { AppIcon, AppIllustration, Card, RecitationPreview } from "@/components";
+import { AppAssetIcon, AppIllustration, Avatar, Card, RecitationPreview } from "@/components";
+import { childAvatarById } from "@/lib/avatars";
 import { useReviews } from "@/lib/demo/workflow";
 import { IconVideo } from "../_icons";
 import { ReviewActions, type ReviewItem } from "./ReviewActions";
@@ -40,13 +41,12 @@ export function TeacherReviewsList({ dbItems }: { dbItems: ReviewItem[] }) {
   const renderReviewCard = (item: ReviewItem) => (
     <Card key={item.recitationId} className="flex flex-col gap-4">
       <div className="flex items-center gap-3">
-        <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-pill bg-purple/15 p-2.5 text-purple-soft">
-          <AppIcon name="icon_record_video" fallback={<IconVideo />} />
-        </span>
-        <div className="flex min-w-0 flex-col gap-1">
+        <Avatar name={item.childName} size="lg" src={childAvatarById(item.childId)} />
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
           <span className="text-card-title font-bold break-words">{item.title}</span>
           <span className="text-caption text-on-dark-muted">{item.childName} · تسميع جديد</span>
         </div>
+        <AppAssetIcon src="/assets/icons/icon_record_video.png" size="sm" className="shrink-0 text-purple-soft" fallback={<IconVideo />} />
       </div>
       <RecitationPreview />
       <ReviewActions item={item} entry={reviews[item.recitationId]} />

@@ -1,6 +1,7 @@
 /* Parent approvals (/parent/approvals) — pending video approvals (mock actions). */
-import { AppIcon, AppIllustration, Card, PageHeader, RecitationPreview } from "@/components";
+import { AppAssetIcon, AppIllustration, Avatar, Card, PageHeader, RecitationPreview } from "@/components";
 import { getPendingParentApprovals, getTeacherIdsForChild } from "@/lib/data";
+import { childAvatarById } from "@/lib/avatars";
 import { ApprovalActions, type ApprovalItem } from "../ApprovalActions";
 import { IconVideo } from "../_icons";
 import { getParentContext } from "../_shared";
@@ -39,13 +40,12 @@ export default async function ParentApprovalsPage({
           {items.map((item) => (
             <Card key={item.recitationId} variant="contrast" className="flex flex-col gap-3">
               <div className="flex items-center gap-3">
-                <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-pill bg-purple/15 p-2.5 text-purple">
-                  <AppIcon name="icon_record_video" fallback={<IconVideo />} />
-                </span>
-                <div className="flex min-w-0 flex-col gap-1">
+                <Avatar name={item.childName} size="lg" src={childAvatarById(item.childId)} />
+                <div className="flex min-w-0 flex-1 flex-col gap-1">
                   <span className="text-card-title font-bold break-words">{item.title}</span>
                   <span className="text-caption opacity-70">{item.childName} · تسميع جديد</span>
                 </div>
+                <AppAssetIcon src="/assets/icons/icon_record_video.png" size="sm" className="shrink-0 text-purple" fallback={<IconVideo />} />
               </div>
               <RecitationPreview />
               <p className="text-caption opacity-70">

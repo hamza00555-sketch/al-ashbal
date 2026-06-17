@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
-import { Badge, Button, Card, RecordingPlayer, SectionTitle } from "@/components";
+import { AppAssetIcon, Avatar, Badge, Button, Card, RecordingPlayer, SectionTitle } from "@/components";
 import { cn } from "@/lib/cn";
+import { childAvatarById } from "@/lib/avatars";
 import { pushNotification } from "@/lib/demo/notifications";
 import { updateSubmission, useSubmissions, type Submission } from "@/lib/demo/submissions";
+import { IconVideo } from "../_icons";
 
 /**
  * Recorded recitations for THIS parent.
@@ -83,9 +85,18 @@ export function ParentSubmissions({
               id={`submission-${s.id}`}
               className={cn("flex flex-col gap-3", highlighted && "ring-2 ring-purple-soft")}
             >
-              <div className="flex min-w-0 flex-col gap-1">
-                <span className="text-card-title font-bold break-words">{s.title}</span>
-                <span className="text-caption text-on-dark-muted">{s.childName} · {s.recordingType === "video" ? "فيديو" : "صوت"}</span>
+              <div className="flex items-center gap-3">
+                <Avatar name={s.childName} size="lg" src={childAvatarById(s.childId)} />
+                <div className="flex min-w-0 flex-1 flex-col gap-1">
+                  <span className="text-card-title font-bold break-words">{s.title}</span>
+                  <span className="text-caption text-on-dark-muted">{s.childName} · {s.recordingType === "video" ? "فيديو" : "صوت"}</span>
+                </div>
+                <AppAssetIcon
+                  src={`/assets/icons/${s.recordingType === "video" ? "icon_record_video" : "icon_record_audio"}.png`}
+                  size="sm"
+                  className="shrink-0 text-purple-soft"
+                  fallback={<IconVideo />}
+                />
               </div>
               {highlighted && (
                 <span>
