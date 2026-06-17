@@ -25,6 +25,7 @@ import {
   type NavItem,
   type RoleOption,
 } from "@/components";
+import { DemoTools } from "../teacher/demo-tools/DemoTools";
 
 // A tiny placeholder glyph to demonstrate icon slots.
 function Glyph() {
@@ -154,6 +155,15 @@ export default function ShowcasePage() {
               <p className="text-body opacity-80">كرت فاتح محدود الاستخدام.</p>
             </Card>
           </div>
+        </section>
+
+        {/* أدوات التجربة — moved out of the teacher daily nav into this dev/showcase page. */}
+        <section className="flex flex-col gap-4">
+          <SectionTitle
+            title="أدوات التجربة"
+            subtitle="قسم تطويري للتجربة — ليس جزءًا من تجربة المعلم اليومية. يمسح بيانات الديمو المحلية فقط."
+          />
+          <DemoTools />
         </section>
       </div>
     </AppShell>

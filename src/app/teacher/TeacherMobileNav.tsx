@@ -2,10 +2,10 @@
 
 import { usePathname } from "next/navigation";
 import { MobileNav } from "@/components";
-import { teacherNavItems } from "./_nav";
+import { teacherBottomNavItems } from "./_nav";
 import { useTeacherReviewCount } from "./useReviewCount";
 
-/** Teacher bottom nav with active state from the current route (mobile fallback). */
+/** Teacher bottom nav (mobile) — slimmed to the daily essentials. */
 export function TeacherMobileNav({
   teacherId,
   dbPendingReviews,
@@ -15,9 +15,9 @@ export function TeacherMobileNav({
 }) {
   const pathname = usePathname();
   const reviewCount = useTeacherReviewCount(teacherId, dbPendingReviews);
-  const items = teacherNavItems.map((item) =>
+  const items = teacherBottomNavItems.map((item) =>
     item.id === "reviews" ? { ...item, badge: reviewCount } : item,
   );
-  const active = teacherNavItems.find((item) => item.href === pathname)?.id ?? "home";
+  const active = teacherBottomNavItems.find((item) => item.href === pathname)?.id ?? "";
   return <MobileNav items={items} activeId={active} />;
 }

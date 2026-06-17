@@ -4,17 +4,26 @@
   sees only their own halaqa. No wishes, no unapproved videos.
 */
 import Link from "next/link";
-import { Avatar, Badge, Card, PageHeader, SectionTitle, StatCard } from "@/components";
+import { AppIcon, Avatar, Badge, Card, PageHeader, SectionTitle, StatCard } from "@/components";
 import {
   getAttendanceForLesson,
   getLessonsForTeacher,
   getPendingTeacherReviews,
 } from "@/lib/data";
-import { IconBook, IconCalendar, IconUsers, IconVideo } from "./_icons";
+import { IconActivity, IconBook, IconCalendar, IconPrep, IconUsers, IconVideo } from "./_icons";
 import { getTeacherContext } from "./_shared";
 import { TeacherReviewAlert } from "./TeacherReviewAlert";
 
 const chip = "inline-flex size-6 items-center justify-center";
+
+/** Teacher control-center tiles — the primary way to reach the daily pages. */
+const TEACHER_TOOLS = [
+  { href: "/teacher/prep", label: "التحضير", icon: "icon_preparation", fallback: <IconPrep /> },
+  { href: "/teacher/attendance", label: "الحضور", icon: "icon_attendance", fallback: <IconCalendar /> },
+  { href: "/teacher/children", label: "الأطفال", icon: "icon_children", fallback: <IconUsers /> },
+  { href: "/teacher/reviews", label: "المراجعات", icon: "icon_review", fallback: <IconVideo /> },
+  { href: "/teacher/activities", label: "الأنشطة", icon: "icon_activity", fallback: <IconActivity /> },
+];
 
 export default function TeacherOverviewPage() {
   const { viewer, halaqas, children } = getTeacherContext();
@@ -48,6 +57,25 @@ export default function TeacherOverviewPage() {
       />
 
       <TeacherReviewAlert teacherId={viewer.id} dbPendingReviews={pendingReviews.length} />
+
+      {/* أدوات المعلم — مركز الوصول الأساسي (كروت مربعة) */}
+      <section className="flex flex-col gap-4">
+        <SectionTitle title="أدوات المعلم" />
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          {TEACHER_TOOLS.map((t) => (
+            <Link
+              key={t.href}
+              href={t.href}
+              className="card-elevated flex aspect-square flex-col items-center justify-center gap-2 rounded-lg p-4 text-center text-on-dark transition hover:brightness-110"
+            >
+              <span className="inline-flex size-12 items-center justify-center overflow-hidden">
+                <AppIcon name={t.icon} fallback={t.fallback} className="scale-[1.3]" />
+              </span>
+              <span className="text-card-title font-bold">{t.label}</span>
+            </Link>
+          ))}
+        </div>
+      </section>
 
       <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard label="حلقة اليوم" value={todayLesson ? todayLesson.startTime : "—"} tone="purple" icon={<span className={chip}><IconCalendar /></span>} hint={todayLesson?.title ?? "لا حلقة اليوم"} />
