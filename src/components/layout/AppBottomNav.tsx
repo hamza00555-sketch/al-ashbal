@@ -42,7 +42,7 @@ export function AppBottomNav({ items, activeId }: { items: BottomNavItem[]; acti
               href={item.href}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "flex flex-1 flex-col items-center justify-end gap-0.5 text-[11px] leading-none transition",
+                "flex flex-1 flex-col items-center justify-end gap-0.5 text-[13px] leading-none transition",
                 active ? "font-bold text-purple-soft" : "text-on-dark-muted hover:text-on-dark",
               )}
             >
