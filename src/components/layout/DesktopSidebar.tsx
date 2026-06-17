@@ -46,7 +46,7 @@ export function DesktopSidebar({
           const inner = (
             <>
               {item.icon && (
-                <span className="inline-flex size-5 items-center justify-center">
+                <span className="inline-flex size-12 shrink-0 items-center justify-center overflow-visible">
                   {item.icon}
                 </span>
               )}
