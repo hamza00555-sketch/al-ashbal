@@ -8,14 +8,27 @@ import {
   ASSIGNMENT_TYPE_LABEL,
   setAssignmentStatus,
   useAssignmentsForHalaqa,
+  type AssignmentStatus,
   type AssignmentSubmissionType,
   type AssignmentType,
+  type StudentAssignment,
 } from "@/lib/demo/studentAssignments";
 import { useSubmissions } from "@/lib/demo/submissions";
 
 const inputClass =
   "min-h-11 w-full rounded-md border border-white/10 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft";
 const fieldLabel = "text-caption text-on-dark-muted";
+
+const STATUS_LABEL: Record<AssignmentStatus, string> = {
+  active: "نشطة",
+  closed: "مغلقة",
+  archived: "مؤرشفة",
+};
+const STATUS_TONE: Record<AssignmentStatus, "success" | "neutral"> = {
+  active: "success",
+  closed: "neutral",
+  archived: "neutral",
+};
 
 function dayLabel(iso: string): string {
   try {
@@ -48,6 +61,34 @@ export function StudentAssignmentsManager({
   const [dueLabel, setDueLabel] = useState("");
 
   const active = assignments.filter((a) => a.status === "active");
+  const closed = assignments.filter((a) => a.status !== "active");
+
+  const renderCard = (a: StudentAssignment) => {
+    const submitted = Object.values(submissions).filter((s) => s.taskId === a.id).length;
+    return (
+      <Card key={a.id} className="flex flex-col gap-2">
+        <div className="flex items-start justify-between gap-2">
+          <span className="text-card-title font-bold break-words">{a.title}</span>
+          <Badge tone={STATUS_TONE[a.status]}>{STATUS_LABEL[a.status]}</Badge>
+        </div>
+        {a.description && <p className="text-caption text-on-dark-muted break-words">{a.description}</p>}
+        <div className="flex flex-wrap gap-2">
+          <Badge tone="purple">{ASSIGNMENT_TYPE_LABEL[a.type]}</Badge>
+          <Badge tone="neutral">{ASSIGNMENT_SUBMISSION_LABEL[a.submissionType]}</Badge>
+          {a.dueLabel && <Badge tone="neutral">{a.dueLabel}</Badge>}
+          <Badge tone="neutral">أُنشئت: {dayLabel(a.createdAt)}</Badge>
+          {submitted > 0 && <Badge tone="gold">أرسلها {submitted}</Badge>}
+        </div>
+        {a.status === "active" && (
+          <div className="sm:max-w-[10rem]">
+            <Button variant="secondary" size="sm" fullWidth onClick={() => setAssignmentStatus(a.id, "closed")}>
+              إغلاق المهمة
+            </Button>
+          </div>
+        )}
+      </Card>
+    );
+  };
 
   function handleAdd(e: React.FormEvent) {
     e.preventDefault();
@@ -116,38 +157,20 @@ export function StudentAssignmentsManager({
       </Card>
 
       <section className="flex flex-col gap-3">
-        <SectionTitle title="المهام النشطة" subtitle="تظهر للطلاب الآن" />
+        <SectionTitle title="مهام نشطة" subtitle="تظهر للطلاب الآن" />
         {active.length > 0 ? (
-          <div className="grid gap-3 lg:grid-cols-2">
-            {active.map((a) => {
-              const submitted = Object.values(submissions).filter((s) => s.taskId === a.id).length;
-              return (
-                <Card key={a.id} className="flex flex-col gap-2">
-                  <div className="flex items-start justify-between gap-2">
-                    <span className="text-card-title font-bold break-words">{a.title}</span>
-                    <Badge tone="success">نشطة</Badge>
-                  </div>
-                  {a.description && <p className="text-caption text-on-dark-muted break-words">{a.description}</p>}
-                  <div className="flex flex-wrap gap-2">
-                    <Badge tone="purple">{ASSIGNMENT_TYPE_LABEL[a.type]}</Badge>
-                    <Badge tone="neutral">{ASSIGNMENT_SUBMISSION_LABEL[a.submissionType]}</Badge>
-                    {a.dueLabel && <Badge tone="neutral">{a.dueLabel}</Badge>}
-                    <Badge tone="neutral">أُنشئت: {dayLabel(a.createdAt)}</Badge>
-                    {submitted > 0 && <Badge tone="gold">أرسلها {submitted}</Badge>}
-                  </div>
-                  <div className="sm:max-w-[10rem]">
-                    <Button variant="secondary" size="sm" fullWidth onClick={() => setAssignmentStatus(a.id, "closed")}>
-                      إغلاق المهمة
-                    </Button>
-                  </div>
-                </Card>
-              );
-            })}
-          </div>
+          <div className="grid gap-3 lg:grid-cols-2">{active.map(renderCard)}</div>
         ) : (
           <Card><p className="text-body text-on-dark-muted">لا مهام نشطة بعد — أضِف أول مهمة.</p></Card>
         )}
       </section>
+
+      {closed.length > 0 && (
+        <section className="flex flex-col gap-3">
+          <SectionTitle title="مهام مغلقة" subtitle="لا تظهر للطلاب — محفوظة هنا" />
+          <div className="grid gap-3 lg:grid-cols-2">{closed.map(renderCard)}</div>
+        </section>
+      )}
     </div>
   );
 }
