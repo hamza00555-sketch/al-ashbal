@@ -10,17 +10,14 @@ export type BadgeTone =
   | "neutral";
 
 const toneClasses: Record<BadgeTone, string> = {
-  // Clearer chips: more opaque background + hairline ring + cream/clear text,
-  // so small tags ("اليوم" / "حاضر") stay readable on the bright purple cards.
-  // Gold is reserved for achievements / awards.
-  gold: "gradient-badge text-on-light",
-  // Deep emerald (NOT mint/cyan) for success/present.
-  success: "bg-[rgba(52,168,107,0.22)] text-cream ring-1 ring-[rgba(52,168,107,0.45)]",
-  warning: "bg-[rgba(240,199,94,0.20)] text-gold ring-1 ring-[rgba(240,199,94,0.4)]",
-  danger: "bg-[rgba(233,137,126,0.22)] text-cream ring-1 ring-[rgba(233,137,126,0.45)]",
-  // Dark translucent chip so it reads clearly ON a purple card (e.g. "اليوم").
-  purple: "bg-[rgba(36,18,72,0.55)] text-cream ring-1 ring-white/18",
-  neutral: "bg-white/14 text-cream ring-1 ring-white/18",
+  // Unified status system: each tone has a clear fill + 1px stroke + light
+  // readable text, so tags never dissolve into the purple cards. No mint/cyan.
+  gold: "gradient-badge text-on-light", // achievements / awards only
+  success: "bg-[rgba(47,191,120,0.22)] text-cream ring-1 ring-[rgba(47,191,120,0.55)]", // حاضر / تم — emerald
+  warning: "bg-[rgba(240,199,94,0.22)] text-[#FFF2C2] ring-1 ring-[rgba(240,199,94,0.55)]", // متأخر / بانتظار — gold
+  danger: "bg-[rgba(233,137,126,0.22)] text-[#FFE4DF] ring-1 ring-[rgba(233,137,126,0.58)]", // غائب / مرفوض — coral
+  purple: "bg-[rgba(181,140,255,0.20)] text-cream ring-1 ring-[rgba(201,174,255,0.40)]", // قيد المراجعة / فئات — lavender
+  neutral: "bg-[rgba(247,241,234,0.16)] text-cream ring-1 ring-[rgba(247,241,234,0.30)]", // اليوم / وقت / عام
 };
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
@@ -38,7 +35,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-pill px-3 py-1 text-caption font-bold",
+        "inline-flex items-center gap-1 rounded-pill px-3 py-1.5 text-caption font-bold leading-none",
         toneClasses[tone],
         className,
       )}

@@ -137,7 +137,7 @@ export function PrepForm({
               <Card key={p.lessonId} className="flex flex-col gap-2">
                 <div className="flex items-start justify-between gap-2">
                   <span className="text-card-title font-bold break-words">{lessonPrepTitle(p)}</span>
-                  <Badge tone={p.lessonStatus === "today" ? "success" : "purple"}>
+                  <Badge tone={p.lessonStatus === "today" ? "neutral" : "purple"}>
                     {p.lessonStatus === "today" ? "درس اليوم" : "درس قادم"}
                   </Badge>
                 </div>

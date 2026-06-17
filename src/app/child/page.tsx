@@ -47,7 +47,7 @@ export default function ChildHomePage() {
           <Card variant="gradient" className="flex flex-col gap-4">
             <div className="flex items-center justify-between gap-2">
               <span className="text-caption text-on-dark-muted">درس اليوم</span>
-              {nextLesson && <Badge tone="purple">اليوم</Badge>}
+              {nextLesson && <Badge tone="neutral">اليوم</Badge>}
             </div>
             <h2 className="text-h2 break-words">{nextLesson?.title ?? "لا يوجد درس مجدول الآن"}</h2>
             {nextLesson?.quranSegment && (
