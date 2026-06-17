@@ -9,9 +9,9 @@ import { IconHome, IconUsers, IconVideo } from "./_icons";
 export function ParentMobileNav() {
   const pathname = usePathname();
   const items: BottomNavItem[] = [
-    { id: "children", label: "أطفالي", href: "/parent/children", src: "/assets/icons/icon_children.png", fallback: <IconUsers />, artworkScale: 1.6 },
+    { id: "children", label: "أطفالي", href: "/parent/children", src: "/assets/icons/icon_children.png", fallback: <IconUsers />, artworkScale: 1.75},
     { id: "home", label: "الرئيسية", href: "/parent", src: "/assets/icons/icon_home.png", fallback: <IconHome />, center: true },
-    { id: "approvals", label: "الموافقات", href: "/parent/approvals", src: "/assets/icons/icon_record_video.png", fallback: <IconVideo />, artworkScale: 1.6 },
+    { id: "approvals", label: "الموافقات", href: "/parent/approvals", src: "/assets/icons/icon_record_video.png", fallback: <IconVideo />, artworkScale: 1.75},
   ];
   const active = items.find((i) => i.href === pathname)?.id ?? "";
   return <AppBottomNav items={items} activeId={active} />;
