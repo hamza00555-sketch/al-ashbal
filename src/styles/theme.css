@@ -99,7 +99,7 @@
    Usage: <div class="gradient-hero"> ...
    ------------------------------------------------------------------ */
 @utility gradient-hero {
-  background-image: var(--gradient-hero);
+  background-image: var(--card-peach-glow), var(--gradient-hero);
 }
 @utility gradient-card {
   background-image: var(--gradient-card);
@@ -118,11 +118,11 @@
    subtle edge glow for hero/emphasis cards.
    ------------------------------------------------------------------ */
 @utility card-elevated {
-  background-image: var(--gradient-card);
+  background-image: var(--card-peach-glow), var(--gradient-card);
   box-shadow: var(--shadow-card), var(--card-top-highlight), var(--card-border);
 }
 @utility card-glow {
-  background-image: var(--gradient-card);
+  background-image: var(--card-peach-glow), var(--gradient-card);
   box-shadow: var(--shadow-card), var(--card-top-highlight), var(--card-border), var(--card-edge-glow);
 }
 

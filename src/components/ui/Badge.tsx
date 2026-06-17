@@ -10,13 +10,17 @@ export type BadgeTone =
   | "neutral";
 
 const toneClasses: Record<BadgeTone, string> = {
+  // Clearer chips: more opaque background + hairline ring + cream/clear text,
+  // so small tags ("اليوم" / "حاضر") stay readable on the bright purple cards.
   // Gold is reserved for achievements / awards.
   gold: "gradient-badge text-on-light",
-  success: "bg-mint/15 text-mint",
-  warning: "bg-gold/15 text-gold",
-  danger: "bg-coral/15 text-coral",
-  purple: "bg-purple/15 text-purple-soft",
-  neutral: "bg-white/8 text-on-dark-muted",
+  // Deep emerald (NOT mint/cyan) for success/present.
+  success: "bg-[rgba(52,168,107,0.22)] text-cream ring-1 ring-[rgba(52,168,107,0.45)]",
+  warning: "bg-[rgba(240,199,94,0.20)] text-gold ring-1 ring-[rgba(240,199,94,0.4)]",
+  danger: "bg-[rgba(233,137,126,0.22)] text-cream ring-1 ring-[rgba(233,137,126,0.45)]",
+  // Dark translucent chip so it reads clearly ON a purple card (e.g. "اليوم").
+  purple: "bg-[rgba(36,18,72,0.55)] text-cream ring-1 ring-white/18",
+  neutral: "bg-white/14 text-cream ring-1 ring-white/18",
 };
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
