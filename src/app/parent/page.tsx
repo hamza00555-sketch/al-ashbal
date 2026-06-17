@@ -4,7 +4,7 @@
   approvals shortcut. Notifications stay in the top bell only.
 */
 import Link from "next/link";
-import { AppIcon, Avatar, Badge, Card, PageHeader, SectionTitle } from "@/components";
+import { AppIcon, Avatar, Badge, Card, CardOverlayMotif, PageHeader, SectionTitle } from "@/components";
 import { getParentChildOverview, getPendingParentApprovals } from "@/lib/data";
 import { childAvatarSrc } from "@/lib/avatars";
 import { ChildStatusAvatar } from "./ChildStatusAvatar";
@@ -48,12 +48,15 @@ export default function ParentOverviewPage() {
             <Link
               key={child.id}
               href={`/parent/children/${child.id}`}
-              className="flex flex-col items-center gap-2 rounded-lg bg-surface p-4 text-center shadow-card transition hover:bg-surface-raised"
+              className="card-contrast relative isolate flex flex-col items-center gap-2 overflow-hidden rounded-lg p-4 text-center shadow-soft ring-1 ring-black/5 transition hover:brightness-[1.03]"
             >
-              <ChildStatusAvatar name={child.displayName} level={summary.level} size="childCard" src={childAvatarSrc(child.gender)} />
-              <span className="text-card-title font-bold break-words">{child.displayName}</span>
-              <Badge tone={CHILD_STATUS[summary.level].tone}>{CHILD_STATUS[summary.level].label}</Badge>
-              <span className="line-clamp-2 text-caption text-on-dark-muted break-words">
+              <CardOverlayMotif motif="halo" className="-top-5 left-1/2 size-28 -translate-x-1/2 text-purple-soft opacity-[0.13]" />
+              <span className="relative z-10">
+                <ChildStatusAvatar name={child.displayName} level={summary.level} size="childCard" src={childAvatarSrc(child.gender)} />
+              </span>
+              <span className="relative z-10 text-card-title font-bold break-words">{child.displayName}</span>
+              <Badge className="relative z-10" tone={CHILD_STATUS[summary.level].tone}>{CHILD_STATUS[summary.level].label}</Badge>
+              <span className="relative z-10 line-clamp-2 text-caption break-words text-[#5F4B7A]">
                 {summary.lastActivity}
               </span>
             </Link>

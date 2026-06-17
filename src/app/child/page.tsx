@@ -4,7 +4,7 @@
   open-tasks alert (→ /child/tasks), and the active class activity (if any).
 */
 import Link from "next/link";
-import { AppAssetIcon, Avatar, Badge, Card, PageHeader, ProgressBar, SectionTitle } from "@/components";
+import { AppAssetIcon, Avatar, Badge, Card, CardOverlayMotif, PageHeader, ProgressBar, SectionTitle } from "@/components";
 import { childAvatarSrc } from "@/lib/avatars";
 import {
   getAttendanceForChild,
@@ -124,29 +124,31 @@ export default function ChildHomePage() {
         <div className="grid grid-cols-2 gap-3">
           <Link
             href="/child/progress"
-            className="flex flex-col gap-2 rounded-lg bg-surface-raised p-4 transition hover:bg-white/5"
+            className="card-contrast relative isolate flex flex-col gap-2 overflow-hidden rounded-lg p-4 shadow-soft ring-1 ring-black/5 transition hover:brightness-[1.03]"
           >
+            <CardOverlayMotif motif="progress" className="-bottom-5 -end-6 size-32 text-purple opacity-[0.12]" />
             <AppAssetIcon
               src="/assets/icons/icon_progress.png"
               size="md"
-              className="rounded-full bg-gold/15 text-gold"
+              className="relative z-10 rounded-full bg-gold/20 text-gold"
               fallback={<IconStar />}
             />
-            <span className="text-card-title font-bold">تقدّمي</span>
-            <span className="text-caption text-on-dark-muted">تابع نقاطك وأوسمتك</span>
+            <span className="relative z-10 text-card-title font-bold">تقدّمي</span>
+            <span className="relative z-10 text-caption text-[#5F4B7A]">تابع نقاطك وأوسمتك</span>
           </Link>
           <Link
             href="/child/wishes"
-            className="flex flex-col gap-2 rounded-lg bg-surface-raised p-4 transition hover:bg-white/5"
+            className="card-contrast relative isolate flex flex-col gap-2 overflow-hidden rounded-lg p-4 shadow-soft ring-1 ring-black/5 transition hover:brightness-[1.03]"
           >
+            <CardOverlayMotif motif="wishes" className="-bottom-5 -end-5 size-32 text-gold opacity-[0.13]" />
             <AppAssetIcon
               src="/assets/icons/icon_wishes.png"
               size="md"
-              className="rounded-full bg-purple/15 text-purple-soft"
+              className="relative z-10 rounded-full bg-purple/20 text-purple-soft"
               fallback={<IconSparkle />}
             />
-            <span className="text-card-title font-bold">أمنياتي</span>
-            <span className="text-caption text-on-dark-muted">اكتب ما تتمنى تحقيقه</span>
+            <span className="relative z-10 text-card-title font-bold">أمنياتي</span>
+            <span className="relative z-10 text-caption text-[#5F4B7A]">اكتب ما تتمنى تحقيقه</span>
           </Link>
         </div>
       </section>

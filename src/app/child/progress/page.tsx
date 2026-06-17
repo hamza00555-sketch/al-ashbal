@@ -1,5 +1,5 @@
 /* Child progress (/child/progress) — rings, cub-journey bar, badges. */
-import { BadgeMedal, Card, PageHeader, ProgressBar, ProgressRing, SectionTitle } from "@/components";
+import { BadgeMedal, Card, CardOverlayMotif, PageHeader, ProgressBar, ProgressRing, SectionTitle } from "@/components";
 import { getBadgesForChild, getProgressForChild } from "@/lib/data";
 import { getChildContext } from "../_shared";
 import { ChildPoints } from "./ChildPoints";
@@ -40,18 +40,21 @@ export default function ChildProgressPage() {
 
         <ChildPoints childId={child.id} />
 
-        <Card className="flex flex-col gap-3">
+        <section className="flex flex-col gap-3">
           <SectionTitle title="أوسمتي" />
-          {badges.length > 0 ? (
-            <div className="flex flex-wrap items-center gap-3">
-              {badges.map((b) => (
-                <BadgeMedal key={b.id} assetKey={BADGE_ASSET[b.category]} label={b.title} />
-              ))}
-            </div>
-          ) : (
-            <p className="text-body text-on-dark-muted">لا أوسمة بعد — أحسنت واستمر!</p>
-          )}
-        </Card>
+          <Card variant="contrast" className="relative isolate overflow-hidden">
+            <CardOverlayMotif motif="badge" className="-bottom-6 -end-6 size-36 text-gold opacity-[0.12]" />
+            {badges.length > 0 ? (
+              <div className="relative z-10 flex flex-wrap items-center gap-3">
+                {badges.map((b) => (
+                  <BadgeMedal key={b.id} assetKey={BADGE_ASSET[b.category]} label={b.title} />
+                ))}
+              </div>
+            ) : (
+              <p className="relative z-10 text-body text-[#5F4B7A]">لا أوسمة بعد — أحسنت واستمر!</p>
+            )}
+          </Card>
+        </section>
       </div>
     </>
   );

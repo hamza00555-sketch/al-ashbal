@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AppAssetIcon, Button, Card, Modal } from "@/components";
+import { AppAssetIcon, Button, Card, CardOverlayMotif, Modal } from "@/components";
 import { IconSparkle } from "../_icons";
 
 export interface LocalWish {
@@ -42,12 +42,13 @@ export function WishesSection({ initialWishes }: { initialWishes: LocalWish[] })
       {wishes.length > 0 ? (
         <div className="grid gap-3 lg:grid-cols-2">
           {wishes.map((wish) => (
-            <Card key={wish.id} className="flex items-start gap-3">
-              <AppAssetIcon src="/assets/icons/icon_wishes.png" size="md" className="text-purple-soft" fallback={<IconSparkle />} />
-              <div className="flex min-w-0 flex-col gap-1">
+            <Card key={wish.id} variant="contrast" className="relative isolate flex items-start gap-3 overflow-hidden">
+              <CardOverlayMotif motif="wishes" className="-bottom-4 -end-4 size-24 text-gold opacity-[0.12]" />
+              <AppAssetIcon src="/assets/icons/icon_wishes.png" size="md" className="relative z-10 text-purple" fallback={<IconSparkle />} />
+              <div className="relative z-10 flex min-w-0 flex-col gap-1">
                 <span className="text-card-title font-bold break-words">{wish.title}</span>
                 {wish.description && (
-                  <span className="text-caption text-on-dark-muted break-words">{wish.description}</span>
+                  <span className="text-caption break-words text-[#5F4B7A]">{wish.description}</span>
                 )}
               </div>
             </Card>

@@ -14,6 +14,8 @@ export { AppIcon } from "./ui/AppIcon";
 export { AppAssetIcon } from "./ui/AppAssetIcon";
 export type { AppAssetIconProps, AssetIconSize, AssetIconVariant } from "./ui/AppAssetIcon";
 export { AppIllustration } from "./ui/AppIllustration";
+export { CardOverlayMotif } from "./ui/CardOverlayMotif";
+export type { OverlayMotif } from "./ui/CardOverlayMotif";
 export { BadgeMedal } from "./ui/BadgeMedal";
 export { SectionTitle } from "./ui/SectionTitle";
 export type { SectionTitleProps } from "./ui/SectionTitle";

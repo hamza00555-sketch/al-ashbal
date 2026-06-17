@@ -8,8 +8,8 @@ const variantClasses: Record<CardVariant, string> = {
   surface: "card-elevated text-on-dark",
   // Emphasis card — same gradient with a soft edge glow.
   raised: "card-glow text-on-dark",
-  // The LIMITED light card — used sparingly for emphasis / privacy notices.
-  contrast: "bg-surface-contrast text-on-light shadow-soft",
+  // The LIMITED light card — cream/off-white with dark-purple text.
+  contrast: "card-contrast shadow-soft ring-1 ring-black/5",
   // Hero card — brighter lavender→purple gradient with glow + lavender outline.
   gradient: "gradient-hero text-on-dark shadow-glow ring-1 ring-purple-soft/30",
 };
