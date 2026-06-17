@@ -17,7 +17,7 @@ export function MobileNav({ items, activeId, onSelect, className }: MobileNavPro
       aria-label="التنقل"
       className={cn(
         "fixed inset-x-0 bottom-0 z-40 flex items-stretch justify-around gap-1",
-        "border-t border-white/10 bg-surface/95 px-3 pt-2 pb-1 backdrop-blur md:hidden",
+        "border-t border-white/10 bg-surface px-3 pt-2 pb-1 shadow-[0_-8px_24px_rgba(0,0,0,0.35)] md:hidden",
         className,
       )}
     >

@@ -56,7 +56,7 @@ export function ChildMobileNav() {
   return (
     <nav
       aria-label="التنقل"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-surface pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_24px_rgba(0,0,0,0.35)] md:hidden"
     >
       {/* fixed bar height (~76px); the larger center icon overflows upward without inflating it */}
       <div className="mx-auto flex h-[76px] w-full max-w-[430px] items-end justify-around gap-2 px-6 pb-2">
