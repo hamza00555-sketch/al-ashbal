@@ -22,6 +22,8 @@ export interface ChildProfile {
   userId?: string;
   displayName: string;
   age?: number;
+  /** Picks the 3D avatar (boy/girl). Optional → falls back to boy. */
+  gender?: "male" | "female";
   halaqaId: string;
   parentIds: string[];
   isActive: boolean;

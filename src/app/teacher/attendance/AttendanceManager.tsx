@@ -38,6 +38,8 @@ function scoreOf(status: AttendanceStatus): string {
 export interface AttendanceChild {
   id: string;
   name: string;
+  /** 3D avatar path (precomputed from the child's gender). */
+  avatarSrc?: string;
 }
 
 export function AttendanceManager({
@@ -174,7 +176,7 @@ export function AttendanceManager({
             <Card key={child.id} className="flex flex-col gap-3">
               <div className="flex items-center justify-between gap-3">
                 <span className="flex min-w-0 items-center gap-3">
-                  <Avatar name={child.name} size="sm" />
+                  <Avatar name={child.name} size="attendance" src={child.avatarSrc} />
                   <span className="truncate font-bold">{child.name}</span>
                 </span>
                 <Badge tone={STATUS_META[status].tone}>{STATUS_META[status].label}</Badge>
@@ -215,7 +217,7 @@ export function AttendanceManager({
                   <tr key={child.id} className="border-b border-white/5 last:border-0">
                     <td className={td}>
                       <span className="flex items-center gap-3">
-                        <Avatar name={child.name} size="sm" />
+                        <Avatar name={child.name} size="attendance" src={child.avatarSrc} />
                         <span className="font-bold">{child.name}</span>
                       </span>
                     </td>

@@ -2,13 +2,25 @@ import type { HTMLAttributes } from "react";
 import { cn } from "@/lib/cn";
 import { AssetImage } from "./AssetImage";
 
-export type AvatarSize = "sm" | "md" | "lg" | "xl";
+export type AvatarSize =
+  | "sm"
+  | "md"
+  | "lg"
+  | "xl"
+  | "attendance"
+  | "childCard"
+  | "hero"
+  | "profile";
 
 const sizeClasses: Record<AvatarSize, string> = {
   sm: "size-9 text-caption",
   md: "size-11 text-body",
   lg: "size-14 text-card-title",
   xl: "size-20 text-h2",
+  attendance: "size-13 text-body", // 52px — teacher attendance rows
+  childCard: "size-18 text-card-title", // 72px — child list cards
+  hero: "size-22 text-h2", // 88px — dashboard headers
+  profile: "size-24 text-h2", // 96px — single-child detail headers
 };
 
 function getInitials(name: string): string {

@@ -6,6 +6,7 @@
 */
 import { Card, PageHeader } from "@/components";
 import { getLessonsForTeacher } from "@/lib/data";
+import { childAvatarSrc } from "@/lib/avatars";
 import { getTeacherContext } from "../_shared";
 import { AttendanceManager, type AttendanceChild } from "./AttendanceManager";
 
@@ -23,7 +24,11 @@ export default function TeacherAttendancePage() {
       .sort((a, b) => `${b.date}${b.startTime}`.localeCompare(`${a.date}${a.startTime}`))[0] ??
     null;
 
-  const childrenList: AttendanceChild[] = children.map((c) => ({ id: c.id, name: c.displayName }));
+  const childrenList: AttendanceChild[] = children.map((c) => ({
+    id: c.id,
+    name: c.displayName,
+    avatarSrc: childAvatarSrc(c.gender),
+  }));
 
   return (
     <>

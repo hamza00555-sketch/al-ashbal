@@ -23,6 +23,9 @@ export const childProfiles: ChildProfile[] = childUsers.map((u, i) => {
     userId: u.id,
     displayName: u.displayName,
     age: 7 + (n % 6), // 7..12, deterministic mock
+    // Seed children all carry male names → male. The girl avatar is wired and
+    // used automatically for any child with gender "female".
+    gender: "male" as const,
     halaqaId: halaqaForChild(n),
     parentIds: [childToParent[n]],
     isActive: true,

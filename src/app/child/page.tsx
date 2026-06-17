@@ -5,6 +5,7 @@
 */
 import Link from "next/link";
 import { AppAssetIcon, Avatar, Badge, Card, PageHeader, ProgressBar, SectionTitle } from "@/components";
+import { childAvatarSrc } from "@/lib/avatars";
 import {
   getAttendanceForChild,
   getNextLessonForChild,
@@ -37,7 +38,7 @@ export default function ChildHomePage() {
         eyebrow="مرحباً"
         title={child.displayName}
         subtitle="هذه لوحتك المختصرة"
-        leading={<Avatar name={child.displayName} size="lg" src="/assets/avatars/avatar_child_boy_01.png" />}
+        leading={<Avatar name={child.displayName} size="hero" src={childAvatarSrc(child.gender)} />}
       />
 
       <div className="grid gap-6 lg:grid-cols-3">

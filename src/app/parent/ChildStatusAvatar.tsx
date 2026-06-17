@@ -8,14 +8,16 @@ export function ChildStatusAvatar({
   name,
   level,
   size = "lg",
+  src,
 }: {
   name: string;
   level: ChildStatusLevel;
   size?: AvatarSize;
+  src?: string;
 }) {
   return (
     <span className={cn("inline-flex shrink-0 rounded-pill p-0.5 ring-2", CHILD_STATUS[level].ring)}>
-      <Avatar name={name} size={size} />
+      <Avatar name={name} size={size} src={src} />
     </span>
   );
 }

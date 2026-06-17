@@ -3,7 +3,8 @@
   One child of the teacher's halaqa only. Gated by getChildById; a teacher can
   never view a child outside their halaqa. Quick points live in a demo store.
 */
-import { Badge, Card, PageHeader, ProgressRing, SectionTitle } from "@/components";
+import { Avatar, Badge, Card, PageHeader, ProgressRing, SectionTitle } from "@/components";
+import { childAvatarSrc } from "@/lib/avatars";
 import {
   getAttendanceForChild,
   getChildById,
@@ -56,6 +57,7 @@ export default async function TeacherChildDetailPage({
       <PageHeader
         eyebrow="تفاصيل الطالب"
         title={child.displayName}
+        leading={<Avatar name={child.displayName} size="profile" src={childAvatarSrc(child.gender)} />}
         actions={<Badge tone={CHILD_STATUS[level].tone}>{CHILD_STATUS[level].label}</Badge>}
       />
 

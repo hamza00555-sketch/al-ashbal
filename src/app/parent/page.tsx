@@ -6,6 +6,7 @@
 import Link from "next/link";
 import { AppIcon, Avatar, Badge, Card, PageHeader, SectionTitle } from "@/components";
 import { getParentChildOverview, getPendingParentApprovals } from "@/lib/data";
+import { childAvatarSrc } from "@/lib/avatars";
 import { ChildStatusAvatar } from "./ChildStatusAvatar";
 import { CHILD_STATUS, getParentContext } from "./_shared";
 import { IconVideo } from "./_icons";
@@ -21,7 +22,7 @@ export default function ParentOverviewPage() {
         eyebrow="أهلاً"
         title={viewer.displayName}
         subtitle="متابعة أبنائك باطمئنان"
-        leading={<Avatar name={viewer.displayName} size="lg" src="/assets/avatars/avatar_parent_father_01.png" />}
+        leading={<Avatar name={viewer.displayName} size="hero" src="/assets/avatars/avatar_parent_father_01.png" />}
       />
 
       {pending.length > 0 && (
@@ -49,7 +50,7 @@ export default function ParentOverviewPage() {
               href={`/parent/children/${child.id}`}
               className="flex flex-col items-center gap-2 rounded-lg bg-surface p-4 text-center shadow-card transition hover:bg-surface-raised"
             >
-              <ChildStatusAvatar name={child.displayName} level={summary.level} size="lg" />
+              <ChildStatusAvatar name={child.displayName} level={summary.level} size="childCard" src={childAvatarSrc(child.gender)} />
               <span className="text-card-title font-bold break-words">{child.displayName}</span>
               <Badge tone={CHILD_STATUS[summary.level].tone}>{CHILD_STATUS[summary.level].label}</Badge>
               <span className="line-clamp-2 text-caption text-on-dark-muted break-words">

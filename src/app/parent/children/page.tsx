@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { Badge, Card, PageHeader } from "@/components";
 import { getParentChildOverview } from "@/lib/data";
+import { childAvatarSrc } from "@/lib/avatars";
 import { ChildStatusAvatar } from "../ChildStatusAvatar";
 import { CHILD_STATUS, getParentContext } from "../_shared";
 
@@ -15,7 +16,7 @@ export default function ParentChildrenPage() {
       <div className="flex flex-col gap-3">
         {overview.map(({ child, summary }) => (
           <Card key={child.id} className="flex items-center gap-3">
-            <ChildStatusAvatar name={child.displayName} level={summary.level} size="md" />
+            <ChildStatusAvatar name={child.displayName} level={summary.level} size="childCard" src={childAvatarSrc(child.gender)} />
             <div className="flex min-w-0 flex-1 flex-col gap-1">
               <span className="text-card-title font-bold break-words">{child.displayName}</span>
               <span className="text-caption text-on-dark-muted break-words">{summary.lastActivity}</span>

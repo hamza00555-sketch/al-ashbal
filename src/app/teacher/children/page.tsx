@@ -5,6 +5,7 @@
 */
 import Link from "next/link";
 import { Avatar, Card, PageHeader } from "@/components";
+import { childAvatarSrc } from "@/lib/avatars";
 import { cn } from "@/lib/cn";
 import { getChildStatusSummary } from "@/lib/data";
 import type { ChildStatusLevel } from "@/lib/data";
@@ -34,7 +35,7 @@ export default function TeacherChildrenPage() {
                 className="flex flex-col items-center gap-2 rounded-lg p-2 text-center transition hover:bg-white/5"
               >
                 <span className={cn("rounded-pill p-1 ring-2", RING[level])}>
-                  <Avatar name={child.displayName} size="lg" />
+                  <Avatar name={child.displayName} size="childCard" src={childAvatarSrc(child.gender)} />
                 </span>
                 <span className="w-full break-words text-caption font-bold">{child.displayName}</span>
               </Link>
