@@ -23,9 +23,9 @@
     /* RTL is also set via the dir attribute in layout.tsx; kept for safety. */
     direction: rtl;
     font-family: var(--font-primary);
-    /* Mostly-purple: the app surface defaults to deep purple. White/cream is
-       opt-in per card via bg-cream / bg-surface-contrast. */
-    background: var(--color-deep-purple);
+    /* Calm dark-purple base (matches the AppShell app-surface gradient top).
+       White/cream is opt-in per card via bg-cream / bg-surface-contrast. */
+    background: #170c33;
     color: var(--text-on-dark);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;

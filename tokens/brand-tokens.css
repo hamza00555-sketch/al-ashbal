@@ -32,9 +32,11 @@
   --text-muted: #CDBEEB;
 
   /* ---------- Gradients ---------- */
-  /* Cards are the visual hero: light lavender top → rich purple → deep bottom. */
+  /* Calm dark base — the background is NOT the hero (a subtle vertical gradient). */
+  --gradient-app-bg: linear-gradient(180deg, #170C33 0%, #221248 55%, #25114A 100%);
+  /* Cards ARE the visual hero: lit lavender corner → rich purple → deep bottom. */
   --gradient-hero: linear-gradient(150deg, #B58CFF 0%, #7B3FF2 38%, #4C1FA6 100%);
-  --gradient-card: linear-gradient(155deg, #6E3AE6 0%, #5226BE 44%, #371A82 100%);
+  --gradient-card: linear-gradient(135deg, rgba(181, 140, 255, 0.95) 0%, rgba(123, 63, 242, 0.92) 38%, rgba(76, 31, 166, 0.96) 100%);
   --gradient-button: linear-gradient(135deg, #B58CFF 0%, #7B3FF2 45%, #4C1FA6 100%);
   --gradient-badge: linear-gradient(135deg, #F8D77A 0%, #F0C75E 45%, #B98221 100%);
 
