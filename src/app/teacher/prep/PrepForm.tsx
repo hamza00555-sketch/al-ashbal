@@ -4,14 +4,10 @@ import { useState } from "react";
 import { Badge, Button, Card, SectionTitle } from "@/components";
 import {
   lessonPrepTitle,
-  REQUIREMENT_LABEL,
   savePrep,
   SUBJECTS,
-  SUBMISSION_LABEL,
   useAllPreps,
   type LessonPrepStatus,
-  type RequirementType,
-  type SubmissionType,
 } from "@/lib/demo/lessonPrep";
 
 const inputClass =
@@ -39,9 +35,6 @@ export function PrepForm({
   const [studentNotes, setStudentNotes] = useState("");
   const [lessonStatus, setLessonStatus] = useState<LessonPrepStatus>("today");
   const [lessonDate, setLessonDate] = useState("");
-  const [requirementType, setRequirementType] = useState<RequirementType>("recitation");
-  const [submissionType, setSubmissionType] = useState<SubmissionType>("audio_or_video");
-  const [dueLabel, setDueLabel] = useState("");
 
   function handleSave(e: React.FormEvent) {
     e.preventDefault();
@@ -49,6 +42,8 @@ export function PrepForm({
       setMessage("أدخل عنوان الدرس أو السورة/الموضوع.");
       return;
     }
+    // Lesson prep is lesson-only now: it never creates a student task.
+    // Student tasks live in the independent "مهام الطلاب" section.
     savePrep({
       teacherId,
       halaqaId,
@@ -61,18 +56,16 @@ export function PrepForm({
       studentNotes: studentNotes.trim() || undefined,
       lessonDate: lessonDate.trim() || (lessonStatus === "today" ? "اليوم" : "قريبًا"),
       lessonStatus,
-      requirementType,
-      submissionType,
-      dueLabel: dueLabel.trim() || undefined,
+      requirementType: "none",
+      submissionType: "none",
     });
-    setMessage("تم حفظ التحضير تجريبيًا وسيظهر للطلاب.");
+    setMessage("تم حفظ تحضير الدرس تجريبيًا.");
     setTitle("");
     setSurahOrTopic("");
     setAyahFrom("");
     setAyahTo("");
     setObjective("");
     setStudentNotes("");
-    setDueLabel("");
   }
 
   return (
@@ -126,33 +119,9 @@ export function PrepForm({
             </label>
           </div>
 
-          <SectionTitle title="المطلوب من الطلاب" />
-          <div className="grid gap-4 sm:grid-cols-3">
-            <label className="flex flex-col gap-2">
-              <span className={fieldLabel}>نوع المطلوب</span>
-              <select value={requirementType} onChange={(e) => setRequirementType(e.target.value as RequirementType)} className={inputClass}>
-                <option value="recitation">{REQUIREMENT_LABEL.recitation}</option>
-                <option value="memorization">{REQUIREMENT_LABEL.memorization}</option>
-                <option value="review">{REQUIREMENT_LABEL.review}</option>
-                <option value="reading">{REQUIREMENT_LABEL.reading}</option>
-                <option value="none">{REQUIREMENT_LABEL.none}</option>
-              </select>
-            </label>
-            <label className="flex flex-col gap-2">
-              <span className={fieldLabel}>طريقة التسليم</span>
-              <select value={submissionType} onChange={(e) => setSubmissionType(e.target.value as SubmissionType)} className={inputClass}>
-                <option value="none">{SUBMISSION_LABEL.none}</option>
-                <option value="audio">{SUBMISSION_LABEL.audio}</option>
-                <option value="video">{SUBMISSION_LABEL.video}</option>
-                <option value="audio_or_video">{SUBMISSION_LABEL.audio_or_video}</option>
-              </select>
-            </label>
-            <label className="flex flex-col gap-2">
-              <span className={fieldLabel}>موعد التسليم</span>
-              <input value={dueLabel} onChange={(e) => setDueLabel(e.target.value)} placeholder="مثال: قبل الدرس القادم" className={inputClass} />
-            </label>
-          </div>
-
+          <p className="text-caption text-on-dark-muted">
+            هذا القسم لتحضير الدرس فقط. لإضافة واجبات للطلاب استخدم قسم «مهام الطلاب» بالأسفل.
+          </p>
           <div className="sm:max-w-xs">
             <Button type="submit" variant="primary" fullWidth>حفظ التحضير</Button>
           </div>
@@ -174,8 +143,7 @@ export function PrepForm({
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <Badge tone="neutral">{p.subject}</Badge>
-                  {p.requirementType !== "none" && <Badge tone="purple">{REQUIREMENT_LABEL[p.requirementType]}</Badge>}
-                  {p.requirementType !== "none" && <Badge tone="neutral">{SUBMISSION_LABEL[p.submissionType]}</Badge>}
+                  {p.lessonDate && <Badge tone="neutral">{p.lessonDate}</Badge>}
                 </div>
               </Card>
             ))}

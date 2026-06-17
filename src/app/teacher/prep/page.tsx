@@ -6,6 +6,7 @@
 import { PageHeader } from "@/components";
 import { getTeacherContext } from "../_shared";
 import { PrepForm } from "./PrepForm";
+import { StudentAssignmentsManager } from "./StudentAssignmentsManager";
 
 export default function TeacherPrepPage() {
   const { viewer, halaqas } = getTeacherContext();
@@ -23,7 +24,10 @@ export default function TeacherPrepPage() {
   return (
     <>
       <PageHeader title="التحضير" subtitle="جهّز درس اليوم أو الدرس القادم" />
-      <PrepForm teacherId={viewer.id} halaqaId={halaqa.id} halaqaName={halaqa.name} />
+      <div className="flex flex-col gap-10">
+        <PrepForm teacherId={viewer.id} halaqaId={halaqa.id} halaqaName={halaqa.name} />
+        <StudentAssignmentsManager teacherId={viewer.id} halaqaId={halaqa.id} />
+      </div>
     </>
   );
 }

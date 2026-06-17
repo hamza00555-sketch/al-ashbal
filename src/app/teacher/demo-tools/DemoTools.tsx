@@ -7,6 +7,7 @@ import {
   resetActivityAnswers,
 } from "@/lib/demo/activities";
 import { resetLessonPrep } from "@/lib/demo/lessonPrep";
+import { resetStudentAssignments } from "@/lib/demo/studentAssignments";
 import { resetNotifications } from "@/lib/demo/notifications";
 import { resetPoints } from "@/lib/demo/points";
 import { clearAllRecordings } from "@/lib/demo/recordings";
@@ -46,6 +47,12 @@ const ITEMS: ResetItem[] = [
     desc: "يحذف تحضيرات الدروس المحفوظة على هذا الجهاز.",
     confirm: "حذف كل التحضيرات التجريبية؟",
     run: resetLessonPrep,
+  },
+  {
+    title: "إعادة ضبط مهام الطلاب",
+    desc: "يحذف مهام الطلاب التي أنشأها المعلم على هذا الجهاز.",
+    confirm: "حذف كل مهام الطلاب التجريبية؟",
+    run: resetStudentAssignments,
   },
   {
     title: "إعادة ضبط الإشعارات",

@@ -12,6 +12,7 @@ import {
 import { PrepTasks } from "./PrepTasks";
 import { RecitationTaskAction } from "./RecitationTaskAction";
 import { ScrollToId } from "./ScrollToId";
+import { StudentAssignmentTasks } from "./StudentAssignmentTasks";
 import { TaskActionButton } from "./TaskActionButton";
 
 const RECORDABLE: ChildTaskStatus[] = ["not_started", "in_progress", "rerecord_needed"];
@@ -90,6 +91,15 @@ export default async function ChildTasksPage({
   return (
     <>
       <PageHeader title="مهامي" subtitle="التسميع والحفظ والمراجعة" />
+
+      <StudentAssignmentTasks
+        halaqaId={child.halaqaId}
+        childId={child.id}
+        childName={child.displayName}
+        childUserId={childUserId}
+        parentUserId={parentUserId}
+        teacherId={teacherId}
+      />
 
       <PrepTasks
         halaqaId={child.halaqaId}
