@@ -4,7 +4,7 @@
   open-tasks alert (→ /child/tasks), and the active class activity (if any).
 */
 import Link from "next/link";
-import { AppIcon, Avatar, Badge, Card, PageHeader, ProgressBar, SectionTitle } from "@/components";
+import { AppAssetIcon, Avatar, Badge, Card, PageHeader, ProgressBar, SectionTitle } from "@/components";
 import {
   getAttendanceForChild,
   getNextLessonForChild,
@@ -122,9 +122,12 @@ export default function ChildHomePage() {
             href="/child/progress"
             className="flex flex-col gap-2 rounded-lg bg-surface-raised p-4 transition hover:bg-white/5"
           >
-            <span className="inline-flex size-10 items-center justify-center rounded-pill bg-gold/15 p-2 text-gold">
-              <AppIcon name="icon_progress" fallback={<IconStar />} />
-            </span>
+            <AppAssetIcon
+              src="/assets/icons/icon_progress.png"
+              size="md"
+              className="rounded-full bg-gold/15 text-gold"
+              fallback={<IconStar />}
+            />
             <span className="text-card-title font-bold">تقدّمي</span>
             <span className="text-caption text-on-dark-muted">تابع نقاطك وأوسمتك</span>
           </Link>
@@ -132,9 +135,12 @@ export default function ChildHomePage() {
             href="/child/wishes"
             className="flex flex-col gap-2 rounded-lg bg-surface-raised p-4 transition hover:bg-white/5"
           >
-            <span className="inline-flex size-10 items-center justify-center rounded-pill bg-purple/15 p-2 text-purple-soft">
-              <AppIcon name="icon_wishes" fallback={<IconSparkle />} />
-            </span>
+            <AppAssetIcon
+              src="/assets/icons/icon_wishes.png"
+              size="md"
+              className="rounded-full bg-purple/15 text-purple-soft"
+              fallback={<IconSparkle />}
+            />
             <span className="text-card-title font-bold">أمنياتي</span>
             <span className="text-caption text-on-dark-muted">اكتب ما تتمنى تحقيقه</span>
           </Link>

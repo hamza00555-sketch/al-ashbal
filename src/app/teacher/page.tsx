@@ -4,7 +4,7 @@
   sees only their own halaqa. No wishes, no unapproved videos.
 */
 import Link from "next/link";
-import { AppIcon, Avatar, Badge, Card, PageHeader, SectionTitle, StatCard } from "@/components";
+import { AppAssetIcon, Avatar, Badge, Card, PageHeader, SectionTitle, StatCard } from "@/components";
 import {
   getAttendanceForLesson,
   getLessonsForTeacher,
@@ -68,9 +68,7 @@ export default function TeacherOverviewPage() {
               href={t.href}
               className="card-elevated flex aspect-square flex-col items-center justify-center gap-2 rounded-lg p-4 text-center text-on-dark transition hover:brightness-110"
             >
-              <span className="inline-flex size-12 items-center justify-center overflow-hidden">
-                <AppIcon name={t.icon} fallback={t.fallback} className="scale-[1.3]" />
-              </span>
+              <AppAssetIcon src={`/assets/icons/${t.icon}.png`} size="lg" fallback={t.fallback} />
               <span className="text-card-title font-bold">{t.label}</span>
             </Link>
           ))}

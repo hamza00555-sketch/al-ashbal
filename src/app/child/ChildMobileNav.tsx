@@ -2,33 +2,29 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AppIcon } from "@/components";
+import { AppAssetIcon } from "@/components";
 import { cn } from "@/lib/cn";
 import { IconBook, IconHome, IconTasks } from "./_icons";
 
 /**
  * Child bottom navigation — only the 3 daily-core pages.
  * RTL visual order: الدروس (right) · الرئيسية (center, larger) · مهامي (left).
- *
- * Sizing note: the icon PNGs have a large transparent canvas (~50–65% fill),
- * so containers are FIXED and the artwork is enlarged with object-contain +
- * overflow-hidden + scale — the glyph grows, the bar height never does.
+ * Icons use the unified AppAssetIcon (fixed container + scaled artwork).
  */
 function SideLink({
   href,
   label,
   active,
-  iconName,
+  src,
   fallback,
-  iconScale = "scale-[1.35]",
+  artworkScale,
 }: {
   href: string;
   label: string;
   active: boolean;
-  iconName: string;
+  src: string;
   fallback: React.ReactNode;
-  /** Per-icon artwork scale (some PNGs have more transparent margin than others). */
-  iconScale?: string;
+  artworkScale?: number;
 }) {
   return (
     <Link
@@ -39,9 +35,7 @@ function SideLink({
         active ? "font-bold text-purple-soft" : "text-on-dark-muted hover:text-on-dark",
       )}
     >
-      <span className="flex size-14 items-center justify-center overflow-hidden">
-        <AppIcon name={iconName} fallback={fallback} className={iconScale} />
-      </span>
+      <AppAssetIcon src={src} size="nav" variant="nav" artworkScale={artworkScale} fallback={fallback} />
       <span className="w-full truncate text-center">{label}</span>
     </Link>
   );
@@ -58,19 +52,18 @@ export function ChildMobileNav() {
       aria-label="التنقل"
       className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-surface pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_24px_rgba(0,0,0,0.35)] md:hidden"
     >
-      {/* fixed bar height (~76px); the larger center icon overflows upward without inflating it */}
       <div className="mx-auto flex h-[76px] w-full max-w-[430px] items-end justify-around gap-2 px-6 pb-2">
-        {/* الدروس — يمين */}
+        {/* الدروس — يمين (أيقونتها فيها هامش أكبر فتحتاج scale أعلى) */}
         <SideLink
           href="/child/lessons"
           label="الدروس"
           active={isLessons}
-          iconName="icon_lessons"
+          src="/assets/icons/icon_lessons.png"
           fallback={<IconBook />}
-          iconScale="scale-[1.75]"
+          artworkScale={1.7}
         />
 
-        {/* الرئيسية — المنتصف: الأيقونة فقط (بدون دائرة)، أكبر من الجانبين */}
+        {/* الرئيسية — المنتصف: أكبر (hero) وبلا دائرة */}
         <Link
           href="/child"
           aria-current={isHome ? "page" : undefined}
@@ -79,9 +72,7 @@ export function ChildMobileNav() {
             isHome ? "font-bold text-purple-soft" : "text-on-dark-muted hover:text-on-dark",
           )}
         >
-          <span className="flex size-20 items-center justify-center overflow-hidden">
-            <AppIcon name="icon_home" fallback={<IconHome />} className="scale-[1.4]" />
-          </span>
+          <AppAssetIcon src="/assets/icons/icon_home.png" size="hero" variant="plain" fallback={<IconHome />} />
           <span>الرئيسية</span>
         </Link>
 
@@ -90,7 +81,7 @@ export function ChildMobileNav() {
           href="/child/tasks"
           label="مهامي"
           active={isTasks}
-          iconName="icon_tasks"
+          src="/assets/icons/icon_tasks.png"
           fallback={<IconTasks />}
         />
       </div>

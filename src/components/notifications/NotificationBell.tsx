@@ -10,7 +10,7 @@ import {
   type DemoNotification,
 } from "@/lib/demo/notifications";
 import { Drawer } from "../ui/Drawer";
-import { AppIcon } from "../ui/AppIcon";
+import { AppAssetIcon } from "../ui/AppAssetIcon";
 import { NotificationList, type NotificationListItem } from "./NotificationList";
 
 function BellIcon() {
@@ -74,7 +74,13 @@ export function NotificationBell({
         onClick={() => setOpen(true)}
         className="relative inline-flex items-center justify-center text-on-dark-muted transition hover:text-on-dark"
       >
-        <span className="inline-flex size-[70px] items-center justify-center"><AppIcon name="icon_notifications" fallback={<BellIcon />} className="scale-[1.35] drop-shadow-[0_3px_6px_rgba(0,0,0,0.35)]" /></span>
+        <AppAssetIcon
+          src="/assets/icons/icon_notifications.png"
+          size="hero"
+          variant="plain"
+          className="drop-shadow-[0_3px_6px_rgba(0,0,0,0.35)]"
+          fallback={<BellIcon />}
+        />
         {unread > 0 && (
           <span className="absolute -top-0.5 -end-0.5 size-2.5 rounded-pill bg-coral" />
         )}
