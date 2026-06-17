@@ -6,26 +6,35 @@ import { cn } from "@/lib/cn";
 import { pushNotification } from "@/lib/demo/notifications";
 import { updateSubmission, useSubmissions, type Submission } from "@/lib/demo/submissions";
 
-/** Recorded recitations awaiting THIS parent's approval (real recording players). */
+/**
+ * Recorded recitations for THIS parent.
+ * - mode="pending"  → awaiting the parent's decision (action buttons). Shown on top.
+ * - mode="processed"→ already approved (sent to teacher) or sent back for re-record.
+ *   Shown read-only at the BOTTOM so acted items move down instead of vanishing.
+ */
 export function ParentSubmissions({
   parentUserId,
   highlightSubmissionId,
+  mode = "pending",
 }: {
   parentUserId: string;
   highlightSubmissionId?: string;
+  mode?: "pending" | "processed";
 }) {
   const submissions = useSubmissions();
-  const pending = Object.values(submissions).filter(
-    (s) => s.parentUserId === parentUserId && s.state === "pending_parent",
-  );
+  const mine = Object.values(submissions).filter((s) => s.parentUserId === parentUserId);
+  const list =
+    mode === "pending"
+      ? mine.filter((s) => s.state === "pending_parent")
+      : mine.filter((s) => s.state === "pending_teacher" || s.state === "rerecord");
 
   useEffect(() => {
-    if (!highlightSubmissionId) return;
+    if (mode !== "pending" || !highlightSubmissionId) return;
     const el = document.getElementById(`submission-${highlightSubmissionId}`);
     el?.scrollIntoView({ behavior: "smooth", block: "center" });
-  }, [highlightSubmissionId, pending.length]);
+  }, [mode, highlightSubmissionId, list.length]);
 
-  if (pending.length === 0) return null;
+  if (list.length === 0) return null;
 
   function approve(s: Submission) {
     updateSubmission(s.taskId, { state: "pending_teacher" });
@@ -57,20 +66,22 @@ export function ParentSubmissions({
     });
   }
 
+  const heading =
+    mode === "pending"
+      ? { title: "تسميعات بانتظار موافقتك", subtitle: "تسجيلات على هذا الجهاز" }
+      : { title: "تمت مراجعتها", subtitle: "تسميعات اتخذت قرارك فيها" };
+
   return (
     <section className="flex flex-col gap-3">
-      <SectionTitle title="تسميعات بانتظار موافقتك" subtitle="تسجيلات على هذا الجهاز" />
+      <SectionTitle title={heading.title} subtitle={heading.subtitle} />
       <div className="grid gap-6 lg:grid-cols-2">
-        {pending.map((s) => {
-          const highlighted = s.id === highlightSubmissionId;
+        {list.map((s) => {
+          const highlighted = mode === "pending" && s.id === highlightSubmissionId;
           return (
             <Card
               key={s.taskId}
               id={`submission-${s.id}`}
-              className={cn(
-                "flex flex-col gap-3",
-                highlighted && "ring-2 ring-purple-soft",
-              )}
+              className={cn("flex flex-col gap-3", highlighted && "ring-2 ring-purple-soft")}
             >
               <div className="flex min-w-0 flex-col gap-1">
                 <span className="text-card-title font-bold break-words">{s.title}</span>
@@ -82,17 +93,27 @@ export function ParentSubmissions({
                 </span>
               )}
               <RecordingPlayer recordingId={s.recordingId} />
-              <p className="text-caption text-on-dark-muted">
-                راجع التسجيل قبل إرساله للمعلم. (تسجيل محفوظ على هذا الجهاز فقط)
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <Button variant="primary" size="sm" onClick={() => approve(s)}>
-                  موافقة
-                </Button>
-                <Button variant="danger" size="sm" onClick={() => rerecord(s)}>
-                  إعادة التسجيل
-                </Button>
-              </div>
+              {mode === "pending" ? (
+                <>
+                  <p className="text-caption text-on-dark-muted">
+                    راجع التسجيل قبل إرساله للمعلم. (تسجيل محفوظ على هذا الجهاز فقط)
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <Button variant="primary" size="sm" onClick={() => approve(s)}>
+                      موافقة
+                    </Button>
+                    <Button variant="danger" size="sm" onClick={() => rerecord(s)}>
+                      إعادة التسجيل
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <span>
+                  <Badge tone={s.state === "pending_teacher" ? "success" : "warning"}>
+                    {s.state === "pending_teacher" ? "تمت الموافقة — أُرسل للمعلم" : "طلبت إعادة التسجيل"}
+                  </Badge>
+                </span>
+              )}
             </Card>
           );
         })}

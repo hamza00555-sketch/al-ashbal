@@ -29,6 +29,30 @@ export function TeacherReviewsList({ dbItems }: { dbItems: ReviewItem[] }) {
   }
   const items = [...byId.values()];
 
+  // Pending reviews on top; accepted / re-record (processed) move to the bottom.
+  const isProcessed = (it: ReviewItem) => {
+    const s = reviews[it.recitationId]?.state;
+    return s === "accepted" || s === "rerecord";
+  };
+  const pendingItems = items.filter((it) => !isProcessed(it));
+  const processedItems = items.filter(isProcessed);
+
+  const renderReviewCard = (item: ReviewItem) => (
+    <Card key={item.recitationId} className="flex flex-col gap-4">
+      <div className="flex items-center gap-3">
+        <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-pill bg-purple/15 p-2.5 text-purple-soft">
+          <AppIcon name="icon_record_video" fallback={<IconVideo />} />
+        </span>
+        <div className="flex min-w-0 flex-col gap-1">
+          <span className="text-card-title font-bold break-words">{item.title}</span>
+          <span className="text-caption text-on-dark-muted">{item.childName} · تسميع جديد</span>
+        </div>
+      </div>
+      <RecitationPreview />
+      <ReviewActions item={item} entry={reviews[item.recitationId]} />
+    </Card>
+  );
+
   if (items.length === 0) {
     return (
       <Card className="flex items-center gap-3">
@@ -47,22 +71,22 @@ export function TeacherReviewsList({ dbItems }: { dbItems: ReviewItem[] }) {
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
-      {items.map((item) => (
-        <Card key={item.recitationId} className="flex flex-col gap-4">
-          <div className="flex items-center gap-3">
-            <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-pill bg-purple/15 p-2.5 text-purple-soft">
-              <AppIcon name="icon_record_video" fallback={<IconVideo />} />
-            </span>
-            <div className="flex min-w-0 flex-col gap-1">
-              <span className="text-card-title font-bold break-words">{item.title}</span>
-              <span className="text-caption text-on-dark-muted">{item.childName} · تسميع جديد</span>
-            </div>
-          </div>
-          <RecitationPreview />
-          <ReviewActions item={item} entry={reviews[item.recitationId]} />
-        </Card>
-      ))}
+    <div className="flex flex-col gap-6">
+      {pendingItems.length > 0 ? (
+        <section className="flex flex-col gap-3">
+          <h2 className="text-body font-bold text-on-dark">بانتظار المراجعة</h2>
+          <div className="grid gap-6 lg:grid-cols-2">{pendingItems.map(renderReviewCard)}</div>
+        </section>
+      ) : (
+        <p className="text-body text-on-dark-muted">لا توجد تسميعات بانتظار المراجعة حاليًا.</p>
+      )}
+
+      {processedItems.length > 0 && (
+        <section className="flex flex-col gap-3">
+          <h2 className="text-body font-bold text-on-dark-muted">تمت مراجعتها</h2>
+          <div className="grid gap-6 lg:grid-cols-2">{processedItems.map(renderReviewCard)}</div>
+        </section>
+      )}
     </div>
   );
 }

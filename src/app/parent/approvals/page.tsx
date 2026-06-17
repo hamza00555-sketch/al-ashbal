@@ -69,6 +69,9 @@ export default async function ParentApprovalsPage({
           <p className="text-body text-on-dark-muted">لا يوجد فيديو بانتظار موافقتك الآن.</p>
         </Card>
       )}
+
+      {/* Processed (approved / sent back) move to the bottom — they don't vanish. */}
+      <ParentSubmissions parentUserId={viewer.id} mode="processed" />
     </>
   );
 }
