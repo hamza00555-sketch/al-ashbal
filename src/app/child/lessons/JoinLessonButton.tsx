@@ -5,11 +5,14 @@ import { Badge, Button } from "@/components";
 import { useAttendance } from "@/lib/demo/attendance";
 import { IconBook } from "../_icons";
 
+const GATE_CLOSED_MESSAGE = "بوابة الحضور مغلقة حاليًا، لن يتم تسجيل أي حضور الآن.";
+
 /**
- * Child join flow (mock). Uses the OPEN gate's meet link (set by the teacher),
- * not a static lesson URL.
+ * Child join flow (mock). Attendance is recorded ONLY when the teacher's gate
+ * is open. If the gate is closed (or never opened), pressing the button shows a
+ * clear notice and records nothing — no store write, no timestamp, no success.
  * - gate open  → record join → present (within grace) / late → open gate.meetUrl
- * - gate closed / not opened → blocked with a clear message (no attendance)
+ * - gate closed / idle → blocked with a clear message (no attendance)
  */
 export function JoinLessonButton({
   lessonId,
@@ -23,23 +26,24 @@ export function JoinLessonButton({
   const { state, recordJoin } = useAttendance(lessonId ?? "none", [childId]);
   const [message, setMessage] = useState<string | null>(null);
   const myStatus = state.entries[childId]?.status;
+  const gateOpen = state.gate.status === "open";
 
   function handleJoin() {
     if (!lessonId) {
       setMessage("لا يوجد درس الآن.");
       return;
     }
-    if (state.gate.status === "idle") {
-      setMessage("لم يفتح المعلم بوابة الحضور بعد.");
-      return;
-    }
-    if (state.gate.status === "closed") {
-      setMessage("بوابة الحضور مغلقة الآن.");
+    // ── Attendance gate guard ──────────────────────────────────────────────
+    // Block EVERYTHING (store write / timestamp / success) unless the gate is
+    // open. This runs before recordJoin, which also re-checks the gate itself.
+    if (state.gate.status !== "open") {
+      setMessage(GATE_CLOSED_MESSAGE);
       return;
     }
     const result = recordJoin(childId);
     if (!result.ok) {
-      setMessage("تعذّر تسجيل الدخول الآن.");
+      // Gate flipped to closed between render and click — still nothing saved.
+      setMessage(GATE_CLOSED_MESSAGE);
       return;
     }
     const label = result.status === "present" ? "حاضر" : "متأخر";
@@ -54,6 +58,18 @@ export function JoinLessonButton({
 
   return (
     <div className="flex flex-col gap-2">
+      {/* Clear gate status when there is a lesson but the gate is not open. */}
+      {lessonId && !gateOpen && (
+        <div className="flex flex-col gap-1 rounded-md bg-surface-raised px-4 py-3">
+          <span>
+            <Badge tone="warning">بوابة الحضور مغلقة</Badge>
+          </span>
+          <p className="text-caption text-on-dark-muted">
+            يفتحها المعلم عند بداية الحلقة. لن يُسجَّل أي حضور الآن.
+          </p>
+        </div>
+      )}
+
       <Button
         variant="primary"
         fullWidth
