@@ -1,15 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { Badge, Button, Card, SectionTitle } from "@/components";
+import { AppAssetIcon, Badge, Button, Card, SectionTitle } from "@/components";
 import {
   lessonPrepTaskTitle,
   REQUIREMENT_LABEL,
   SUBMISSION_LABEL,
   usePrepsForHalaqa,
   type LessonPrep,
+  type RequirementType,
 } from "@/lib/demo/lessonPrep";
+import { IconBook, IconTasks, IconVideo } from "../_icons";
 import { RecitationTaskAction } from "./RecitationTaskAction";
+
+const PREP_ICON: Record<RequirementType, { name: string; fallback: React.ReactNode }> = {
+  recitation: { name: "icon_record_video", fallback: <IconVideo /> },
+  memorization: { name: "icon_tasks", fallback: <IconTasks /> },
+  review: { name: "icon_review", fallback: <IconBook /> },
+  reading: { name: "icon_lessons", fallback: <IconBook /> },
+  none: { name: "icon_tasks", fallback: <IconTasks /> },
+};
 
 export interface PrepTasksProps {
   halaqaId: string;
@@ -34,13 +44,21 @@ function PrepTaskCard({ prep, ctx }: { prep: LessonPrep; ctx: PrepTasksProps }) 
 
   return (
     <Card className="flex flex-col gap-3">
-      <div className="flex min-w-0 flex-col gap-1">
-        <span className="text-card-title font-bold break-words">{title}</span>
-        <div className="flex flex-wrap gap-2">
-          <Badge tone="purple">من التحضير</Badge>
-          <Badge tone="neutral">{REQUIREMENT_LABEL[prep.requirementType]}</Badge>
-          <Badge tone="neutral">طريقة التسليم: {SUBMISSION_LABEL[prep.submissionType]}</Badge>
-          {prep.dueLabel && <Badge tone="neutral">{prep.dueLabel}</Badge>}
+      <div className="flex items-start gap-3">
+        <AppAssetIcon
+          src={`/assets/icons/${PREP_ICON[prep.requirementType].name}.png`}
+          size="md"
+          className="rounded-full bg-purple/15 text-purple-soft"
+          fallback={PREP_ICON[prep.requirementType].fallback}
+        />
+        <div className="flex min-w-0 flex-col gap-1">
+          <span className="text-card-title font-bold break-words">{title}</span>
+          <div className="flex flex-wrap gap-2">
+            <Badge tone="purple">من التحضير</Badge>
+            <Badge tone="neutral">{REQUIREMENT_LABEL[prep.requirementType]}</Badge>
+            <Badge tone="neutral">طريقة التسليم: {SUBMISSION_LABEL[prep.submissionType]}</Badge>
+            {prep.dueLabel && <Badge tone="neutral">{prep.dueLabel}</Badge>}
+          </div>
         </div>
       </div>
       {prep.studentNotes && <p className="text-body text-on-dark-muted break-words">{prep.studentNotes}</p>}

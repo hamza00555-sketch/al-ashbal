@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Badge, Button } from "@/components";
+import { AppAssetIcon, Badge, Button } from "@/components";
 import { useAttendance } from "@/lib/demo/attendance";
 import { IconBook } from "../_icons";
 
@@ -75,7 +75,7 @@ export function JoinLessonButton({
         fullWidth
         disabled={disabled}
         onClick={handleJoin}
-        leadingIcon={<span className="inline-flex size-5"><IconBook /></span>}
+        leadingIcon={<AppAssetIcon src="/assets/icons/icon_lessons.png" size="sm" fallback={<IconBook />} />}
       >
         ادخل الدرس
       </Button>

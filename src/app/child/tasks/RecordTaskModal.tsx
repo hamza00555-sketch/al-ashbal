@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AppIcon, Badge, Button, Modal } from "@/components";
+import { AppAssetIcon, Badge, Button, Modal } from "@/components";
 import { cn } from "@/lib/cn";
 import { IconMic, IconVideo } from "../_icons";
 import { pushNotification } from "@/lib/demo/notifications";
@@ -231,12 +231,11 @@ export function RecordTaskModal({
                   mode === m ? "gradient-cta text-cream" : "bg-surface-raised text-on-dark-muted hover:text-on-dark",
                 )}
               >
-                <span className="inline-flex size-4">
-                  <AppIcon
-                    name={m === "audio" ? "icon_record_audio" : "icon_record_video"}
-                    fallback={m === "audio" ? <IconMic /> : <IconVideo />}
-                  />
-                </span>
+                <AppAssetIcon
+                  src={`/assets/icons/${m === "audio" ? "icon_record_audio" : "icon_record_video"}.png`}
+                  size="sm"
+                  fallback={m === "audio" ? <IconMic /> : <IconVideo />}
+                />
                 {m === "audio" ? "تسجيل صوت" : "تسجيل فيديو"}
               </button>
             ))}

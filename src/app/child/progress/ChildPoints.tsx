@@ -1,6 +1,6 @@
 "use client";
 
-import { AppIcon, Badge, Card, SectionTitle } from "@/components";
+import { AppAssetIcon, Badge, Card, SectionTitle } from "@/components";
 import { POINT_CATEGORY_LABEL, usePointsForChild } from "@/lib/demo/points";
 import { IconStar } from "../_icons";
 
@@ -22,7 +22,7 @@ export function ChildPoints({ childId }: { childId: string }) {
     <Card className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <span className="inline-flex size-6 text-gold"><AppIcon name="icon_points" fallback={<IconStar />} /></span>
+          <AppAssetIcon src="/assets/icons/icon_points.png" size="md" className="text-gold" fallback={<IconStar />} />
           <SectionTitle title="نقاطي" />
         </div>
         {points.length > 0 && <Badge tone="gold">إجمالي {total}</Badge>}

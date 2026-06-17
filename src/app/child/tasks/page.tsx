@@ -1,8 +1,16 @@
 /* Child tasks (/child/tasks) — "مهامي": recitation / memorization / review. */
-import { AppIllustration, Badge, Card, PageHeader } from "@/components";
+import { AppAssetIcon, AppIllustration, Badge, Card, PageHeader } from "@/components";
 import { cn } from "@/lib/cn";
 import { getTasksForChild, getTeacherIdsForChild } from "@/lib/data";
-import type { ChildTaskStatus } from "@/types";
+import type { ChildTaskStatus, ChildTaskType } from "@/types";
+import { IconBook, IconTasks, IconVideo } from "../_icons";
+
+/** Task-type → 3D icon asset (+ inline-SVG fallback). */
+const TASK_ICON: Record<ChildTaskType, { name: string; fallback: React.ReactNode }> = {
+  recitation: { name: "icon_record_video", fallback: <IconVideo /> },
+  memorization: { name: "icon_tasks", fallback: <IconTasks /> },
+  review: { name: "icon_review", fallback: <IconBook /> },
+};
 import {
   getChildContext,
   TASK_STATUS,
@@ -44,7 +52,13 @@ export default async function ChildTasksPage({
         id={`task-${task.id}`}
         className={cn("flex flex-col gap-3", highlighted && "ring-2 ring-purple-soft")}
       >
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex items-start gap-3">
+          <AppAssetIcon
+            src={`/assets/icons/${TASK_ICON[task.type].name}.png`}
+            size="md"
+            className="rounded-full bg-purple/15 text-purple-soft"
+            fallback={TASK_ICON[task.type].fallback}
+          />
           <div className="flex min-w-0 flex-col gap-1">
             <span className="text-card-title font-bold break-words">{task.title}</span>
             <div className="flex flex-wrap gap-2">

@@ -1,14 +1,24 @@
 "use client";
 
 import { useState } from "react";
-import { Badge, Button, Card, SectionTitle } from "@/components";
+import { AppAssetIcon, Badge, Button, Card, SectionTitle } from "@/components";
 import {
   ASSIGNMENT_SUBMISSION_LABEL,
   ASSIGNMENT_TYPE_LABEL,
   useAssignmentsForHalaqa,
+  type AssignmentType,
   type StudentAssignment,
 } from "@/lib/demo/studentAssignments";
+import { IconBook, IconTasks, IconVideo } from "../_icons";
 import { RecitationTaskAction } from "./RecitationTaskAction";
+
+const ASSIGNMENT_ICON: Record<AssignmentType, { name: string; fallback: React.ReactNode }> = {
+  recitation: { name: "icon_record_video", fallback: <IconVideo /> },
+  memorization: { name: "icon_tasks", fallback: <IconTasks /> },
+  review: { name: "icon_review", fallback: <IconBook /> },
+  reading: { name: "icon_lessons", fallback: <IconBook /> },
+  confirm: { name: "icon_tasks", fallback: <IconTasks /> },
+};
 
 export interface StudentAssignmentTasksProps {
   halaqaId: string;
@@ -31,13 +41,21 @@ function AssignmentCard({ a, ctx }: { a: StudentAssignment; ctx: StudentAssignme
   const [message, setMessage] = useState<string | null>(null);
   return (
     <Card className="flex flex-col gap-3">
-      <div className="flex min-w-0 flex-col gap-1">
-        <span className="text-card-title font-bold break-words">{a.title}</span>
-        <div className="flex flex-wrap gap-2">
-          <Badge tone="purple">مهمة من المعلم</Badge>
-          <Badge tone="neutral">{ASSIGNMENT_TYPE_LABEL[a.type]}</Badge>
-          <Badge tone="neutral">طريقة التسليم: {ASSIGNMENT_SUBMISSION_LABEL[a.submissionType]}</Badge>
-          {a.dueLabel && <Badge tone="neutral">{a.dueLabel}</Badge>}
+      <div className="flex items-start gap-3">
+        <AppAssetIcon
+          src={`/assets/icons/${ASSIGNMENT_ICON[a.type].name}.png`}
+          size="md"
+          className="rounded-full bg-purple/15 text-purple-soft"
+          fallback={ASSIGNMENT_ICON[a.type].fallback}
+        />
+        <div className="flex min-w-0 flex-col gap-1">
+          <span className="text-card-title font-bold break-words">{a.title}</span>
+          <div className="flex flex-wrap gap-2">
+            <Badge tone="purple">مهمة من المعلم</Badge>
+            <Badge tone="neutral">{ASSIGNMENT_TYPE_LABEL[a.type]}</Badge>
+            <Badge tone="neutral">طريقة التسليم: {ASSIGNMENT_SUBMISSION_LABEL[a.submissionType]}</Badge>
+            {a.dueLabel && <Badge tone="neutral">{a.dueLabel}</Badge>}
+          </div>
         </div>
       </div>
       {a.description && <p className="text-body text-on-dark-muted break-words">{a.description}</p>}

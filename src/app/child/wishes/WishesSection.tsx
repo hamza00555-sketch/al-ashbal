@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Card, Modal } from "@/components";
+import { AppAssetIcon, Button, Card, Modal } from "@/components";
 import { IconSparkle } from "../_icons";
 
 export interface LocalWish {
@@ -43,9 +43,7 @@ export function WishesSection({ initialWishes }: { initialWishes: LocalWish[] })
         <div className="grid gap-3 lg:grid-cols-2">
           {wishes.map((wish) => (
             <Card key={wish.id} className="flex items-start gap-3">
-              <span className="inline-flex size-6 shrink-0 items-center justify-center text-purple-soft">
-                <IconSparkle />
-              </span>
+              <AppAssetIcon src="/assets/icons/icon_wishes.png" size="md" className="text-purple-soft" fallback={<IconSparkle />} />
               <div className="flex min-w-0 flex-col gap-1">
                 <span className="text-card-title font-bold break-words">{wish.title}</span>
                 {wish.description && (

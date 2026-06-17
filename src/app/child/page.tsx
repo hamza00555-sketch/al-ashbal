@@ -58,9 +58,12 @@ export default function ChildHomePage() {
           {openTasks > 0 && (
             <Card className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex min-w-0 items-center gap-3">
-                <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-pill bg-purple/15 p-2.5 text-purple-soft">
-                  <IconTasks />
-                </span>
+                <AppAssetIcon
+                  src="/assets/icons/icon_tasks.png"
+                  size="md"
+                  className="rounded-full bg-purple/15 text-purple-soft"
+                  fallback={<IconTasks />}
+                />
                 <div className="flex min-w-0 flex-col gap-1">
                   <span className="text-card-title font-bold">لديك {openTasks} مهمة بانتظارك</span>
                   <span className="text-caption text-on-dark-muted">تسميع وحفظ ومراجعة</span>
@@ -104,10 +107,10 @@ export default function ChildHomePage() {
             <ProgressBar value={progress?.currentProgressBar.current ?? 0} tone="purple" label="رحلة الشبل" />
             <div className="grid grid-cols-2 gap-3">
               <Link href="/child/tasks" className={glanceLink}>
-                <span className="inline-flex size-5 text-purple-soft"><IconTasks /></span> مهامي
+                <AppAssetIcon src="/assets/icons/icon_tasks.png" size="sm" className="text-purple-soft" fallback={<IconTasks />} /> مهامي
               </Link>
               <Link href="/child/progress" className={glanceLink}>
-                <span className="inline-flex size-5 text-gold"><IconStar /></span> التقدّم
+                <AppAssetIcon src="/assets/icons/icon_progress.png" size="sm" className="text-gold" fallback={<IconStar />} /> التقدّم
               </Link>
             </div>
           </Card>

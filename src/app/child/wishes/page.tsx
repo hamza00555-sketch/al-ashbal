@@ -1,5 +1,5 @@
 /* Child wishes (/child/wishes) — privacy note + interactive (mock) wishes. */
-import { Card, PageHeader } from "@/components";
+import { AppAssetIcon, Card, PageHeader } from "@/components";
 import { getWishesForViewer } from "@/lib/data";
 import { IconSparkle } from "../_icons";
 import { getChildContext } from "../_shared";
@@ -20,9 +20,12 @@ export default function ChildWishesPage() {
       <PageHeader title="أمنياتي" subtitle="تظهر لولي أمرك فقط" />
 
       <Card className="flex items-center gap-3">
-        <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-pill bg-purple/15 p-2 text-purple-soft">
-          <IconSparkle />
-        </span>
+        <AppAssetIcon
+          src="/assets/icons/icon_wishes.png"
+          size="md"
+          className="rounded-full bg-purple/15 text-purple-soft"
+          fallback={<IconSparkle />}
+        />
         <p className="text-caption text-on-dark-muted">
           الأمنيات للتعبير، وليست وعدًا مباشرًا — يراها ولي أمرك فقط.
         </p>
