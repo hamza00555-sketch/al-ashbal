@@ -1,8 +1,9 @@
 /* Child progress (/child/progress) — rings, cub-journey bar, badges. */
-import { BadgeMedal, Card, CardOverlayMotif, PageHeader, ProgressBar, ProgressRing, SectionTitle } from "@/components";
+import { BadgeMedal, Card, CardOverlayMotif, PageHeader, SectionTitle } from "@/components";
 import { getBadgesForChild, getProgressForChild } from "@/lib/data";
 import { getChildContext } from "../_shared";
 import { ChildPoints } from "./ChildPoints";
+import { CubJourneyCard, ProgressRingsCard } from "./ProgressMetrics";
 
 /** Map a badge's category to a medal asset key (falls back to a text pill). */
 const BADGE_ASSET: Record<string, string | undefined> = {
@@ -18,25 +19,22 @@ export default function ChildProgressPage() {
   const progress = getProgressForChild(viewer, child.id);
   const badges = getBadgesForChild(viewer, child.id);
 
+  // Seed snapshot used only as a baseline; live values are derived in the
+  // single demo helper (useChildProgress) so rings + bar + points stay in sync.
+  const baseline = {
+    quran: progress?.quranPercent ?? 0,
+    tajweed: progress?.tajweedPercent ?? 0,
+    behavior: progress?.behaviorPercent ?? 0,
+  };
+
   return (
     <>
       <PageHeader title="تقدّمي" subtitle="القرآن · التجويد · السلوك" />
 
-      <Card>
-        {/* keep the rings grouped & centered even on wide screens */}
-        <div className="mx-auto flex w-full max-w-md items-center justify-between gap-2">
-          <ProgressRing value={progress?.quranPercent ?? 0} size={72} strokeWidth={8} tone="purple" sublabel="القرآن" />
-          <ProgressRing value={progress?.tajweedPercent ?? 0} size={72} strokeWidth={8} tone="gold" sublabel="التجويد" />
-          <ProgressRing value={progress?.behaviorPercent ?? 0} size={72} strokeWidth={8} tone="success" sublabel="السلوك" />
-        </div>
-      </Card>
+      <ProgressRingsCard childId={child.id} baseline={baseline} />
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="flex flex-col gap-3">
-          <SectionTitle title="رحلة الشبل" />
-          <ProgressBar value={progress?.currentProgressBar.current ?? 0} tone="purple" />
-          <p className="text-caption text-on-dark-muted">باقي القليل على الإنجاز القادم.</p>
-        </Card>
+        <CubJourneyCard childId={child.id} baseline={baseline} />
 
         <ChildPoints childId={child.id} />
 
