@@ -16,6 +16,12 @@ export interface RecordTask {
   parentUserId: string;
   teacherId?: string;
   title: string;
+  /** Optional material/lesson link copied from the assignment (Phase D). */
+  materialId?: string;
+  lessonId?: string;
+  points?: number;
+  materialName?: string;
+  lessonTitle?: string;
 }
 
 type Phase = "idle" | "recording" | "recorded" | "error";
@@ -189,6 +195,12 @@ export function RecordTaskModal({
       recordingType: mode,
       state: "pending_parent",
       createdAt: new Date().toISOString(),
+      // carry the material/lesson link so acceptance can credit the material
+      materialId: task.materialId,
+      lessonId: task.lessonId,
+      points: task.points,
+      materialName: task.materialName,
+      lessonTitle: task.lessonTitle,
     });
     pushNotification({
       userId: task.parentUserId,

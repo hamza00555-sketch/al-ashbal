@@ -80,6 +80,11 @@ function AssignmentCard({ a, ctx }: { a: StudentAssignment; ctx: StudentAssignme
           allowAudio={a.submissionType === "audio" || a.submissionType === "audio_or_video"}
           allowVideo={a.submissionType === "video" || a.submissionType === "audio_or_video"}
           baseCanRecord
+          materialId={a.materialId}
+          lessonId={a.lessonId}
+          points={a.points}
+          materialName={a.materialName}
+          lessonTitle={a.lessonTitle}
         />
       ) : (
         <div className="flex flex-col gap-2">

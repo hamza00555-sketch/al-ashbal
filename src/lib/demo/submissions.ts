@@ -23,6 +23,14 @@ export interface Submission {
   state: SubmissionState;
   note?: string;
   createdAt: string;
+  /** Optional link to a learning material + saved lesson (Phase C/D). Copied
+   *  from the assignment so teacher acceptance can credit the right material.
+   *  All optional → old submissions keep working. */
+  materialId?: string;
+  lessonId?: string;
+  points?: number;
+  materialName?: string;
+  lessonTitle?: string;
 }
 
 type SubmissionMap = Record<string, Submission>; // keyed by taskId

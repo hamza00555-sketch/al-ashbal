@@ -54,6 +54,9 @@ function SubmissionCard({
         note: rateNote.trim() || undefined,
         sourceType: "recitation",
         sourceId: sub.id,
+        // Phase D: credit the linked material so its progress ring updates.
+        // Falls back to category→material mapping when there is no materialId.
+        materialId: sub.materialId,
       });
     }
     const earned = chosen.value > 0;

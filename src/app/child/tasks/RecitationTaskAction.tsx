@@ -26,6 +26,12 @@ export interface RecitationTaskActionProps {
   baseCanRecord: boolean;
   baseStatusLabel?: string;
   baseStatusTone?: BadgeTone;
+  /** Optional material/lesson link (Phase D) — passed through to the submission. */
+  materialId?: string;
+  lessonId?: string;
+  points?: number;
+  materialName?: string;
+  lessonTitle?: string;
 }
 
 export function RecitationTaskAction(props: RecitationTaskActionProps) {
@@ -77,6 +83,11 @@ export function RecitationTaskAction(props: RecitationTaskActionProps) {
             parentUserId: props.parentUserId,
             teacherId: props.teacherId,
             title: props.title,
+            materialId: props.materialId,
+            lessonId: props.lessonId,
+            points: props.points,
+            materialName: props.materialName,
+            lessonTitle: props.lessonTitle,
           }}
           allowAudio={props.allowAudio}
           allowVideo={props.allowVideo}
