@@ -1,6 +1,6 @@
 /* Child progress (/child/progress) — rings, cub-journey bar, badges. */
 import { BadgeMedal, Card, CardOverlayMotif, PageHeader, SectionTitle } from "@/components";
-import { getBadgesForChild, getProgressForChild } from "@/lib/data";
+import { getBadgesForChild } from "@/lib/data";
 import { getChildContext } from "../_shared";
 import { ChildPoints } from "./ChildPoints";
 import { CubJourneyCard, ProgressRingsCard } from "./ProgressMetrics";
@@ -16,25 +16,16 @@ export default function ChildProgressPage() {
   const { viewer, child } = getChildContext();
   if (!child) return <p className="text-body text-on-dark-muted">لا توجد بيانات لعرضها.</p>;
 
-  const progress = getProgressForChild(viewer, child.id);
   const badges = getBadgesForChild(viewer, child.id);
-
-  // Seed snapshot used only as a baseline; live values are derived in the
-  // single demo helper (useChildProgress) so rings + bar + points stay in sync.
-  const baseline = {
-    quran: progress?.quranPercent ?? 0,
-    tajweed: progress?.tajweedPercent ?? 0,
-    behavior: progress?.behaviorPercent ?? 0,
-  };
 
   return (
     <>
       <PageHeader title="تقدّمي" subtitle="القرآن · التجويد · السلوك" />
 
-      <ProgressRingsCard childId={child.id} baseline={baseline} />
+      <ProgressRingsCard childId={child.id} halaqaId={child.halaqaId} />
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <CubJourneyCard childId={child.id} baseline={baseline} />
+        <CubJourneyCard childId={child.id} halaqaId={child.halaqaId} />
 
         <ChildPoints childId={child.id} />
 

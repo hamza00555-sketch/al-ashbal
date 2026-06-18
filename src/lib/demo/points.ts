@@ -35,6 +35,9 @@ export interface PointEntry {
   createdAt: string;
   sourceType?: PointSourceType;
   sourceId?: string;
+  /** Optional link to a learning material (Phase A+). When absent, progress
+   *  attribution falls back to the point's category. No writer sets this yet. */
+  materialId?: string;
 }
 
 export const POINT_CATEGORY_LABEL: Record<PointCategory, string> = {

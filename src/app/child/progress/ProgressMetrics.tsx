@@ -1,33 +1,50 @@
 "use client";
 
 import { Card, ProgressBar, ProgressRing, SectionTitle } from "@/components";
-import { useChildProgress, type ProgressBaseline } from "@/lib/demo/progress";
+import { useChildProgress } from "@/lib/demo/progress";
 
 /**
- * Live progress UI for /child/progress. Both the three rings and the
- * "رحلة الشبل" bar read from the SAME demo helper (useChildProgress), so they
- * never show contradictory numbers and update after teacher acceptance.
+ * Live progress UI for /child/progress. Both the rings and the "رحلة الشبل" bar
+ * read from the SAME demo helper (useChildProgress), which is driven by the
+ * halaqa's learning materials — so the page shows one ring PER material
+ * (dynamic count) and the bar is the average of the visible materials.
  */
-export function ProgressRingsCard({ childId, baseline }: { childId: string; baseline: ProgressBaseline }) {
-  const m = useChildProgress(childId, baseline);
+export function ProgressRingsCard({ childId, halaqaId }: { childId: string; halaqaId: string }) {
+  const { materials } = useChildProgress(childId, halaqaId);
+
+  if (materials.length === 0) {
+    return (
+      <Card>
+        <p className="text-body text-on-dark-muted">لا توجد مواد لعرض تقدّمها بعد.</p>
+      </Card>
+    );
+  }
+
   return (
     <Card>
-      {/* keep the rings grouped & centered even on wide screens */}
-      <div className="mx-auto flex w-full max-w-md items-center justify-between gap-2">
-        <ProgressRing value={m.quranProgress} size={72} strokeWidth={8} tone="purple" sublabel="القرآن" />
-        <ProgressRing value={m.tajweedProgress} size={72} strokeWidth={8} tone="gold" sublabel="التجويد" />
-        <ProgressRing value={m.behaviorProgress} size={72} strokeWidth={8} tone="success" sublabel="السلوك" />
+      {/* one ring per visible material — keep them grouped & centered */}
+      <div className="mx-auto flex w-full max-w-md flex-wrap items-center justify-center gap-x-6 gap-y-4">
+        {materials.map((m) => (
+          <ProgressRing
+            key={m.materialId}
+            value={m.progress}
+            size={72}
+            strokeWidth={8}
+            tone={m.colorToken}
+            sublabel={m.name}
+          />
+        ))}
       </div>
     </Card>
   );
 }
 
-export function CubJourneyCard({ childId, baseline }: { childId: string; baseline: ProgressBaseline }) {
-  const m = useChildProgress(childId, baseline);
+export function CubJourneyCard({ childId, halaqaId }: { childId: string; halaqaId: string }) {
+  const { overallProgress } = useChildProgress(childId, halaqaId);
   return (
     <Card className="flex flex-col gap-3">
       <SectionTitle title="رحلة الشبل" />
-      <ProgressBar value={m.overallProgress} tone="purple" />
+      <ProgressBar value={overallProgress} tone="purple" />
       <p className="text-caption text-on-dark-muted">باقي القليل على الإنجاز القادم.</p>
     </Card>
   );
