@@ -50,6 +50,12 @@ function AssignmentCard({ a, ctx }: { a: StudentAssignment; ctx: StudentAssignme
         />
         <div className="flex min-w-0 flex-col gap-1">
           <span className="text-card-title font-bold break-words">{a.title}</span>
+          {/* Calm material · lesson meta line (Phase C) — no extra tag clutter. */}
+          {(a.materialName || a.lessonTitle) && (
+            <p className="text-caption text-purple-soft break-words">
+              {[a.materialName, a.lessonTitle].filter(Boolean).join(" · ")}
+            </p>
+          )}
           <div className="flex flex-wrap gap-2">
             <Badge tone="purple">مهمة من المعلم</Badge>
             <Badge tone="neutral">{ASSIGNMENT_TYPE_LABEL[a.type]}</Badge>

@@ -14,6 +14,18 @@ import {
   type StudentAssignment,
 } from "@/lib/demo/studentAssignments";
 import { useSubmissions } from "@/lib/demo/submissions";
+import { useMaterialsForHalaqa } from "@/lib/demo/materials";
+import { useLessonsForMaterial, type LessonSubmissionType } from "@/lib/demo/materialLessons";
+
+/** Map a lesson's allowed submission types → the assignment submission type. */
+function lessonToSubmissionType(allowed: LessonSubmissionType[]): AssignmentSubmissionType {
+  const audio = allowed.includes("audio");
+  const video = allowed.includes("video");
+  if (audio && video) return "audio_or_video";
+  if (video) return "video";
+  if (audio) return "audio";
+  return "none";
+}
 
 const inputClass =
   "min-h-11 w-full rounded-md border border-white/10 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft";
@@ -52,6 +64,7 @@ export function StudentAssignmentsManager({
 }) {
   const assignments = useAssignmentsForHalaqa(halaqaId);
   const submissions = useSubmissions();
+  const materials = useMaterialsForHalaqa(halaqaId);
   const [message, setMessage] = useState<string | null>(null);
 
   const [title, setTitle] = useState("");
@@ -59,6 +72,29 @@ export function StudentAssignmentsManager({
   const [type, setType] = useState<AssignmentType>("recitation");
   const [submissionType, setSubmissionType] = useState<AssignmentSubmissionType>("audio_or_video");
   const [dueLabel, setDueLabel] = useState("");
+
+  // Phase C: optional material + saved-lesson link.
+  const [materialId, setMaterialId] = useState("");
+  const [lessonId, setLessonId] = useState("");
+  const [points, setPoints] = useState("");
+  const lessons = useLessonsForMaterial(materialId).filter((l) => !l.archived);
+  const selectedMaterial = materials.find((m) => m.id === materialId);
+
+  function onMaterialChange(id: string) {
+    setMaterialId(id);
+    setLessonId("");
+  }
+
+  function onLessonChange(id: string) {
+    setLessonId(id);
+    const lesson = lessons.find((l) => l.id === id);
+    if (!lesson) return;
+    // Autofill from the lesson (teacher can still edit afterwards).
+    setTitle(lesson.title);
+    setDescription(lesson.description ?? "");
+    setPoints(String(lesson.defaultPoints));
+    setSubmissionType(lessonToSubmissionType(lesson.allowedSubmissionTypes));
+  }
 
   const active = assignments.filter((a) => a.status === "active");
   const closed = assignments.filter((a) => a.status !== "active");
@@ -96,6 +132,7 @@ export function StudentAssignmentsManager({
       setMessage("اكتب عنوان المهمة.");
       return;
     }
+    const lesson = lessons.find((l) => l.id === lessonId);
     addAssignment({
       teacherId,
       halaqaId,
@@ -104,11 +141,19 @@ export function StudentAssignmentsManager({
       type,
       submissionType,
       dueLabel: dueLabel.trim() || undefined,
+      materialId: materialId || undefined,
+      lessonId: lessonId || undefined,
+      points: points.trim() !== "" ? Number(points) : undefined,
+      materialName: selectedMaterial?.name,
+      lessonTitle: lesson?.title,
     });
     setMessage("تمت إضافة المهمة وستظهر للطلاب.");
     setTitle("");
     setDescription("");
     setDueLabel("");
+    setMaterialId("");
+    setLessonId("");
+    setPoints("");
   }
 
   return (
@@ -117,6 +162,25 @@ export function StudentAssignmentsManager({
         <SectionTitle title="مهام الطلاب" subtitle="مستقلة عن تحضير الدرس — أضِف المطلوب في أي وقت" />
         <form onSubmit={handleAdd} className="flex flex-col gap-4">
           <div className="grid gap-4 sm:grid-cols-2">
+            {/* Phase C: pick a material + saved lesson to auto-fill the task. */}
+            <label className="flex flex-col gap-2">
+              <span className={fieldLabel}>المادة (اختياري)</span>
+              <select value={materialId} onChange={(e) => onMaterialChange(e.target.value)} className={inputClass}>
+                <option value="">— بدون مادة —</option>
+                {materials.map((m) => (
+                  <option key={m.id} value={m.id}>{m.name}</option>
+                ))}
+              </select>
+            </label>
+            <label className="flex flex-col gap-2">
+              <span className={fieldLabel}>الدرس المحفوظ (اختياري)</span>
+              <select value={lessonId} onChange={(e) => onLessonChange(e.target.value)} disabled={!materialId} className={inputClass}>
+                <option value="">{materialId ? "— اختر درسًا —" : "اختر مادة أولًا"}</option>
+                {lessons.map((l) => (
+                  <option key={l.id} value={l.id}>{l.title}</option>
+                ))}
+              </select>
+            </label>
             <label className="flex flex-col gap-2 sm:col-span-2">
               <span className={fieldLabel}>عنوان المهمة</span>
               <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="مثال: سمّع سورة الملك 1-10" className={inputClass} />
@@ -143,6 +207,10 @@ export function StudentAssignmentsManager({
                 <option value="video">{ASSIGNMENT_SUBMISSION_LABEL.video}</option>
                 <option value="audio_or_video">{ASSIGNMENT_SUBMISSION_LABEL.audio_or_video}</option>
               </select>
+            </label>
+            <label className="flex flex-col gap-2">
+              <span className={fieldLabel}>نقاط المهمة (اختياري)</span>
+              <input type="number" min={0} value={points} onChange={(e) => setPoints(e.target.value)} placeholder="من الدرس" className={inputClass} />
             </label>
             <label className="flex flex-col gap-2 sm:col-span-2">
               <span className={fieldLabel}>موعد التسليم (اختياري)</span>

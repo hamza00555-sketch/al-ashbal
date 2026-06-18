@@ -25,6 +25,14 @@ export interface StudentAssignment {
   dueLabel?: string;
   status: AssignmentStatus;
   createdAt: string;
+  /** Optional link to a learning material + saved lesson (Phase C). Snapshot
+   *  names are kept for a calm display even if the material/lesson changes
+   *  later. All optional → old manual assignments keep working unchanged. */
+  materialId?: string;
+  lessonId?: string;
+  points?: number;
+  materialName?: string;
+  lessonTitle?: string;
 }
 
 export const ASSIGNMENT_TYPE_LABEL: Record<AssignmentType, string> = {
