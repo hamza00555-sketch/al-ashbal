@@ -16,6 +16,7 @@ import {
   type MaterialType,
 } from "@/lib/demo/materials";
 import { IconBook } from "../_icons";
+import { MaterialLessons } from "./MaterialLessons";
 
 const inputClass =
   "min-h-11 w-full rounded-md border border-white/10 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft";
@@ -84,6 +85,7 @@ export function MaterialsManager({ halaqaId }: { halaqaId: string }) {
   const archived = materials.filter((m) => m.archived);
 
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [lessonsOpenId, setLessonsOpenId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
   // add-form state
@@ -141,7 +143,15 @@ export function MaterialsManager({ halaqaId }: { halaqaId: string }) {
           <Button variant="ghost" size="sm" disabled={index === 0} onClick={() => moveMaterialUp(halaqaId, m.id)}>رفع الترتيب</Button>
           <Button variant="ghost" size="sm" disabled={index === list.length - 1} onClick={() => moveMaterialDown(halaqaId, m.id)}>خفض الترتيب</Button>
           <Button variant="ghost" size="sm" onClick={() => archiveMaterial(halaqaId, m.id)}>أرشفة</Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setLessonsOpenId((cur) => (cur === m.id ? null : m.id))}
+          >
+            {lessonsOpenId === m.id ? "إخفاء الدروس" : "إدارة الدروس"}
+          </Button>
         </div>
+        {lessonsOpenId === m.id && <MaterialLessons materialId={m.id} />}
       </Card>
     );
   }
