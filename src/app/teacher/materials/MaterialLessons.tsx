@@ -119,7 +119,7 @@ export function MaterialLessons({ materialId }: { materialId: string }) {
   const [editingId, setEditingId] = useState<string | null>(null);
 
   return (
-    <div className="mt-1 flex flex-col gap-3 border-t border-white/10 pt-3">
+    <div className="mt-1 flex flex-col gap-3 rounded-md bg-night/40 p-3 ring-1 ring-white/10">
       <div className="flex items-center justify-between gap-2">
         <span className="text-caption font-bold text-on-dark">الدروس المحفوظة ({active.length})</span>
         {!adding && (
@@ -160,11 +160,25 @@ export function MaterialLessons({ materialId }: { materialId: string }) {
                     <Badge tone="neutral">الترتيب: {l.order}</Badge>
                   </div>
                 </div>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap items-center gap-1">
                   <Button variant="ghost" size="sm" onClick={() => { setEditingId(l.id); setAdding(false); }}>تعديل</Button>
-                  <Button variant="ghost" size="sm" disabled={i === 0} onClick={() => moveLessonUp(materialId, l.id)}>رفع</Button>
-                  <Button variant="ghost" size="sm" disabled={i === active.length - 1} onClick={() => moveLessonDown(materialId, l.id)}>خفض</Button>
                   <Button variant="ghost" size="sm" onClick={() => archiveMaterialLesson(materialId, l.id)}>أرشفة</Button>
+                  <span className="ms-auto flex items-center gap-1">
+                    <button
+                      type="button"
+                      aria-label="رفع الترتيب"
+                      disabled={i === 0}
+                      onClick={() => moveLessonUp(materialId, l.id)}
+                      className="inline-flex size-8 items-center justify-center rounded-md text-body text-on-dark-muted transition hover:bg-white/5 hover:text-on-dark disabled:cursor-not-allowed disabled:opacity-35"
+                    >↑</button>
+                    <button
+                      type="button"
+                      aria-label="خفض الترتيب"
+                      disabled={i === active.length - 1}
+                      onClick={() => moveLessonDown(materialId, l.id)}
+                      className="inline-flex size-8 items-center justify-center rounded-md text-body text-on-dark-muted transition hover:bg-white/5 hover:text-on-dark disabled:cursor-not-allowed disabled:opacity-35"
+                    >↓</button>
+                  </span>
                 </div>
               </div>
             ),
