@@ -23,6 +23,7 @@ const TEACHER_TOOLS = [
   { href: "/teacher/children", label: "الأطفال", icon: "icon_children", fallback: <IconUsers /> },
   { href: "/teacher/reviews", label: "المراجعات", icon: "icon_review", fallback: <IconVideo /> },
   { href: "/teacher/activities", label: "الأنشطة", icon: "icon_activity", fallback: <IconActivity /> },
+  { href: "/teacher/materials", label: "المواد والتقدم", icon: "icon_progress", fallback: <IconActivity /> },
 ];
 
 export default function TeacherOverviewPage() {
