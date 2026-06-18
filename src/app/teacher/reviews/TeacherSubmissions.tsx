@@ -185,9 +185,15 @@ export function TeacherSubmissions({
   highlightSubmissionId?: string;
 }) {
   const submissions = useSubmissions();
-  const items = Object.values(submissions).filter(
-    (s) => s.teacherId === teacherId && (s.state === "pending_teacher" || s.state === "accepted" || s.state === "rerecord"),
-  );
+  // Parent-approved & awaiting THIS teacher's review (pending) vs already
+  // processed (accepted / rerecord). Pending must always sort to the top so a
+  // freshly parent-approved recitation never sits below older reviewed ones.
+  const isPending = (s: Submission) => s.state === "pending_teacher";
+  const isProcessed = (s: Submission) => s.state === "accepted" || s.state === "rerecord";
+  const ts = (s: Submission) => Date.parse(s.createdAt) || 0;
+  const items = Object.values(submissions)
+    .filter((s) => s.teacherId === teacherId && (isPending(s) || isProcessed(s)))
+    .sort((a, b) => (isPending(a) ? 0 : 1) - (isPending(b) ? 0 : 1) || ts(b) - ts(a));
 
   useEffect(() => {
     if (!highlightSubmissionId) return;
