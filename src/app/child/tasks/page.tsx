@@ -1,7 +1,7 @@
 /* Child tasks (/child/tasks) — "مهامي": recitation / memorization / review. */
 import { AppAssetIcon, AppIllustration, Badge, Card, PageHeader } from "@/components";
 import { cn } from "@/lib/cn";
-import { getTasksForChild, getTeacherIdsForChild } from "@/lib/data";
+import { getTasksForChild, getTeacherIdForHalaqa } from "@/lib/data";
 import type { ChildTaskStatus, ChildTaskType } from "@/types";
 import { IconBook, IconTasks, IconVideo } from "../_icons";
 
@@ -37,7 +37,7 @@ export default async function ChildTasksPage({
   const tasks = getTasksForChild(viewer, child.id);
   const childUserId = child.userId ?? "";
   const parentUserId = child.parentIds[0] ?? "";
-  const teacherId = getTeacherIdsForChild(viewer, child.id)[0];
+  const teacherId = getTeacherIdForHalaqa(child.halaqaId);
 
   // Active (needs the child's action) on top; submitted/handled move to the bottom.
   // Order WITHIN each group is preserved (the source order).

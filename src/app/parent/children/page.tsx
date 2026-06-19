@@ -13,6 +13,9 @@ export default function ParentChildrenPage() {
   return (
     <>
       <PageHeader title="أطفالي" subtitle={`${overview.length} مرتبطون بك`} />
+      {overview.length === 0 && (
+        <Card><p className="text-body text-on-dark-muted">لم يتم ربط أي طفل بعد.</p></Card>
+      )}
       <div className="flex flex-col gap-3">
         {overview.map(({ child, summary }) => (
           <Card key={child.id} variant="contrast" className="relative isolate flex items-center gap-3 overflow-hidden">

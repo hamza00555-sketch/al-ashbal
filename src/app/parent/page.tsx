@@ -4,7 +4,7 @@
   approvals shortcut. Notifications stay in the top bell only.
 */
 import Link from "next/link";
-import { Badge, CardOverlayMotif, ChildDisplayName, PageHeader, RoleAvatar, RoleName, SectionTitle, SettingsLink } from "@/components";
+import { Badge, Card, CardOverlayMotif, ChildDisplayName, PageHeader, RoleAvatar, RoleName, SectionTitle, SettingsLink } from "@/components";
 import { getParentChildOverview } from "@/lib/data";
 import { childAvatarSrc } from "@/lib/avatars";
 import { LiveChildStatusAvatar } from "./LiveChildStatusAvatar";
@@ -29,6 +29,18 @@ export default function ParentOverviewPage() {
 
       <section className="flex flex-col gap-3">
         <SectionTitle title="أطفالي" subtitle={`${overview.length} مرتبطون بك`} />
+        {overview.length === 0 ? (
+          <Card className="flex flex-col items-start gap-3">
+            <p className="text-body text-on-dark-muted">لم يتم ربط أي طفل بعد.</p>
+            <p className="text-caption text-on-dark-muted">سيتاح ربط الأطفال بحسابك لاحقًا. يمكنك تجربة حساب الطفل الآن.</p>
+            <Link
+              href="/child"
+              className="inline-flex min-h-9 items-center rounded-pill bg-surface-raised px-4 text-caption font-bold text-on-dark ring-1 ring-purple-soft/30 transition hover:bg-white/5 hover:ring-purple-soft"
+            >
+              فتح تجربة الطفل
+            </Link>
+          </Card>
+        ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {overview.map(({ child, summary }) => (
             <Link
@@ -50,6 +62,7 @@ export default function ParentOverviewPage() {
             </Link>
           ))}
         </div>
+        )}
       </section>
     </>
   );

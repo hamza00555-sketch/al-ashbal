@@ -77,6 +77,12 @@ export function getProgressForChild(
   return db.progressSnapshots.find((p) => p.childId === childId) ?? null;
 }
 
+/** The teacher who owns a halaqa (by halaqaId). Independent of the children
+ *  roster — used so the child→teacher link works in empty-first mode. */
+export function getTeacherIdForHalaqa(halaqaId: string): string | undefined {
+  return db.halaqas.find((h) => h.id === halaqaId)?.teacherIds[0];
+}
+
 /** Halaqas a teacher (or admin) manages. */
 export function getTeacherHalaqas(viewer: User): Halaqa[] {
   if (viewer.role === "admin") return [...db.halaqas];

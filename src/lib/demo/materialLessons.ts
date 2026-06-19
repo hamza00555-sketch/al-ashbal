@@ -60,7 +60,8 @@ function typeFromMaterialId(materialId: string): MaterialType | undefined {
   return (suffix in LESSON_SEED ? (suffix as MaterialType) : undefined);
 }
 
-function defaultLessons(materialId: string): MaterialLesson[] {
+/** Demo seed lessons for a material (kept for an explicit demo-fill, not auto). */
+export function defaultLessons(materialId: string): MaterialLesson[] {
   const type = typeFromMaterialId(materialId);
   const seed = type ? LESSON_SEED[type] : undefined;
   if (!seed) return [];
@@ -97,10 +98,11 @@ function writeAll(list: MaterialLesson[]) {
   window.dispatchEvent(new CustomEvent(EVENT));
 }
 
-/** Lessons for a material, materialized from the demo seed the first time. */
+/** Lessons for a material. Empty-first: NO auto-seed — the teacher adds lessons
+ *  from /teacher/materials. `defaultLessons` is kept for an explicit demo-fill
+ *  later, but is not used automatically. */
 function lessonsOf(all: MaterialLesson[], materialId: string): MaterialLesson[] {
-  const mine = all.filter((l) => l.materialId === materialId);
-  return mine.length > 0 ? mine : defaultLessons(materialId);
+  return all.filter((l) => l.materialId === materialId);
 }
 
 /** All lessons for a material incl. archived, ordered. */
@@ -205,16 +207,6 @@ function subscribe(callback: () => void) {
   };
 }
 
-const defaultsCache = new Map<string, MaterialLesson[]>();
-function stableDefaults(materialId: string): MaterialLesson[] {
-  let v = defaultsCache.get(materialId);
-  if (!v) {
-    v = defaultLessons(materialId);
-    defaultsCache.set(materialId, v);
-  }
-  return v;
-}
-
 export function useLessonsForMaterial(materialId: string): MaterialLesson[] {
   const cache = useRef<{ sig: string; value: MaterialLesson[] }>({ sig: "∅", value: EMPTY });
   const getSnapshot = useCallback((): MaterialLesson[] => {
@@ -224,6 +216,7 @@ export function useLessonsForMaterial(materialId: string): MaterialLesson[] {
     cache.current = { sig, value: list };
     return list;
   }, [materialId]);
-  const getServerSnapshot = useCallback(() => stableDefaults(materialId), [materialId]);
+  // Empty-first: server/first-paint snapshot is empty (no auto-seed lessons).
+  const getServerSnapshot = useCallback(() => EMPTY, []);
   return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }

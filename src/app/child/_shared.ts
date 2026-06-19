@@ -1,6 +1,7 @@
 /* Shared helpers + label maps for the child pages (keeps pages thin). */
 import type { BadgeTone } from "@/components";
-import { getMockUser, getVisibleChildren } from "@/lib/data";
+import { getMockUser } from "@/lib/data";
+import { childProfiles } from "@/lib/data/children";
 import type {
   AttendanceStatus,
   ChildProfile,
@@ -12,10 +13,15 @@ import type {
   User,
 } from "@/types";
 
-/** Resolve the current (mock) child viewer + their own profile. */
+/**
+ * Resolve the current (mock) child viewer + their own profile.
+ * Empty-first: the roster (db.children) is empty, so we resolve the demo child
+ * profile DIRECTLY from the seed by userId — identity only. All seed-gated data
+ * (tasks/progress/badges/wishes) stays empty until the user builds it.
+ */
 export function getChildContext(): { viewer: User; child: ChildProfile | null } {
   const viewer = getMockUser("child");
-  const child = getVisibleChildren(viewer)[0] ?? null;
+  const child = childProfiles.find((c) => c.userId === viewer.id) ?? childProfiles[0] ?? null;
   return { viewer, child };
 }
 

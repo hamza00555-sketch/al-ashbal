@@ -25,6 +25,7 @@ export {
   getAttendanceForChild,
   getTeacherReviewsForChild,
   getTeacherIdsForChild,
+  getTeacherIdForHalaqa,
   getLessonsForTeacher,
   getAttendanceForLesson,
   getGuestSummary,

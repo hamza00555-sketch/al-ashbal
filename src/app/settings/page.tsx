@@ -4,7 +4,8 @@
   defaulting to the current demo role. No backend, no real auth, no protection.
 */
 import { AppShell, DemoExperienceSwitcher } from "@/components";
-import { getMockUser, getVisibleChildren } from "@/lib/data";
+import { getMockUser } from "@/lib/data";
+import { childProfiles } from "@/lib/data/children";
 import type { Role } from "@/lib/auth/types";
 import { SettingsView } from "./SettingsView";
 
@@ -19,9 +20,11 @@ export default async function SettingsPage({
   const role = VALID_ROLES.includes(roleParam ?? "") ? (roleParam as Role) : undefined;
 
   // For the child role, settings edit the child profile keyed by childId (the
-  // demo child viewer) so the change reflects in the parent's views too.
+  // demo child viewer). Resolved from the seed directly (roster is empty-first).
   const childId =
-    role === "child" ? getVisibleChildren(getMockUser("child"))[0]?.id : undefined;
+    role === "child"
+      ? (childProfiles.find((c) => c.userId === getMockUser("child").id)?.id ?? childProfiles[0]?.id)
+      : undefined;
 
   return (
     <AppShell>

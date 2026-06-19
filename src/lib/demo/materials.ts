@@ -112,10 +112,11 @@ function writeAll(list: LearningMaterial[]) {
   window.dispatchEvent(new CustomEvent(EVENT));
 }
 
-/** Stored materials for a halaqa, materialized from defaults the first time. */
+/** Stored materials for a halaqa. Empty-first: NO auto-defaults — the teacher
+ *  creates materials from /teacher/materials. `defaultMaterials` is kept for an
+ *  explicit "fill demo data" action later, but is not used automatically. */
 function halaqaMaterials(all: LearningMaterial[], halaqaId: string): LearningMaterial[] {
-  const mine = all.filter((m) => m.halaqaId === halaqaId);
-  return mine.length > 0 ? mine : defaultMaterials(halaqaId);
+  return all.filter((m) => m.halaqaId === halaqaId);
 }
 
 /**
@@ -241,18 +242,6 @@ function subscribe(callback: () => void) {
   };
 }
 
-// Stable defaults per halaqa for the server/hydration snapshot (must not read
-// localStorage and must keep a stable reference).
-const defaultsCache = new Map<string, LearningMaterial[]>();
-function stableDefaults(halaqaId: string): LearningMaterial[] {
-  let v = defaultsCache.get(halaqaId);
-  if (!v) {
-    v = defaultMaterials(halaqaId);
-    defaultsCache.set(halaqaId, v);
-  }
-  return v;
-}
-
 function useMaterialsList(
   halaqaId: string,
   getter: (halaqaId: string) => LearningMaterial[],
@@ -265,7 +254,8 @@ function useMaterialsList(
     cache.current = { sig, value: list };
     return list;
   }, [halaqaId, getter]);
-  const getServerSnapshot = useCallback(() => stableDefaults(halaqaId), [halaqaId]);
+  // Empty-first: server/first-paint snapshot is empty (no auto-defaults).
+  const getServerSnapshot = useCallback(() => EMPTY, []);
   return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }
 
