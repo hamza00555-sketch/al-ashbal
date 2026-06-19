@@ -126,6 +126,9 @@ export function MaterialLessons({ materialId }: { materialId: string }) {
           <Button variant="secondary" size="sm" onClick={() => { setAdding(true); setEditingId(null); }}>إضافة درس</Button>
         )}
       </div>
+      <p className="text-caption text-on-dark-muted">
+        الدروس هنا محفوظة للمعلم. لن تظهر للطفل إلا بعد إنشاء تكليف منها من صفحة التحضير.
+      </p>
 
       {adding && (
         <LessonForm

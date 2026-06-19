@@ -1,10 +1,12 @@
-/* Parent approvals (/parent/approvals) — pending video approvals (mock actions). */
-import { AppAssetIcon, AppIllustration, Avatar, Card, PageHeader, RecitationPreview } from "@/components";
-import { getPendingParentApprovals, getTeacherIdsForChild } from "@/lib/data";
-import { childAvatarById } from "@/lib/avatars";
-import { ApprovalActions, type ApprovalItem } from "../ApprovalActions";
-import { IconVideo } from "../_icons";
+/*
+  Parent approvals (/parent/approvals) — driven entirely by the live recordings
+  submissions store: pending (awaiting parent) on top, an empty-state when none,
+  and processed (approved / sent back) at the bottom. No stale seed list, so an
+  item never stays "pending" after approval.
+*/
+import { PageHeader } from "@/components";
 import { getParentContext } from "../_shared";
+import { ParentApprovalsEmpty } from "./ParentApprovalsEmpty";
 import { ParentSubmissions } from "./ParentSubmissions";
 
 export default async function ParentApprovalsPage({
@@ -13,62 +15,14 @@ export default async function ParentApprovalsPage({
   searchParams: Promise<{ submissionId?: string }>;
 }) {
   const { submissionId } = await searchParams;
-  const { viewer, children } = getParentContext();
-  const pending = getPendingParentApprovals(viewer);
-
-  const items: ApprovalItem[] = pending.map((r) => {
-    const child = children.find((c) => c.id === r.childId);
-    return {
-      recitationId: r.id,
-      childId: r.childId,
-      childName: child?.displayName ?? "طفلك",
-      title: r.title,
-      childUserId: child?.userId ?? "",
-      parentUserId: viewer.id,
-      teacherId: getTeacherIdsForChild(viewer, r.childId)[0],
-    };
-  });
+  const { viewer } = getParentContext();
 
   return (
     <>
       <PageHeader title="الموافقات" subtitle="الفيديو لا يصل للمعلم إلا بعد موافقتك" />
 
       <ParentSubmissions parentUserId={viewer.id} highlightSubmissionId={submissionId} />
-
-      {items.length > 0 ? (
-        <div className="grid gap-6 lg:grid-cols-2">
-          {items.map((item) => (
-            <Card key={item.recitationId} variant="contrast" className="flex flex-col gap-3">
-              <div className="flex items-center gap-3">
-                <Avatar name={item.childName} size="lg" src={childAvatarById(item.childId)} />
-                <div className="flex min-w-0 flex-1 flex-col gap-1">
-                  <span className="text-card-title font-bold break-words">{item.title}</span>
-                  <span className="text-caption opacity-70">{item.childName} · تسميع جديد</span>
-                </div>
-                <AppAssetIcon src="/assets/icons/icon_record_video.png" size="sm" className="shrink-0 text-purple" fallback={<IconVideo />} />
-              </div>
-              <RecitationPreview />
-              <p className="text-caption opacity-70">
-                راجع الفيديو قبل إرساله للمعلم. (الأزرار تجريبية)
-              </p>
-              <ApprovalActions item={item} />
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <Card className="flex items-center gap-3">
-          <AppIllustration
-            name="illustration_parent_approval"
-            className="size-16 shrink-0"
-            fallback={
-              <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-pill bg-mint/15 p-2.5 text-mint">
-                <IconVideo />
-              </span>
-            }
-          />
-          <p className="text-body text-on-dark-muted">لا يوجد فيديو بانتظار موافقتك الآن.</p>
-        </Card>
-      )}
+      <ParentApprovalsEmpty parentUserId={viewer.id} />
 
       {/* Processed (approved / sent back) move to the bottom — they don't vanish. */}
       <ParentSubmissions parentUserId={viewer.id} mode="processed" />

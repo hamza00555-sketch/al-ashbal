@@ -4,43 +4,28 @@
   approvals shortcut. Notifications stay in the top bell only.
 */
 import Link from "next/link";
-import { AppIcon, Avatar, Badge, Card, CardOverlayMotif, PageHeader, SectionTitle, SettingsLink } from "@/components";
-import { getParentChildOverview, getPendingParentApprovals } from "@/lib/data";
+import { Badge, CardOverlayMotif, PageHeader, RoleAvatar, RoleName, SectionTitle, SettingsLink } from "@/components";
+import { getParentChildOverview } from "@/lib/data";
 import { childAvatarSrc } from "@/lib/avatars";
 import { ChildStatusAvatar } from "./ChildStatusAvatar";
+import { ParentPendingAlert } from "./ParentPendingAlert";
 import { CHILD_STATUS, getParentContext } from "./_shared";
-import { IconVideo } from "./_icons";
 
 export default function ParentOverviewPage() {
   const { viewer } = getParentContext();
   const overview = getParentChildOverview(viewer);
-  const pending = getPendingParentApprovals(viewer);
 
   return (
     <>
       <PageHeader
         eyebrow="أهلاً"
-        title={viewer.displayName}
+        title={<RoleName role="parent" fallback={viewer.displayName} />}
         subtitle="متابعة أبنائك باطمئنان"
-        leading={<Avatar name={viewer.displayName} size="hero" src="/assets/avatars/avatar_parent_father_01.png" />}
-        actions={<SettingsLink />}
+        leading={<RoleAvatar role="parent" fallbackName={viewer.displayName} fallbackSrc="/assets/avatars/avatar_parent_father_01.png" />}
+        actions={<SettingsLink role="parent" />}
       />
 
-      {pending.length > 0 && (
-        <Link href="/parent/approvals" className="block rounded-lg transition hover:brightness-110">
-          <Card className="flex items-center gap-3">
-            <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-pill bg-purple/15 p-2.5 text-purple">
-              <AppIcon name="icon_record_video" fallback={<IconVideo />} />
-            </span>
-            <div className="flex min-w-0 flex-col gap-1">
-              <span className="text-card-title font-bold break-words">
-                لديك {pending.length} فيديو بانتظار موافقتك
-              </span>
-              <span className="text-caption opacity-70">اضغط لمراجعة الموافقات</span>
-            </div>
-          </Card>
-        </Link>
-      )}
+      <ParentPendingAlert parentUserId={viewer.id} />
 
       <section className="flex flex-col gap-3">
         <SectionTitle title="أطفالي" subtitle={`${overview.length} مرتبطون بك`} />

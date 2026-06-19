@@ -1,14 +1,16 @@
 "use client";
 
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Avatar, Badge, Button, Card, PageHeader, SectionTitle } from "@/components";
 import { cn } from "@/lib/cn";
 import {
   ROLE_LABEL,
-  resetDemoSession,
-  setDemoProfile,
-  useCurrentProfile,
+  resetRoleOverride,
+  setRoleOverride,
   useCurrentRole,
+  useProfileForRole,
 } from "@/lib/auth/demoSession";
 import type { Profile, Role } from "@/lib/auth/types";
 
@@ -22,19 +24,27 @@ const AVATARS = [
   "/assets/avatars/avatar_child_girl_01.png",
 ];
 
-/** Editable form. Keyed by the current profile so it re-inits on change. */
-function SettingsForm({ profile, onMessage }: { profile: Profile; onMessage: (m: string) => void }) {
+/** Home route per role (for the back button). */
+const ROLE_HOME: Partial<Record<Role, string>> = {
+  teacher: "/teacher",
+  parent: "/parent",
+  child: "/child",
+  guest: "/guest",
+};
+
+/** Editable form. Keyed by the resolved profile so it re-inits on change. */
+function SettingsForm({ role, profile, onMessage }: { role: Role; profile: Profile; onMessage: (m: string) => void }) {
   const [name, setName] = useState(profile.displayName);
   const [avatar, setAvatar] = useState<string | undefined>(profile.avatarUrl);
 
   function handleSave() {
     const trimmed = name.trim();
-    setDemoProfile({ displayName: trimmed || profile.displayName, avatarUrl: avatar });
+    setRoleOverride(role, { displayName: trimmed || profile.displayName, avatarUrl: avatar });
     onMessage("تم حفظ التغييرات.");
   }
   function handleReset() {
-    resetDemoSession();
-    onMessage("تمت الاستعادة إلى الافتراضي.");
+    resetRoleOverride(role);
+    onMessage("تمت استعادة هذا الدور إلى الافتراضي.");
   }
 
   return (
@@ -44,7 +54,7 @@ function SettingsForm({ profile, onMessage }: { profile: Profile; onMessage: (m:
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="اكتب اسمك الظاهر"
+          placeholder="اكتب الاسم الظاهر"
           className="min-h-11 w-full rounded-md border border-white/10 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft"
         />
       </label>
@@ -74,27 +84,48 @@ function SettingsForm({ profile, onMessage }: { profile: Profile; onMessage: (m:
 
       <div className="flex flex-wrap gap-2">
         <Button variant="primary" size="sm" onClick={handleSave}>حفظ</Button>
-        <Button variant="ghost" size="sm" onClick={handleReset}>إعادة للافتراضي</Button>
+        <Button variant="ghost" size="sm" onClick={handleReset}>إعادة هذا الدور للافتراضي</Button>
       </div>
     </>
   );
 }
 
-export function SettingsView() {
-  const profile = useCurrentProfile();
-  const role: Role = useCurrentRole();
+export function SettingsView({ roleParam }: { roleParam?: Role }) {
+  const router = useRouter();
+  const currentRole = useCurrentRole();
+  // Edit the role from the URL when present, else the current demo role.
+  const role: Role = roleParam ?? currentRole;
+  const profile = useProfileForRole(role);
   const [message, setMessage] = useState<string | null>(null);
 
-  // Inner form remounts (fresh draft) whenever the saved profile changes.
-  const formKey = `${profile.id}:${profile.displayName}:${profile.avatarUrl ?? ""}`;
+  const backHref = ROLE_HOME[role];
+  const formKey = `${role}:${profile.displayName}:${profile.avatarUrl ?? ""}`;
 
   return (
     <>
       <PageHeader
         eyebrow="إعدادات تجريبية"
         title="الملف الشخصي"
-        subtitle="تعديل بسيط للاسم والأفاتار — محلي فقط"
+        subtitle={`تعديل ملف: ${ROLE_LABEL[role]} — محلي فقط`}
         leading={<Avatar name={profile.displayName} size="hero" src={profile.avatarUrl} />}
+        actions={
+          backHref ? (
+            <Link
+              href={backHref}
+              className="inline-flex min-h-9 shrink-0 items-center gap-1 whitespace-nowrap rounded-pill bg-surface-raised px-3.5 py-1.5 text-caption font-bold text-on-dark ring-1 ring-purple-soft/30 transition hover:bg-white/5 hover:ring-purple-soft"
+            >
+              ← رجوع
+            </Link>
+          ) : (
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="inline-flex min-h-9 shrink-0 items-center gap-1 whitespace-nowrap rounded-pill bg-surface-raised px-3.5 py-1.5 text-caption font-bold text-on-dark ring-1 ring-purple-soft/30 transition hover:bg-white/5 hover:ring-purple-soft"
+            >
+              ← رجوع
+            </button>
+          )
+        }
       />
 
       <Card className="flex flex-col gap-5">
@@ -108,11 +139,11 @@ export function SettingsView() {
           </div>
         </div>
 
-        <SettingsForm key={formKey} profile={profile} onMessage={setMessage} />
+        <SettingsForm key={formKey} role={role} profile={profile} onMessage={setMessage} />
 
         {message && <p className="text-caption text-on-dark-muted">{message}</p>}
         <p className="text-caption text-on-dark-muted">
-          إعدادات تجريبية محلية فقط — لا تسجيل دخول ولا backend. تُحفظ في جلسة العرض على هذا الجهاز.
+          إعدادات تجريبية محلية لكل دور على حدة — لا تسجيل دخول ولا backend. تُحفظ على هذا الجهاز.
         </p>
       </Card>
     </>

@@ -4,7 +4,7 @@
   open-tasks alert (→ /child/tasks), and the active class activity (if any).
 */
 import Link from "next/link";
-import { AppAssetIcon, Avatar, Badge, Card, CardOverlayMotif, PageHeader, ProgressBar, SectionTitle, SettingsLink } from "@/components";
+import { AppAssetIcon, Badge, Card, CardOverlayMotif, PageHeader, ProgressBar, RoleAvatar, RoleName, SectionTitle, SettingsLink } from "@/components";
 import { childAvatarSrc } from "@/lib/avatars";
 import {
   getAttendanceForChild,
@@ -36,10 +36,10 @@ export default function ChildHomePage() {
     <>
       <PageHeader
         eyebrow="مرحباً"
-        title={child.displayName}
+        title={<RoleName role="child" fallback={child.displayName} />}
         subtitle="هذه لوحتك المختصرة"
-        leading={<Avatar name={child.displayName} size="hero" src={childAvatarSrc(child.gender)} />}
-        actions={<SettingsLink label="ملفي" />}
+        leading={<RoleAvatar role="child" fallbackName={child.displayName} fallbackSrc={childAvatarSrc(child.gender)} />}
+        actions={<SettingsLink label="ملفي" role="child" />}
       />
 
       <div className="grid gap-6 lg:grid-cols-3">

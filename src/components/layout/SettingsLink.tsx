@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { cn } from "@/lib/cn";
+import type { Role } from "@/lib/auth/types";
 
 function GearIcon() {
   return (
@@ -16,21 +17,32 @@ function GearIcon() {
 }
 
 /**
- * Small, unobtrusive link to /settings for the role home headers.
- * Not a route guard, not in the bottom nav — just an entry point.
+ * Small, unobtrusive link to /settings for the role home headers. Carries the
+ * role so settings edits the right profile. Stays fixed on mobile: it never
+ * shrinks (shrink-0), the label never wraps (whitespace-nowrap), and the icon
+ * always shows.
  */
-export function SettingsLink({ label = "الإعدادات", className }: { label?: string; className?: string }) {
+export function SettingsLink({
+  label = "الإعدادات",
+  role,
+  className,
+}: {
+  label?: string;
+  role?: Role;
+  className?: string;
+}) {
+  const href = role ? `/settings?role=${role}` : "/settings";
   return (
     <Link
-      href="/settings"
+      href={href}
       aria-label={label}
       className={cn(
-        "inline-flex min-h-9 items-center gap-1.5 rounded-pill bg-surface-raised px-3.5 py-1.5 text-caption font-bold text-on-dark ring-1 ring-purple-soft/30 transition hover:bg-white/5 hover:ring-purple-soft",
+        "inline-flex min-h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-pill bg-surface-raised px-3.5 py-1.5 text-caption font-bold text-on-dark ring-1 ring-purple-soft/30 transition hover:bg-white/5 hover:ring-purple-soft",
         className,
       )}
     >
-      <span className="inline-flex size-4 text-purple-soft"><GearIcon /></span>
-      {label}
+      <span className="inline-flex size-4 shrink-0 text-purple-soft"><GearIcon /></span>
+      <span className="max-w-[8rem] truncate">{label}</span>
     </Link>
   );
 }

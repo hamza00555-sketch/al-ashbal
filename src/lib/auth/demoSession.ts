@@ -3,12 +3,11 @@
 /*
   الأشبال — DEMO auth/profile session (Phase 2 shell).
 
-  PURELY LOCAL: no backend, no Supabase, no real login. It holds a "current
-  profile" + role so the app can read who the current user is via hooks, and
-  lets us switch the demo role for testing. Stored in its OWN localStorage key
-  so it never touches the existing demo stores (materials/lessons/assignments/
-  submissions/points/...). Acts as the single source (provider) for the current
-  profile until real auth replaces it later.
+  PURELY LOCAL: no backend, no Supabase, no real login. Holds the current demo
+  role plus PER-ROLE profile overrides (display name / avatar) so each role can
+  have its own demo identity. Stored in its OWN localStorage key so it never
+  touches the other demo stores (materials/lessons/assignments/submissions/
+  points/...).
 */
 import { useCallback, useMemo, useRef, useSyncExternalStore } from "react";
 import type { UserRole } from "@/types";
@@ -28,8 +27,11 @@ export const ROLE_LABEL: Record<Role, string> = {
 /** Default role for the demo session (control center). */
 const DEFAULT_ROLE: Role = "teacher";
 
+export type ProfileOverride = Partial<Pick<Profile, "displayName" | "avatarUrl">>;
+type Overrides = Partial<Record<Role, ProfileOverride>>;
+
 /** Build a Profile from the existing seed user for a role (display-name/avatar). */
-function profileForRole(role: Role): Profile {
+function baseProfileForRole(role: Role): Profile {
   const u = getMockUser(role as UserRole);
   return {
     id: u.id,
@@ -43,23 +45,42 @@ function profileForRole(role: Role): Profile {
 
 interface StoredSession {
   role: Role;
-  /** Optional overrides on top of the role's default profile (demo edits). */
-  profileOverride?: Partial<Pick<Profile, "displayName" | "avatarUrl">>;
+  overrides: Overrides;
 }
 
 const KEY = "alashbal:demo-session";
 const EVENT = "alashbal:demo-session-changed";
+const EMPTY_STORED: StoredSession = { role: DEFAULT_ROLE, overrides: {} };
+
+function sanitizeOverride(o: unknown): ProfileOverride | undefined {
+  if (!o || typeof o !== "object") return undefined;
+  const { displayName, avatarUrl } = o as ProfileOverride;
+  const out: ProfileOverride = {};
+  if (typeof displayName === "string") out.displayName = displayName;
+  if (typeof avatarUrl === "string") out.avatarUrl = avatarUrl;
+  return Object.keys(out).length ? out : undefined;
+}
 
 function readStored(): StoredSession {
-  if (typeof window === "undefined") return { role: DEFAULT_ROLE };
+  if (typeof window === "undefined") return EMPTY_STORED;
   try {
     const raw = window.localStorage.getItem(KEY);
-    if (!raw) return { role: DEFAULT_ROLE };
-    const parsed = JSON.parse(raw);
-    const role: Role = DEMO_ROLES.includes(parsed?.role) ? parsed.role : DEFAULT_ROLE;
-    return { role, profileOverride: parsed?.profileOverride };
+    if (!raw) return EMPTY_STORED;
+    const parsed = JSON.parse(raw) ?? {};
+    const role: Role = DEMO_ROLES.includes(parsed.role) ? parsed.role : DEFAULT_ROLE;
+    const overrides: Overrides = {};
+    if (parsed.overrides && typeof parsed.overrides === "object") {
+      for (const r of DEMO_ROLES) {
+        const ov = sanitizeOverride(parsed.overrides[r]);
+        if (ov) overrides[r] = ov;
+      }
+    }
+    // Back-compat: an older single `profileOverride` belonged to `role`.
+    const legacy = sanitizeOverride(parsed.profileOverride);
+    if (legacy && !overrides[role]) overrides[role] = legacy;
+    return { role, overrides };
   } catch {
-    return { role: DEFAULT_ROLE };
+    return EMPTY_STORED;
   }
 }
 
@@ -69,9 +90,10 @@ function writeStored(next: StoredSession) {
   window.dispatchEvent(new CustomEvent(EVENT));
 }
 
-function resolveProfile(s: StoredSession): Profile {
-  const base = profileForRole(s.role);
-  return s.profileOverride ? { ...base, ...s.profileOverride } : base;
+function resolveProfile(role: Role, overrides: Overrides): Profile {
+  const base = baseProfileForRole(role);
+  const ov = overrides[role];
+  return ov ? { ...base, ...ov } : base;
 }
 
 // ---- imperative API --------------------------------------------------------
@@ -80,23 +102,39 @@ export function getCurrentRole(): Role {
   return readStored().role;
 }
 export function getCurrentProfile(): Profile {
-  return resolveProfile(readStored());
+  const s = readStored();
+  return resolveProfile(s.role, s.overrides);
+}
+export function getProfileForRole(role: Role): Profile {
+  return resolveProfile(role, readStored().overrides);
+}
+export function getRoleOverride(role: Role): ProfileOverride {
+  return readStored().overrides[role] ?? {};
 }
 
-/** Switch the demo role (testing only). */
+/** Switch the demo role (testing only) — keeps each role's saved override. */
 export function setDemoRole(role: Role) {
   if (!DEMO_ROLES.includes(role)) return;
-  // changing role drops any previous per-role override
-  writeStored({ role });
-}
-
-/** Apply a small profile override (e.g. display name) for the current role. */
-export function setDemoProfile(patch: Partial<Pick<Profile, "displayName" | "avatarUrl">>) {
   const cur = readStored();
-  writeStored({ ...cur, profileOverride: { ...cur.profileOverride, ...patch } });
+  writeStored({ ...cur, role });
 }
 
-/** Demo reset: clears ONLY the demo session (never the other demo stores). */
+/** Apply an override for a SPECIFIC role (independent of other roles). */
+export function setRoleOverride(role: Role, patch: ProfileOverride) {
+  const cur = readStored();
+  const next: ProfileOverride = { ...cur.overrides[role], ...patch };
+  writeStored({ ...cur, overrides: { ...cur.overrides, [role]: next } });
+}
+
+/** Reset ONLY this role back to its seed default (other roles untouched). */
+export function resetRoleOverride(role: Role) {
+  const cur = readStored();
+  const nextOverrides = { ...cur.overrides };
+  delete nextOverrides[role];
+  writeStored({ ...cur, overrides: nextOverrides });
+}
+
+/** Demo reset: clears the WHOLE demo session (all roles). */
 export function resetDemoSession() {
   if (typeof window === "undefined") return;
   window.localStorage.removeItem(KEY);
@@ -116,7 +154,7 @@ function subscribe(callback: () => void) {
 }
 
 function useStored(): StoredSession {
-  const cache = useRef<{ sig: string; value: StoredSession }>({ sig: "∅", value: { role: DEFAULT_ROLE } });
+  const cache = useRef<{ sig: string; value: StoredSession }>({ sig: "∅", value: EMPTY_STORED });
   const getSnapshot = useCallback((): StoredSession => {
     const s = readStored();
     const sig = JSON.stringify(s);
@@ -124,8 +162,7 @@ function useStored(): StoredSession {
     cache.current = { sig, value: s };
     return s;
   }, []);
-  // SSR/first-paint use the default role (stable) to avoid hydration mismatch.
-  const getServerSnapshot = useCallback((): StoredSession => ({ role: DEFAULT_ROLE }), []);
+  const getServerSnapshot = useCallback((): StoredSession => EMPTY_STORED, []);
   return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }
 
@@ -135,8 +172,13 @@ export function useCurrentRole(): Role {
 
 export function useCurrentProfile(): Profile {
   const s = useStored();
-  // `s` is referentially stable per content (cached in useStored), so memo is safe.
-  return useMemo(() => resolveProfile(s), [s]);
+  return useMemo(() => resolveProfile(s.role, s.overrides), [s]);
+}
+
+/** Resolved profile for a specific role (reacts to that role's override). */
+export function useProfileForRole(role: Role): Profile {
+  const s = useStored();
+  return useMemo(() => resolveProfile(role, s.overrides), [role, s]);
 }
 
 export function useAuthSession(): AuthSession {
