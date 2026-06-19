@@ -55,3 +55,6 @@ export { DemoExperienceSwitcher } from "./layout/DemoExperienceSwitcher";
 export { RoleSwitcher } from "./layout/RoleSwitcher";
 export type { RoleSwitcherProps, RoleOption } from "./layout/RoleSwitcher";
 export type { NavItem } from "./layout/types";
+
+// auth (demo profile/role shell — not real auth)
+export { DemoProfilePanel } from "./auth/DemoProfilePanel";

@@ -14,6 +14,7 @@ import {
   Button,
   Card,
   DemoExperienceSwitcher,
+  DemoProfilePanel,
   DesktopSidebar,
   MobileNav,
   PageHeader,
@@ -80,6 +81,8 @@ export default function ShowcasePage() {
         <div className="flex items-center justify-between gap-2">
           <DemoExperienceSwitcher current="style-guide" />
         </div>
+
+        <DemoProfilePanel />
 
         {/* What is this page? */}
         <Card variant="contrast" className="flex flex-col gap-2">
