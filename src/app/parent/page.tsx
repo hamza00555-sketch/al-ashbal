@@ -4,7 +4,7 @@
   approvals shortcut. Notifications stay in the top bell only.
 */
 import Link from "next/link";
-import { AppIcon, Avatar, Badge, Card, CardOverlayMotif, PageHeader, SectionTitle } from "@/components";
+import { AppIcon, Avatar, Badge, Card, CardOverlayMotif, PageHeader, SectionTitle, SettingsLink } from "@/components";
 import { getParentChildOverview, getPendingParentApprovals } from "@/lib/data";
 import { childAvatarSrc } from "@/lib/avatars";
 import { ChildStatusAvatar } from "./ChildStatusAvatar";
@@ -23,6 +23,7 @@ export default function ParentOverviewPage() {
         title={viewer.displayName}
         subtitle="متابعة أبنائك باطمئنان"
         leading={<Avatar name={viewer.displayName} size="hero" src="/assets/avatars/avatar_parent_father_01.png" />}
+        actions={<SettingsLink />}
       />
 
       {pending.length > 0 && (

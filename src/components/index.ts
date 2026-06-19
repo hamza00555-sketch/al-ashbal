@@ -52,6 +52,7 @@ export type { BottomNavItem } from "./layout/AppBottomNav";
 export { DesktopSidebar } from "./layout/DesktopSidebar";
 export type { DesktopSidebarProps } from "./layout/DesktopSidebar";
 export { DemoExperienceSwitcher } from "./layout/DemoExperienceSwitcher";
+export { SettingsLink } from "./layout/SettingsLink";
 export { RoleSwitcher } from "./layout/RoleSwitcher";
 export type { RoleSwitcherProps, RoleOption } from "./layout/RoleSwitcher";
 export type { NavItem } from "./layout/types";

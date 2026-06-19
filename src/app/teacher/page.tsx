@@ -4,7 +4,7 @@
   sees only their own halaqa. No wishes, no unapproved videos.
 */
 import Link from "next/link";
-import { AppAssetIcon, Avatar, Badge, Card, PageHeader, SectionTitle, StatCard } from "@/components";
+import { AppAssetIcon, Avatar, Badge, Card, PageHeader, SectionTitle, SettingsLink, StatCard } from "@/components";
 import {
   getAttendanceForLesson,
   getLessonsForTeacher,
@@ -55,6 +55,7 @@ export default function TeacherOverviewPage() {
         title={viewer.displayName}
         subtitle="لوحة المعلم — متابعة الحلقة"
         leading={<Avatar name={viewer.displayName} size="hero" src="/assets/avatars/avatar_teacher_male_01.png" />}
+        actions={<SettingsLink />}
       />
 
       <TeacherReviewAlert teacherId={viewer.id} dbPendingReviews={pendingReviews.length} />
