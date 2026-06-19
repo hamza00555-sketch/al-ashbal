@@ -89,13 +89,16 @@ function subscribe(callback: () => void) {
 
 /** Save (or replace by lessonId) a lesson prep. */
 export function savePrep(input: Omit<LessonPrep, "lessonId" | "createdAt"> & { lessonId?: string }) {
+  // Spread FIRST so an explicit `lessonId: undefined` (new prep) can't override
+  // the generated id below.
+  const { lessonId, ...rest } = input;
   const prep: LessonPrep = {
-    lessonId: input.lessonId ?? `prep-${Date.now()}`,
+    ...rest,
+    lessonId: lessonId ?? `prep-${Date.now()}`,
     createdAt: new Date().toISOString(),
-    ...input,
   };
-  const rest = readAll().filter((p) => p.lessonId !== prep.lessonId);
-  writeAll([prep, ...rest]);
+  const others = readAll().filter((p) => p.lessonId !== prep.lessonId);
+  writeAll([prep, ...others]);
 }
 
 export function lessonPrepTitle(p: LessonPrep): string {
@@ -135,4 +138,10 @@ export function useAllPreps(): LessonPrep[] {
 
 export function usePrepsForHalaqa(halaqaId: string): LessonPrep[] {
   return usePrepList(halaqaId);
+}
+
+/** Today's lesson plan = the teacher's prep entries marked "today" for a halaqa.
+ *  This is the single source for "درس اليوم" — NOT the student tasks. */
+export function useTodayLessonPlan(halaqaId: string): LessonPrep[] {
+  return usePrepList(halaqaId).filter((p) => p.lessonStatus === "today");
 }

@@ -7,6 +7,7 @@ import {
   savePrep,
   SUBJECTS,
   useAllPreps,
+  type LessonPrep,
   type LessonPrepStatus,
 } from "@/lib/demo/lessonPrep";
 
@@ -26,6 +27,9 @@ export function PrepForm({
   const preps = useAllPreps().filter((p) => p.halaqaId === halaqaId);
   const [message, setMessage] = useState<string | null>(null);
 
+  // When set, we are EDITING an existing saved prep (replace by lessonId).
+  const [editingId, setEditingId] = useState<string | null>(null);
+
   const [title, setTitle] = useState("");
   const [subject, setSubject] = useState<string>(SUBJECTS[0]);
   const [surahOrTopic, setSurahOrTopic] = useState("");
@@ -36,15 +40,41 @@ export function PrepForm({
   const [lessonStatus, setLessonStatus] = useState<LessonPrepStatus>("today");
   const [lessonDate, setLessonDate] = useState("");
 
+  function resetFields() {
+    setTitle("");
+    setSubject(SUBJECTS[0]);
+    setSurahOrTopic("");
+    setAyahFrom("");
+    setAyahTo("");
+    setObjective("");
+    setStudentNotes("");
+    setLessonStatus("today");
+    setLessonDate("");
+    setEditingId(null);
+  }
+
+  function startEdit(p: LessonPrep) {
+    setEditingId(p.lessonId);
+    setTitle(p.title ?? "");
+    setSubject(p.subject);
+    setSurahOrTopic(p.surahOrTopic ?? "");
+    setAyahFrom(p.ayahFrom ?? "");
+    setAyahTo(p.ayahTo ?? "");
+    setObjective(p.objective ?? "");
+    setStudentNotes(p.studentNotes ?? "");
+    setLessonStatus(p.lessonStatus);
+    setLessonDate(p.lessonDate ?? "");
+    setMessage(null);
+  }
+
   function handleSave(e: React.FormEvent) {
     e.preventDefault();
     if (!title.trim() && !surahOrTopic.trim()) {
       setMessage("أدخل عنوان الدرس أو السورة/الموضوع.");
       return;
     }
-    // Lesson prep is lesson-only now: it never creates a student task.
-    // Student tasks live in the independent "مهام الطلاب" section.
     savePrep({
+      lessonId: editingId ?? undefined, // replace when editing, else new
       teacherId,
       halaqaId,
       title: title.trim(),
@@ -59,24 +89,22 @@ export function PrepForm({
       requirementType: "none",
       submissionType: "none",
     });
-    setMessage("تم حفظ تحضير الدرس تجريبيًا.");
-    setTitle("");
-    setSurahOrTopic("");
-    setAyahFrom("");
-    setAyahTo("");
-    setObjective("");
-    setStudentNotes("");
+    setMessage(editingId ? "تم تعديل التحضير." : "تم حفظ تحضير الدرس.");
+    resetFields();
   }
 
   return (
     <div className="flex flex-col gap-6">
       <Card className="flex flex-col gap-4">
-        <SectionTitle title="تحضير درس جديد" subtitle={`الحلقة: ${halaqaName}`} />
+        <SectionTitle
+          title={editingId ? "تعديل التحضير" : "تحضير درس جديد"}
+          subtitle={`الحلقة: ${halaqaName}`}
+        />
         <form onSubmit={handleSave} className="flex flex-col gap-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="flex flex-col gap-2 sm:col-span-2">
               <span className={fieldLabel}>عنوان الدرس</span>
-              <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="مثال: درس سورة الملك" className={inputClass} />
+              <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="مثال: درس سورة الفاتحة" className={inputClass} />
             </label>
             <label className="flex flex-col gap-2">
               <span className={fieldLabel}>المادة</span>
@@ -88,7 +116,7 @@ export function PrepForm({
             </label>
             <label className="flex flex-col gap-2">
               <span className={fieldLabel}>السورة أو الموضوع</span>
-              <input value={surahOrTopic} onChange={(e) => setSurahOrTopic(e.target.value)} placeholder="مثال: سورة الملك" className={inputClass} />
+              <input value={surahOrTopic} onChange={(e) => setSurahOrTopic(e.target.value)} placeholder="مثال: الفاتحة" className={inputClass} />
             </label>
             <label className="flex flex-col gap-2">
               <span className={fieldLabel}>من آية</span>
@@ -96,7 +124,7 @@ export function PrepForm({
             </label>
             <label className="flex flex-col gap-2">
               <span className={fieldLabel}>إلى آية</span>
-              <input value={ayahTo} onChange={(e) => setAyahTo(e.target.value)} inputMode="numeric" placeholder="5" className={inputClass} />
+              <input value={ayahTo} onChange={(e) => setAyahTo(e.target.value)} inputMode="numeric" placeholder="7" className={inputClass} />
             </label>
             <label className="flex flex-col gap-2 sm:col-span-2">
               <span className={fieldLabel}>هدف الدرس</span>
@@ -120,17 +148,22 @@ export function PrepForm({
           </div>
 
           <p className="text-caption text-on-dark-muted">
-            هذا القسم لتحضير الدرس فقط. لإضافة واجبات للطلاب استخدم قسم «مهام الطلاب» بالأسفل.
+            هذا القسم لتحضير الدرس فقط (درس اليوم يظهر للطفل). لإضافة واجبات للطلاب استخدم قسم «مهام الطلاب» بالأسفل.
           </p>
-          <div className="sm:max-w-xs">
-            <Button type="submit" variant="primary" fullWidth>حفظ التحضير</Button>
+          <div className="flex flex-wrap gap-2">
+            <div className="sm:max-w-xs">
+              <Button type="submit" variant="primary" fullWidth>{editingId ? "حفظ التعديل" : "حفظ التحضير"}</Button>
+            </div>
+            {editingId && (
+              <Button type="button" variant="ghost" size="md" onClick={resetFields}>إلغاء التعديل</Button>
+            )}
           </div>
           {message && <p className="text-caption text-on-dark-muted">{message}</p>}
         </form>
       </Card>
 
       <section className="flex flex-col gap-3">
-        <SectionTitle title="التحضيرات المحفوظة" subtitle="تجريبية — تظهر للطلاب" />
+        <SectionTitle title="التحضيرات المحفوظة" subtitle="تجريبية — درس اليوم يظهر للطلاب" />
         {preps.length > 0 ? (
           <div className="grid gap-3 lg:grid-cols-2">
             {preps.map((p) => (
@@ -144,6 +177,9 @@ export function PrepForm({
                 <div className="flex flex-wrap gap-2">
                   <Badge tone="neutral">{p.subject}</Badge>
                   {p.lessonDate && <Badge tone="neutral">{p.lessonDate}</Badge>}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button variant="secondary" size="sm" onClick={() => startEdit(p)}>تعديل</Button>
                 </div>
               </Card>
             ))}

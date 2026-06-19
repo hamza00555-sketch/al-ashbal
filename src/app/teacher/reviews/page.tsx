@@ -1,14 +1,12 @@
 /*
-  Teacher · reviews (/teacher/reviews) — recitations awaiting teacher review.
-  Only parent-approved videos surface (db pending + parent-approved demo queue).
-  No real video upload/playback.
+  Teacher · reviews (/teacher/reviews) — recorded recitations approved by the
+  parent, awaiting THIS teacher's review. Driven entirely by the live
+  submissions store (no stale seed list). Accepting awards points (unchanged).
 */
 import { PageHeader } from "@/components";
-import { getPendingTeacherReviews } from "@/lib/data";
 import { getTeacherContext } from "../_shared";
-import { TeacherReviewsList } from "./TeacherReviewsList";
+import { TeacherReviewsEmpty } from "./TeacherReviewsEmpty";
 import { TeacherSubmissions } from "./TeacherSubmissions";
-import type { ReviewItem } from "./ReviewActions";
 
 export default async function TeacherReviewsPage({
   searchParams,
@@ -16,20 +14,7 @@ export default async function TeacherReviewsPage({
   searchParams: Promise<{ submissionId?: string }>;
 }) {
   const { submissionId } = await searchParams;
-  const { viewer, halaqas, children } = getTeacherContext();
-  const pending = getPendingTeacherReviews(viewer);
-
-  const dbItems: ReviewItem[] = pending.map((r) => {
-    const child = children.find((c) => c.id === r.childId);
-    return {
-      recitationId: r.id,
-      childId: r.childId,
-      childName: child?.displayName ?? "طفل الحلقة",
-      title: r.title,
-      childUserId: child?.userId ?? "",
-      parentUserId: child?.parentIds[0] ?? "",
-    };
-  });
+  const { viewer, halaqas } = getTeacherContext();
 
   return (
     <>
@@ -40,7 +25,7 @@ export default async function TeacherReviewsPage({
         halaqaId={halaqas[0]?.id ?? ""}
         highlightSubmissionId={submissionId}
       />
-      <TeacherReviewsList dbItems={dbItems} />
+      <TeacherReviewsEmpty teacherId={viewer.id} />
     </>
   );
 }

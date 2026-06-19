@@ -8,7 +8,6 @@ import { AppAssetIcon, Badge, Card, CardOverlayMotif, ChildDisplayAvatar, ChildD
 import { childAvatarSrc } from "@/lib/avatars";
 import {
   getAttendanceForChild,
-  getNextLessonForChild,
   getProgressForChild,
   getTasksForChild,
 } from "@/lib/data";
@@ -24,7 +23,6 @@ export default function ChildHomePage() {
   const { viewer, child } = getChildContext();
   if (!child) return <p className="text-body text-on-dark-muted">لا توجد بيانات لعرضها.</p>;
 
-  const nextLesson = getNextLessonForChild(viewer, child.id);
   const progress = getProgressForChild(viewer, child.id);
   const tasks = getTasksForChild(viewer, child.id);
   const openTasks = tasks.filter((t) => isOpenTask(t.status)).length;
@@ -44,11 +42,7 @@ export default function ChildHomePage() {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* main column */}
         <div className="flex flex-col gap-6 lg:col-span-2">
-          <ChildTodayCard
-            halaqaId={child.halaqaId}
-            fallbackTitle={nextLesson?.title}
-            fallbackQuran={nextLesson?.quranSegment ? `القرآن: ${nextLesson.quranSegment}` : undefined}
-          />
+          <ChildTodayCard halaqaId={child.halaqaId} />
 
           {openTasks > 0 && (
             <Card className="flex flex-wrap items-center justify-between gap-3">
