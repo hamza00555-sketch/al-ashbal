@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
@@ -46,6 +47,17 @@ export function DemoProfilePanel() {
             </Button>
           ))}
         </div>
+      </div>
+
+      <div>
+        <Link
+          href="/settings"
+          className={cn(
+            "inline-flex min-h-9 items-center gap-1 rounded-md bg-surface-raised px-4 py-1 text-caption font-bold text-on-dark ring-1 ring-purple-soft/35 transition hover:bg-white/5 hover:ring-purple-soft",
+          )}
+        >
+          فتح إعدادات الملف
+        </Link>
       </div>
 
       <p className={cn("text-caption text-on-dark-muted")}>
