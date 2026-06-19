@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { Badge, Button, Card, SectionTitle } from "@/components";
 import {
@@ -181,6 +182,10 @@ export function StudentAssignmentsManager({
                 ))}
               </select>
             </label>
+            <p className="text-caption text-on-dark-muted sm:col-span-2">
+              الدروس تأتي من صفحة المواد والتقدّم. يمكنك تعديل الدروس{" "}
+              <Link href="/teacher/materials" className="font-bold text-purple-soft underline">من هناك</Link>.
+            </p>
             <label className="flex flex-col gap-2 sm:col-span-2">
               <span className={fieldLabel}>عنوان المهمة</span>
               <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="مثال: سمّع سورة الملك 1-10" className={inputClass} />

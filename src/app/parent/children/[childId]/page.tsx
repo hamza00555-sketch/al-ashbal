@@ -2,7 +2,7 @@
   Parent · child detail (/parent/children/[childId]) — one child only.
   Gated by getChildById; a parent can never view a child they aren't linked to.
 */
-import { Avatar, Badge, Card, PageHeader, ProgressRing, SectionTitle } from "@/components";
+import { Badge, Card, ChildDisplayAvatar, ChildDisplayName, PageHeader, ProgressRing, SectionTitle } from "@/components";
 import { childAvatarSrc } from "@/lib/avatars";
 import {
   getAttendanceForChild,
@@ -81,8 +81,8 @@ export default async function ParentChildDetailPage({
     <>
       <PageHeader
         eyebrow="تفاصيل الطفل"
-        title={child.displayName}
-        leading={<Avatar name={child.displayName} size="profile" src={childAvatarSrc(child.gender)} />}
+        title={<ChildDisplayName childId={child.id} fallback={child.displayName} />}
+        leading={<ChildDisplayAvatar childId={child.id} fallbackName={child.displayName} fallbackSrc={childAvatarSrc(child.gender)} size="profile" />}
         actions={<Badge tone={CHILD_STATUS[level].tone}>{CHILD_STATUS[level].label}</Badge>}
       />
 

@@ -12,9 +12,13 @@ import {
   useCurrentRole,
   useProfileForRole,
 } from "@/lib/auth/demoSession";
-import type { Profile, Role } from "@/lib/auth/types";
+import {
+  resetChildOverride,
+  setChildOverride,
+  useChildDisplayProfile,
+} from "@/lib/demo/childProfiles";
+import type { Role } from "@/lib/auth/types";
 
-/** The existing avatar set (no uploads — pick from what we have). */
 const AVATARS = [
   "/assets/avatars/avatar_teacher_male_01.png",
   "/assets/avatars/avatar_teacher_female_01.png",
@@ -24,7 +28,6 @@ const AVATARS = [
   "/assets/avatars/avatar_child_girl_01.png",
 ];
 
-/** Home route per role (for the back button). */
 const ROLE_HOME: Partial<Record<Role, string>> = {
   teacher: "/teacher",
   parent: "/parent",
@@ -32,20 +35,16 @@ const ROLE_HOME: Partial<Record<Role, string>> = {
   guest: "/guest",
 };
 
-/** Editable form. Keyed by the resolved profile so it re-inits on change. */
-function SettingsForm({ role, profile, onMessage }: { role: Role; profile: Profile; onMessage: (m: string) => void }) {
-  const [name, setName] = useState(profile.displayName);
-  const [avatar, setAvatar] = useState<string | undefined>(profile.avatarUrl);
+interface SaveTarget {
+  displayName: string;
+  avatarUrl?: string;
+  save: (name: string, avatar?: string) => void;
+  reset: () => void;
+}
 
-  function handleSave() {
-    const trimmed = name.trim();
-    setRoleOverride(role, { displayName: trimmed || profile.displayName, avatarUrl: avatar });
-    onMessage("تم حفظ التغييرات.");
-  }
-  function handleReset() {
-    resetRoleOverride(role);
-    onMessage("تمت استعادة هذا الدور إلى الافتراضي.");
-  }
+function SettingsForm({ target, onMessage }: { target: SaveTarget; onMessage: (m: string) => void }) {
+  const [name, setName] = useState(target.displayName);
+  const [avatar, setAvatar] = useState<string | undefined>(target.avatarUrl);
 
   return (
     <>
@@ -83,23 +82,42 @@ function SettingsForm({ role, profile, onMessage }: { role: Role; profile: Profi
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <Button variant="primary" size="sm" onClick={handleSave}>حفظ</Button>
-        <Button variant="ghost" size="sm" onClick={handleReset}>إعادة هذا الدور للافتراضي</Button>
+        <Button variant="primary" size="sm" onClick={() => { target.save(name.trim() || target.displayName, avatar); onMessage("تم حفظ التغييرات."); }}>حفظ</Button>
+        <Button variant="ghost" size="sm" onClick={() => { target.reset(); onMessage("تمت استعادة هذا الملف إلى الافتراضي."); }}>إعادة هذا الملف للافتراضي</Button>
       </div>
     </>
   );
 }
 
-export function SettingsView({ roleParam }: { roleParam?: Role }) {
+export function SettingsView({ roleParam, childId }: { roleParam?: Role; childId?: string }) {
   const router = useRouter();
   const currentRole = useCurrentRole();
-  // Edit the role from the URL when present, else the current demo role.
   const role: Role = roleParam ?? currentRole;
-  const profile = useProfileForRole(role);
+  const isChild = role === "child" && !!childId;
+
+  // Both hooks are called unconditionally; only the relevant one is used.
+  const roleProfile = useProfileForRole(role);
+  const childProfile = useChildDisplayProfile(childId ?? "__none__");
+
   const [message, setMessage] = useState<string | null>(null);
 
+  const displayName = isChild ? childProfile.displayName : roleProfile.displayName;
+  const avatarUrl = isChild ? childProfile.avatarUrl : roleProfile.avatarUrl;
+
+  const target: SaveTarget = {
+    displayName,
+    avatarUrl,
+    save: (name, avatar) =>
+      isChild
+        ? setChildOverride(childId!, { displayName: name, avatarUrl: avatar })
+        : setRoleOverride(role, { displayName: name, avatarUrl: avatar }),
+    reset: () => (isChild ? resetChildOverride(childId!) : resetRoleOverride(role)),
+  };
+
   const backHref = ROLE_HOME[role];
-  const formKey = `${role}:${profile.displayName}:${profile.avatarUrl ?? ""}`;
+  const formKey = `${role}:${childId ?? "-"}:${displayName}:${avatarUrl ?? ""}`;
+  const backBtnClass =
+    "inline-flex min-h-9 shrink-0 items-center gap-1 whitespace-nowrap rounded-pill bg-surface-raised px-3.5 py-1.5 text-caption font-bold text-on-dark ring-1 ring-purple-soft/30 transition hover:bg-white/5 hover:ring-purple-soft";
 
   return (
     <>
@@ -107,43 +125,32 @@ export function SettingsView({ roleParam }: { roleParam?: Role }) {
         eyebrow="إعدادات تجريبية"
         title="الملف الشخصي"
         subtitle={`تعديل ملف: ${ROLE_LABEL[role]} — محلي فقط`}
-        leading={<Avatar name={profile.displayName} size="hero" src={profile.avatarUrl} />}
+        leading={<Avatar name={displayName} size="hero" src={avatarUrl} />}
         actions={
           backHref ? (
-            <Link
-              href={backHref}
-              className="inline-flex min-h-9 shrink-0 items-center gap-1 whitespace-nowrap rounded-pill bg-surface-raised px-3.5 py-1.5 text-caption font-bold text-on-dark ring-1 ring-purple-soft/30 transition hover:bg-white/5 hover:ring-purple-soft"
-            >
-              ← رجوع
-            </Link>
+            <Link href={backHref} className={backBtnClass}>← رجوع</Link>
           ) : (
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="inline-flex min-h-9 shrink-0 items-center gap-1 whitespace-nowrap rounded-pill bg-surface-raised px-3.5 py-1.5 text-caption font-bold text-on-dark ring-1 ring-purple-soft/30 transition hover:bg-white/5 hover:ring-purple-soft"
-            >
-              ← رجوع
-            </button>
+            <button type="button" onClick={() => router.back()} className={backBtnClass}>← رجوع</button>
           )
         }
       />
 
       <Card className="flex flex-col gap-5">
         <div className="flex flex-wrap items-center gap-3">
-          <Avatar name={profile.displayName} size="lg" src={profile.avatarUrl} />
+          <Avatar name={displayName} size="lg" src={avatarUrl} />
           <div className="flex min-w-0 flex-col gap-1">
-            <span className="text-card-title font-bold break-words">{profile.displayName}</span>
+            <span className="text-card-title font-bold break-words">{displayName}</span>
             <span className="flex items-center gap-2 text-caption text-on-dark-muted">
               الدور: <Badge tone="purple">{ROLE_LABEL[role]}</Badge>
             </span>
           </div>
         </div>
 
-        <SettingsForm key={formKey} role={role} profile={profile} onMessage={setMessage} />
+        <SettingsForm key={formKey} target={target} onMessage={setMessage} />
 
         {message && <p className="text-caption text-on-dark-muted">{message}</p>}
         <p className="text-caption text-on-dark-muted">
-          إعدادات تجريبية محلية لكل دور على حدة — لا تسجيل دخول ولا backend. تُحفظ على هذا الجهاز.
+          إعدادات تجريبية محلية لكل ملف على حدة — لا تسجيل دخول ولا backend. تُحفظ على هذا الجهاز.
         </p>
       </Card>
     </>

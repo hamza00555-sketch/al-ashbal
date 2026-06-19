@@ -4,7 +4,7 @@
   open-tasks alert (→ /child/tasks), and the active class activity (if any).
 */
 import Link from "next/link";
-import { AppAssetIcon, Badge, Card, CardOverlayMotif, PageHeader, ProgressBar, RoleAvatar, RoleName, SectionTitle, SettingsLink } from "@/components";
+import { AppAssetIcon, Badge, Card, CardOverlayMotif, ChildDisplayAvatar, ChildDisplayName, PageHeader, ProgressBar, SectionTitle, SettingsLink } from "@/components";
 import { childAvatarSrc } from "@/lib/avatars";
 import {
   getAttendanceForChild,
@@ -15,9 +15,8 @@ import {
 import { IconSparkle, IconStar, IconTasks } from "./_icons";
 import { ATTENDANCE_STATUS, getChildContext, isOpenTask } from "./_shared";
 import { ChildActivity } from "./ChildActivity";
+import { ChildTodayCard } from "./ChildTodayCard";
 
-const ctaLink =
-  "gradient-cta flex min-h-12 w-full items-center justify-center rounded-lg px-8 text-button font-bold text-cream shadow-glow transition hover:brightness-110";
 const glanceLink =
   "flex min-h-11 items-center justify-center gap-2 rounded-md bg-surface-raised px-4 text-caption font-bold text-on-dark transition hover:bg-white/5";
 
@@ -36,26 +35,20 @@ export default function ChildHomePage() {
     <>
       <PageHeader
         eyebrow="مرحباً"
-        title={<RoleName role="child" fallback={child.displayName} />}
+        title={<ChildDisplayName childId={child.id} fallback={child.displayName} />}
         subtitle="هذه لوحتك المختصرة"
-        leading={<RoleAvatar role="child" fallbackName={child.displayName} fallbackSrc={childAvatarSrc(child.gender)} />}
+        leading={<ChildDisplayAvatar childId={child.id} fallbackName={child.displayName} fallbackSrc={childAvatarSrc(child.gender)} />}
         actions={<SettingsLink label="ملفي" role="child" />}
       />
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* main column */}
         <div className="flex flex-col gap-6 lg:col-span-2">
-          <Card variant="gradient" className="flex flex-col gap-4">
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-caption text-on-dark-muted">درس اليوم</span>
-              {nextLesson && <Badge tone="neutral">اليوم</Badge>}
-            </div>
-            <h2 className="text-h2 break-words">{nextLesson?.title ?? "لا يوجد درس مجدول الآن"}</h2>
-            {nextLesson?.quranSegment && (
-              <p className="text-body text-on-dark-muted break-words">القرآن: {nextLesson.quranSegment}</p>
-            )}
-            <Link href="/child/lessons" className={ctaLink}>تفاصيل الدرس</Link>
-          </Card>
+          <ChildTodayCard
+            halaqaId={child.halaqaId}
+            fallbackTitle={nextLesson?.title}
+            fallbackQuran={nextLesson?.quranSegment ? `القرآن: ${nextLesson.quranSegment}` : undefined}
+          />
 
           {openTasks > 0 && (
             <Card className="flex flex-wrap items-center justify-between gap-3">

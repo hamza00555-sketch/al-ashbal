@@ -60,3 +60,4 @@ export type { NavItem } from "./layout/types";
 // auth (demo profile/role shell — not real auth)
 export { DemoProfilePanel } from "./auth/DemoProfilePanel";
 export { RoleName, RoleAvatar } from "./auth/RoleProfile";
+export { ChildDisplayName, ChildDisplayAvatar } from "./auth/ChildIdentity";

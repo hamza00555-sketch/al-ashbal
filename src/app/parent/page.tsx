@@ -4,10 +4,10 @@
   approvals shortcut. Notifications stay in the top bell only.
 */
 import Link from "next/link";
-import { Badge, CardOverlayMotif, PageHeader, RoleAvatar, RoleName, SectionTitle, SettingsLink } from "@/components";
+import { Badge, CardOverlayMotif, ChildDisplayName, PageHeader, RoleAvatar, RoleName, SectionTitle, SettingsLink } from "@/components";
 import { getParentChildOverview } from "@/lib/data";
 import { childAvatarSrc } from "@/lib/avatars";
-import { ChildStatusAvatar } from "./ChildStatusAvatar";
+import { LiveChildStatusAvatar } from "./LiveChildStatusAvatar";
 import { ParentPendingAlert } from "./ParentPendingAlert";
 import { CHILD_STATUS, getParentContext } from "./_shared";
 
@@ -38,9 +38,11 @@ export default function ParentOverviewPage() {
             >
               <CardOverlayMotif motif="halo" className="-top-5 left-1/2 size-28 -translate-x-1/2 text-purple-soft opacity-[0.13]" />
               <span className="relative z-10">
-                <ChildStatusAvatar name={child.displayName} level={summary.level} size="childCard" src={childAvatarSrc(child.gender)} />
+                <LiveChildStatusAvatar childId={child.id} fallbackName={child.displayName} fallbackSrc={childAvatarSrc(child.gender)} level={summary.level} size="childCard" />
               </span>
-              <span className="relative z-10 text-card-title font-bold break-words">{child.displayName}</span>
+              <span className="relative z-10 text-card-title font-bold break-words">
+                <ChildDisplayName childId={child.id} fallback={child.displayName} />
+              </span>
               <Badge className="relative z-10" tone={CHILD_STATUS[summary.level].tone} onLight>{CHILD_STATUS[summary.level].label}</Badge>
               <span className="relative z-10 line-clamp-2 text-caption text-pretty text-[#5F4B7A]">
                 {summary.lastActivity}
