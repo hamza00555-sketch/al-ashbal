@@ -5,7 +5,7 @@
 > Postgres + RLS + Storage**، بعد تثبيت هذا الـ schema). الأسماء/الحقول مشتقّة من
 > متاجر الـ demo الحالية (`src/lib/demo/*`, `src/types`).
 >
-> الحالة: **مسودة للمراجعة** · التاريخ: 2026-06-18 · anchors:
+> الحالة: **schema v1 — قرارات معتمدة** (انظر «Approved Schema Decisions v1») · التاريخ: 2026-06-18 · anchors:
 > `5782661` (Phase D logic) · `6c6d956` (UI polish) · `8f207d7` (decision doc).
 
 اتفاقيات عامة:
@@ -14,6 +14,26 @@
 - الحذف منطقي حيثما أمكن (`archived boolean` / `status`) بدل الحذف الفعلي — يطابق فلسفة الـ demo (أرشفة لا حذف).
 - التسمية: جداول/أعمدة `snake_case`؛ الطبقة الأمامية تُبقي `camelCase` عبر mapping.
 - `enum`s تُنفّذ كـ Postgres enum types (أو `text` + `check`)، مذكورة أدناه.
+
+---
+
+## Approved Schema Decisions v1
+
+> قرارات v1 معتمدة (2026-06-18) لتحويل الأسئلة المفتوحة إلى أساس قابل للتنفيذ.
+> تحكم هذه القرارات الـ schema أعلاه وأول تنفيذ (Auth/Profiles — انظر
+> `docs/AUTH_PROFILES_PHASE2_SCOPE.md`).
+
+1. **حساب الطفل:** الطفل **لا يحتاج auth user مستقل الآن**؛ يكون **child profile فقط** (`children.profile_id = null`). دخول الطفل لاحقًا عبر **parent-managed access** أو **device/session mode**. أول تنفيذ Auth **للمعلم وولي الأمر فقط**.
+2. **من يسجّل الأطفال:** في MVP الأول **المعلم/المشرف ينشئ الأطفال** داخل الحلقة (أو seed/import). ولي الأمر **لاحقًا** يربط نفسه بطفله عبر **invite/code/approval**. لا onboarding كامل للأطفال الآن.
+3. **الحلقات:** الـ schema يدعم **أكثر من حلقة**، لكن التنفيذ الأول يبدأ بـ **حلقة واحدة (teacher-owned)**. لا إدارة حلقات معقّدة الآن.
+4. **الطفل في أكثر من حلقة:** مسموح في الـ schema عبر `halaqa_members`، لكن الـ UI الحالي يعامل الطفل كأن له **حلقة أساسية واحدة**. دعم التعدد الكامل **مؤجّل**.
+5. **موافقة ولي الأمر:** كل media submission من الطفل (خصوصًا audio/video) **يمر على ولي الأمر قبل المعلم**؛ لا يصل التسجيل للمعلم قبل الموافقة. سياسة المهام **غير الإعلامية** قد تختلف لاحقًا، **ليس الآن**.
+6. **حفظ التسجيلات:** **لا تُحفظ دائمًا** كقرار افتراضي؛ الـ **metadata تبقى**، أما **media retention فمؤقت وconfigurable لاحقًا**. لا مدة نهائية الآن.
+7. **الضيف:** **read-only / demo-only لاحقًا**؛ **لا وصول حقيقي** لبيانات الأطفال في Phase 2.
+8. **الإشعارات:** تأجيل **SMS/WhatsApp**؛ **Push لاحقًا**؛ **Phase 2 لا تشمل notifications**.
+9. **تعديل النقاط:** بعد قبول المعلم **لا تُعدّل النقاط في Phase 2**. أي تعديل لاحق يكون عبر **audit log / adjustment entry** (لا تعديل مباشر، يحافظ على dedupe والتاريخ).
+10. **الحذف:** **لا hard delete** للكيانات الأساسية — استخدم `status` / `archived` / soft delete (مواد/دروس/تكليفات…).
+11. **اتجاه الـ backend:** **Supabase** هو الاتجاه المرشّح لاحقًا. **لا** Supabase implementation الآن؛ قبل التنفيذ نثبّت **scope Auth/Profiles فقط**.
 
 ---
 
@@ -416,23 +436,26 @@ select/update(read_at): recipient_id = auth.uid()
 
 ## 9. Open Questions & Assumptions
 
-**Assumptions (مبدئية حتى تُقرّ):**
-- A1: ولي الأمر يُنشئ/يربط الأطفال في onboarding (parent-managed افتراضيًا).
-- A2: الطفل قد لا يملك حساب auth مستقل في البداية (`children.profile_id` nullable).
-- A3: قد يكون الطفل في أكثر من حلقة (لذا `halaqa_members` منفصل).
-- A4: موافقة ولي الأمر **إلزامية قبل** مراجعة المعلم دائمًا.
+**Answered / Approved (v1 — انظر «Approved Schema Decisions v1» أعلاه):**
+- ✅ Q1 → الطفل **بلا** حساب auth مستقل الآن (`children.profile_id` nullable)؛ دخوله parent-managed/device لاحقًا.
+- ✅ Q2 → **المعلم/المشرف** ينشئ الأطفال (أو seed/import) في MVP؛ ربط ولي الأمر لاحقًا عبر invite/code.
+- ✅ Q3 → الـ schema يدعم التعدد؛ التنفيذ الأول **حلقة واحدة teacher-owned** (لا نبسّط `halaqa_members`، نؤجّل التعدد).
+- ✅ Q5 → التسجيلات **غير دائمة افتراضيًا**؛ metadata تبقى، والاحتفاظ بالوسائط **سياسة configurable لاحقًا** (لا مدة نهائية الآن).
+- ✅ Q6 → تكفي **الحالة على `submissions`** الآن؛ سجلّ التدقيق/التعديلات (`submission_reviews` / adjustment entries) **لاحقًا** عند الحاجة (مرتبط بقرار «لا تعديل نقاط في Phase 2»).
+- ✅ Q7 → الضيف **read-only / demo-only لاحقًا**؛ لا وصول حقيقي في Phase 2.
+- ✅ Q8 → **تأجيل SMS/WhatsApp**؛ Push لاحقًا؛ Phase 2 بلا notifications.
+
+**Assumptions المعتمدة:**
+- A1: المعلم/seed يُنشئ الأطفال في MVP؛ ربط ولي الأمر لاحقًا (مُحدّثة وفق Q2).
+- A2: الطفل قد لا يملك حساب auth (`children.profile_id` nullable).
+- A3: قد يكون الطفل في أكثر من حلقة (`halaqa_members` منفصل) — والتنفيذ الأول بحلقة واحدة.
+- A4: موافقة ولي الأمر **إلزامية قبل** مراجعة المعلم دائمًا (للوسائط).
 - A5: وسائط الأطفال private دائمًا.
 
-**Open Questions (تحتاج قرارًا قبل التنفيذ):**
-- Q1: حساب دخول مستقل لكل طفل أم parent-managed فقط؟ (يؤثر على `children.profile_id` وسياسات RLS).
-- Q2: من يُنشئ الأطفال — المعلم أم ولي الأمر؟ (يؤثر على سياسات insert لـ children/links).
-- Q3: حلقة واحدة أم متعددة فعلًا؟ (لو واحدة دائمًا، يمكن تبسيط `halaqa_members`).
-- Q4: هل `due_label` يبقى نصًّا أم يصبح `due_date` فعليًا؟
-- Q5: سياسة الاحتفاظ بالتسجيلات (دائم/مؤقت/حذف بعد القبول)؟
-- Q6: هل نحتاج جدول `submission_reviews` للتدقيق أم تكفي الحالة على `submissions`؟
-- Q7: الضيف/ضيف الشرف — access حقيقي محدود أم view demo فقط؟
-- Q8: قنوات الإشعار: push فقط أم SMS/WhatsApp عربي لاحقًا؟ (يؤثر على حقول التفضيلات).
+**Open Questions (لا تزال تحتاج قرارًا):**
+- Q4: هل `due_label` يبقى نصًّا أم يصبح `due_date timestamptz` فعليًا؟ (غير حاجب لـ Phase 2).
+- (deferred config) المدة الدقيقة للاحتفاظ بالوسائط — تُحدّد كسياسة قابلة للضبط لاحقًا، ليست مفتوحة بل مؤجّلة.
 
 ---
 
-_مسودة توثيقية فقط — لا migrations، لا كود، لا packages. الخطوة التالية: مراجعة + الإجابة على Open Questions ثم Phase 2 (Auth/Profiles)._
+_مسودة توثيقية فقط — لا migrations، لا كود، لا packages. قرارات v1 معتمدة؛ الخطوة التالية: **Phase 2 (Auth/Profiles)** — انظر `docs/AUTH_PROFILES_PHASE2_SCOPE.md`._
