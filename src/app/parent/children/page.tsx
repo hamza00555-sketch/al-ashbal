@@ -1,46 +1,27 @@
-/* Parent · children (/parent/children) — compact list, link to each detail. */
+/* Parent · children (/parent/children) — linked children with link/unlink. */
 import Link from "next/link";
-import { Badge, Card, CardOverlayMotif, ChildDisplayName, PageHeader } from "@/components";
-import { getParentChildOverview } from "@/lib/data";
-import { childAvatarSrc } from "@/lib/avatars";
-import { LiveChildStatusAvatar } from "../LiveChildStatusAvatar";
-import { CHILD_STATUS, getParentContext } from "../_shared";
+import { PageHeader } from "@/components";
+import { getParentContext } from "../_shared";
+import { ParentChildrenManage } from "./ParentChildrenManage";
 
 export default function ParentChildrenPage() {
   const { viewer } = getParentContext();
-  const overview = getParentChildOverview(viewer);
 
   return (
     <>
-      <PageHeader title="أطفالي" subtitle={`${overview.length} مرتبطون بك`} />
-      {overview.length === 0 && (
-        <Card><p className="text-body text-on-dark-muted">لم يتم ربط أي طفل بعد.</p></Card>
-      )}
-      <div className="flex flex-col gap-3">
-        {overview.map(({ child, summary }) => (
-          <Card key={child.id} variant="contrast" className="relative isolate flex items-center gap-3 overflow-hidden">
-            <CardOverlayMotif motif="halo" className="-start-5 top-1/2 size-24 -translate-y-1/2 text-purple-soft opacity-[0.12]" />
-            <span className="relative z-10">
-              <LiveChildStatusAvatar childId={child.id} fallbackName={child.displayName} fallbackSrc={childAvatarSrc(child.gender)} level={summary.level} size="childCard" />
-            </span>
-            <div className="relative z-10 flex min-w-0 flex-1 flex-col gap-1">
-              <span className="text-card-title font-bold break-words">
-                <ChildDisplayName childId={child.id} fallback={child.displayName} />
-              </span>
-              <span className="text-caption text-pretty text-[#5F4B7A]">{summary.lastActivity}</span>
-            </div>
-            <div className="relative z-10 flex shrink-0 flex-col items-end gap-2">
-              <Badge tone={CHILD_STATUS[summary.level].tone} onLight>{CHILD_STATUS[summary.level].label}</Badge>
-              <Link
-                href={`/parent/children/${child.id}`}
-                className="text-caption font-bold text-purple transition hover:brightness-90"
-              >
-                عرض التفاصيل
-              </Link>
-            </div>
-          </Card>
-        ))}
-      </div>
+      <PageHeader
+        title="أطفالي"
+        subtitle="الأطفال المرتبطون بحسابك"
+        actions={
+          <Link
+            href="/parent/link-child"
+            className="inline-flex min-h-9 shrink-0 items-center whitespace-nowrap rounded-pill bg-surface-raised px-3.5 text-caption font-bold text-on-dark ring-1 ring-purple-soft/30 transition hover:bg-white/5 hover:ring-purple-soft"
+          >
+            ربط طفل
+          </Link>
+        }
+      />
+      <ParentChildrenManage parentId={viewer.id} />
     </>
   );
 }

@@ -1,12 +1,13 @@
 "use client";
 
 import { Avatar, type AvatarSize } from "../ui/Avatar";
+import { ResponsiveNameText } from "../ui/ResponsiveNameText";
 import { useChildDisplayProfile } from "@/lib/demo/childProfiles";
 
 /** Child display name reflecting the per-childId demo override (else fallback). */
 export function ChildDisplayName({ childId, fallback }: { childId: string; fallback: string }) {
   const p = useChildDisplayProfile(childId);
-  return <>{p.displayName || fallback}</>;
+  return <ResponsiveNameText name={p.displayName || fallback} />;
 }
 
 /** Child avatar reflecting the per-childId override (override wins over fallback). */

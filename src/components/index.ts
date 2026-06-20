@@ -19,6 +19,7 @@ export type { OverlayMotif } from "./ui/CardOverlayMotif";
 export { BadgeMedal } from "./ui/BadgeMedal";
 export { SectionTitle } from "./ui/SectionTitle";
 export type { SectionTitleProps } from "./ui/SectionTitle";
+export { ResponsiveNameText } from "./ui/ResponsiveNameText";
 export { Modal } from "./ui/Modal";
 export type { ModalProps } from "./ui/Modal";
 export { Drawer } from "./ui/Drawer";

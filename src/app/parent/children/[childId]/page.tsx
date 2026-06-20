@@ -4,10 +4,10 @@
 */
 import { Badge, Card, ChildDisplayAvatar, ChildDisplayName, PageHeader, ProgressRing, SectionTitle } from "@/components";
 import { childAvatarSrc } from "@/lib/avatars";
+import { childProfiles } from "@/lib/data/children";
 import {
   getAttendanceForChild,
   getBadgesForChild,
-  getChildById,
   getChildStatusSummary,
   getNextLessonForChild,
   getProgressForChild,
@@ -28,8 +28,8 @@ import { ParentPoints } from "./ParentPoints";
 import { ParentPrepInfo } from "./ParentPrepInfo";
 
 export function generateStaticParams() {
-  const { children } = getParentContext();
-  return children.map((c) => ({ childId: c.id }));
+  // Demo children may be linked at runtime; pre-render all known demo children.
+  return childProfiles.map((c) => ({ childId: c.id }));
 }
 
 const RING_TONE: Record<ChildStatusLevel, "success" | "gold" | "purple"> = {
@@ -45,7 +45,8 @@ export default async function ParentChildDetailPage({
 }) {
   const { childId } = await params;
   const { viewer } = getParentContext();
-  const child = getChildById(viewer, childId);
+  // Demo: resolve the child from the seed (linking is local/client-side).
+  const child = childProfiles.find((c) => c.id === childId) ?? null;
 
   if (!child) {
     return (
