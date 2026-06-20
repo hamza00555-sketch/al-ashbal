@@ -11,10 +11,11 @@ export default function ParentLinkChildPage() {
 
   return (
     <>
-      <PageHeader title="ربط طفل" subtitle="اختر طفلًا للتجربة" />
+      <PageHeader title="ربط طفل بالحَلَقة" subtitle="أدخل كود الحلقة ثم اختر الطفل" />
       <Card>
         <p className="text-body text-on-dark-muted">
-          اختر طفلًا للتجربة. في النسخة الحقيقية سيتم الربط بدعوة أو كود موافقة.
+          احصل على كود الحلقة من المعلّم، أدخله للتأكد من الحلقة، ثم اربط طفلك بها.
+          الربط تجريبي ومحفوظ على هذا الجهاز فقط.
         </p>
       </Card>
       <LinkChildPicker parentId={viewer.id} />

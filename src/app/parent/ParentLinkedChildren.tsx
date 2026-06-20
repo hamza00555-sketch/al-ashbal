@@ -4,16 +4,16 @@ import Link from "next/link";
 import { Badge, Card, CardOverlayMotif, ChildDisplayName, SectionTitle } from "@/components";
 import { childAvatarSrc } from "@/lib/avatars";
 import { childProfiles } from "@/lib/data/children";
-import { useLinkedChildIds } from "@/lib/demo/parentChildLinks";
+import { useEnrolledChildIdsForParent } from "@/lib/demo/halaqaEnrollment";
 import { LiveChildStatusAvatar } from "./LiveChildStatusAvatar";
 
 /**
  * Parent home "أطفالي" — shows ONLY the children this parent has explicitly
- * linked (local demo links). Empty-first: no children until linked, and the
- * empty state links to /parent/link-child (never to the child app).
+ * enrolled into a halaqa (local demo). Empty-first: no children until enrolled,
+ * and the empty state links to /parent/link-child (never to the child app).
  */
 export function ParentLinkedChildren({ parentId }: { parentId: string }) {
-  const ids = useLinkedChildIds(parentId);
+  const ids = useEnrolledChildIdsForParent(parentId);
   const linked = ids
     .map((id) => childProfiles.find((c) => c.id === id))
     .filter((c): c is NonNullable<typeof c> => Boolean(c));

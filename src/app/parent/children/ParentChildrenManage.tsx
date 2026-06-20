@@ -4,12 +4,19 @@ import Link from "next/link";
 import { Badge, Button, Card, CardOverlayMotif, ChildDisplayName } from "@/components";
 import { childAvatarSrc } from "@/lib/avatars";
 import { childProfiles } from "@/lib/data/children";
-import { removeParentChildLink, useLinkedChildIds } from "@/lib/demo/parentChildLinks";
+import { halaqas } from "@/lib/data/halaqas";
+import {
+  getEnrollmentForChild,
+  removeEnrollment,
+  useEnrolledChildIdsForParent,
+} from "@/lib/demo/halaqaEnrollment";
 import { LiveChildStatusAvatar } from "../LiveChildStatusAvatar";
 
-/** Linked children list with unlink. Empty-first: links to /parent/link-child. */
+const halaqaName = (id: string) => halaqas.find((h) => h.id === id)?.name ?? id;
+
+/** Enrolled children list with unlink. Empty-first: links to /parent/link-child. */
 export function ParentChildrenManage({ parentId }: { parentId: string }) {
-  const ids = useLinkedChildIds(parentId);
+  const ids = useEnrolledChildIdsForParent(parentId);
   const linked = ids
     .map((id) => childProfiles.find((c) => c.id === id))
     .filter((c): c is NonNullable<typeof c> => Boolean(c));
@@ -40,13 +47,21 @@ export function ParentChildrenManage({ parentId }: { parentId: string }) {
             <span className="text-card-title font-bold">
               <ChildDisplayName childId={c.id} fallback={c.displayName} />
             </span>
-            <Badge tone="purple" onLight>مرتبط</Badge>
+            {(() => {
+              const enr = getEnrollmentForChild(c.id);
+              return (
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <Badge tone="purple" onLight>مرتبط</Badge>
+                  {enr && <Badge tone="neutral" onLight>{halaqaName(enr.halaqaId)} · {enr.halaqaCode}</Badge>}
+                </div>
+              );
+            })()}
           </div>
           <div className="relative z-10 flex shrink-0 flex-col items-end gap-2">
             <Link href={`/parent/children/${c.id}`} className="text-caption font-bold text-purple transition hover:brightness-90">
               عرض التفاصيل
             </Link>
-            <Button variant="ghost" size="sm" onClick={() => removeParentChildLink(parentId, c.id)}>إلغاء الربط</Button>
+            <Button variant="ghost" size="sm" onClick={() => removeEnrollment(parentId, c.id)}>إلغاء الربط</Button>
           </div>
         </Card>
       ))}

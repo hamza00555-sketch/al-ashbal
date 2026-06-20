@@ -13,11 +13,13 @@ import {
 import { IconActivity, IconBook, IconCalendar, IconPrep, IconUsers, IconVideo } from "./_icons";
 import { getTeacherContext } from "./_shared";
 import { TeacherReviewAlert } from "./TeacherReviewAlert";
+import { EnrolledChildCountStat } from "./EnrolledChildCountStat";
 
 const chip = "inline-flex size-6 items-center justify-center";
 
 /** Teacher control-center tiles — the primary way to reach the daily pages. */
 const TEACHER_TOOLS = [
+  { href: "/teacher/halaqa", label: "كود الحلقة", icon: "icon_children", fallback: <IconUsers /> },
   { href: "/teacher/prep", label: "التحضير", icon: "icon_preparation", fallback: <IconPrep /> },
   { href: "/teacher/attendance", label: "الحضور", icon: "icon_attendance", fallback: <IconCalendar /> },
   { href: "/teacher/children", label: "الأطفال", icon: "icon_children", fallback: <IconUsers /> },
@@ -27,7 +29,7 @@ const TEACHER_TOOLS = [
 ];
 
 export default function TeacherOverviewPage() {
-  const { viewer, halaqas, children } = getTeacherContext();
+  const { viewer, halaqas } = getTeacherContext();
   const lessons = getLessonsForTeacher(viewer);
 
   const todayLesson =
@@ -79,7 +81,11 @@ export default function TeacherOverviewPage() {
 
       <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard label="حلقة اليوم" value={todayLesson ? todayLesson.startTime : "—"} tone="purple" icon={<span className={chip}><IconCalendar /></span>} hint={todayLesson?.title ?? "لا حلقة اليوم"} />
-        <StatCard label="أطفال الحلقة" value={children.length} tone="purple" icon={<span className={chip}><IconUsers /></span>} />
+        {halaqas[0] ? (
+          <EnrolledChildCountStat halaqaId={halaqas[0].id} />
+        ) : (
+          <StatCard label="أطفال الحلقة" value={0} tone="purple" icon={<span className={chip}><IconUsers /></span>} />
+        )}
         <StatCard label="الحضور" value={lastLesson ? `${present}/${lastAttendance.length}` : "—"} tone="success" icon={<span className={chip}><IconCalendar /></span>} hint="آخر حلقة" />
         <StatCard label="بانتظار المراجعة" value={pendingReviews.length} tone={pendingReviews.length > 0 ? "gold" : "success"} icon={<span className={chip}><IconVideo /></span>} hint="فيديوهات معتمدة" />
       </div>
