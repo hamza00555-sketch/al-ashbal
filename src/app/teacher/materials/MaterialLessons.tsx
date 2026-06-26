@@ -16,7 +16,7 @@ import {
 } from "@/lib/demo/materialLessons";
 
 const inputClass =
-  "min-h-10 w-full rounded-md border border-white/10 bg-surface-raised px-3 text-body text-on-dark outline-none transition focus:border-purple-soft";
+  "min-h-10 w-full rounded-md border border-purple/12 bg-surface-raised px-3 text-body text-on-dark outline-none transition focus:border-purple-soft";
 const fieldLabel = "text-caption text-on-dark-muted";
 const SUB_TYPES = Object.keys(LESSON_SUBMISSION_LABEL) as LessonSubmissionType[];
 
@@ -119,7 +119,7 @@ export function MaterialLessons({ materialId }: { materialId: string }) {
   const [editingId, setEditingId] = useState<string | null>(null);
 
   return (
-    <div className="mt-1 flex flex-col gap-3 rounded-md bg-night/40 p-3 ring-1 ring-white/10">
+    <div className="mt-1 flex flex-col gap-3 rounded-md bg-purple/5 p-3 ring-1 ring-purple/12">
       <div className="flex items-center justify-between gap-2">
         <span className="text-caption font-bold text-on-dark">الدروس المحفوظة ({active.length})</span>
         {!adding && (
@@ -172,14 +172,14 @@ export function MaterialLessons({ materialId }: { materialId: string }) {
                       aria-label="رفع الترتيب"
                       disabled={i === 0}
                       onClick={() => moveLessonUp(materialId, l.id)}
-                      className="inline-flex size-8 items-center justify-center rounded-md text-body text-on-dark-muted transition hover:bg-white/5 hover:text-on-dark disabled:cursor-not-allowed disabled:opacity-35"
+                      className="inline-flex size-8 items-center justify-center rounded-md text-body text-on-dark-muted transition hover:bg-purple/8 hover:text-on-dark disabled:cursor-not-allowed disabled:opacity-35"
                     >↑</button>
                     <button
                       type="button"
                       aria-label="خفض الترتيب"
                       disabled={i === active.length - 1}
                       onClick={() => moveLessonDown(materialId, l.id)}
-                      className="inline-flex size-8 items-center justify-center rounded-md text-body text-on-dark-muted transition hover:bg-white/5 hover:text-on-dark disabled:cursor-not-allowed disabled:opacity-35"
+                      className="inline-flex size-8 items-center justify-center rounded-md text-body text-on-dark-muted transition hover:bg-purple/8 hover:text-on-dark disabled:cursor-not-allowed disabled:opacity-35"
                     >↓</button>
                   </span>
                 </div>

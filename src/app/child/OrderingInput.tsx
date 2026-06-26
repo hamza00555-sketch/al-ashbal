@@ -30,7 +30,7 @@ export function OrderingInput({
         {items.map((item, i) => (
           <li
             key={i}
-            className="flex items-center gap-2 rounded-md border border-white/10 bg-surface-raised p-2"
+            className="flex items-center gap-2 rounded-md border border-purple/12 bg-surface-raised p-2"
           >
             <span className="inline-flex size-6 shrink-0 items-center justify-center rounded-pill bg-purple/15 text-caption font-bold text-purple-soft">
               {i + 1}

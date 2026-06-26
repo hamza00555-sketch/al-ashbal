@@ -15,17 +15,17 @@
 
 @layer base {
   html {
-    /* Tell the UA the app is dark so form controls / scrollbars match. */
-    color-scheme: dark;
+    /* Light UI so native form controls / scrollbars match the warm canvas. */
+    color-scheme: light;
   }
 
   body {
     /* RTL is also set via the dir attribute in layout.tsx; kept for safety. */
     direction: rtl;
     font-family: var(--font-primary);
-    /* Calm dark-purple base (matches the AppShell app-surface gradient top).
-       White/cream is opt-in per card via bg-cream / bg-surface-contrast. */
-    background: #170c33;
+    /* Warm cream canvas (matches the AppShell app-surface gradient top).
+       Cards sit white/elevated on top. */
+    background: #f6f0e8;
     color: var(--text-on-dark);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
@@ -33,6 +33,6 @@
 
   ::selection {
     background: var(--color-main-purple);
-    color: var(--color-warm-white);
+    color: #fffdf7;
   }
 }

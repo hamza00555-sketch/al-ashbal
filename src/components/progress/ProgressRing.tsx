@@ -59,7 +59,7 @@ export function ProgressRing({
           fill="none"
           strokeWidth={strokeWidth}
           stroke="currentColor"
-          className="text-white/10"
+          className="text-purple/12"
         />
         <circle
           cx={size / 2}

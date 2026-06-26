@@ -55,7 +55,10 @@ export function ChildLessonsView({ halaqaId, childId }: { halaqaId: string; chil
 
       {/* Attendance gate — the big, clear primary action */}
       <Card variant="gradient" className="flex flex-col gap-3">
-        <SectionTitle title="حضور الحلقة" subtitle="دخول الدرس وتسجيل الحضور" />
+        <div className="flex flex-col gap-1">
+          <h2 className="text-h2 text-cream">حضور الحلقة</h2>
+          <p className="text-caption text-cream/75">دخول الدرس وتسجيل الحضور</p>
+        </div>
         <JoinLessonButton lessonId={gateLessonId} childId={childId} disabled={!gateLessonId} />
       </Card>
 

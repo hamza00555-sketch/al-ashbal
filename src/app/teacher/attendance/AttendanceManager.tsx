@@ -123,7 +123,7 @@ export function AttendanceManager({
             inputMode="url"
             placeholder="ضع رابط Google Meet الخاص بك"
             disabled={gate.status === "open"}
-            className="min-h-11 rounded-md border border-white/10 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft disabled:opacity-60"
+            className="min-h-11 rounded-md border border-purple/12 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft disabled:opacity-60"
           />
           {gate.status !== "open" && meetUrl.trim() === "" && (
             <span className="text-caption text-on-dark-muted">
@@ -200,7 +200,7 @@ export function AttendanceManager({
         <div className="overflow-x-auto">
           <table className="w-full min-w-[680px] border-collapse text-body">
             <thead>
-              <tr className="border-b border-white/10">
+              <tr className="border-b border-purple/12">
                 <th className={th}>الطفل</th>
                 <th className={th}>الحالة</th>
                 <th className={th}>وقت الدخول</th>
@@ -213,7 +213,7 @@ export function AttendanceManager({
                 const entry = state.entries[child.id];
                 const status = entry?.status ?? "not_joined";
                 return (
-                  <tr key={child.id} className="border-b border-white/5 last:border-0">
+                  <tr key={child.id} className="border-b border-purple/8 last:border-0">
                     <td className={td}>
                       <span className="flex items-center gap-3">
                         <Avatar name={child.name} size="attendance" src={child.avatarSrc} />

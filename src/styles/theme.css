@@ -28,10 +28,10 @@
   --color-coral: var(--color-alert-coral);
 
   /* ---------- Semantic surfaces & text ---------- */
-  --color-surface: var(--color-deep-purple);          /* default app background */
-  --color-surface-raised: var(--color-royal-purple);  /* dark purple cards */
-  --color-surface-panel: var(--color-panel-purple);   /* gradient-ish panels */
-  --color-surface-contrast: var(--color-warm-white);  /* the LIMITED light cards */
+  --color-surface: var(--color-cloud);                /* warm cream app canvas */
+  --color-surface-raised: var(--color-card);          /* white cards / chips / inputs */
+  --color-surface-panel: var(--color-lavender-mist);  /* soft lavender panels */
+  --color-surface-contrast: var(--color-warm-white);  /* warm-white accent cards */
   --color-on-dark: var(--text-on-dark);
   --color-on-dark-muted: var(--text-muted-on-dark);
   --color-on-light: var(--text-on-light);
@@ -126,17 +126,17 @@
   box-shadow: var(--shadow-card), var(--card-top-highlight), var(--card-border), var(--card-edge-glow);
 }
 
-/* Cream / off-white contrast card — used sparingly for secondary/decorative
-   cards. Dark-purple text; pairs with a faint CardOverlayMotif watermark. */
+/* Soft lavender-cream accent card — used sparingly for secondary/decorative
+   cards. Deep-plum text; pairs with a faint CardOverlayMotif watermark. */
 @utility card-contrast {
-  background-image: linear-gradient(135deg, #fff7ef 0%, #f4eeff 58%, #eadfff 100%);
-  color: #241248;
+  background-image: linear-gradient(140deg, #fff8f0 0%, #f6efff 58%, #eee3ff 100%);
+  color: #2a1a4c;
 }
 
-/* Calm, non-distracting app background: a subtle dark-purple vertical gradient.
-   The base only — the cards (not the background) carry the richness. */
+/* Calm, warm app canvas: a soft cream → faint-lavender vertical gradient.
+   The base only — the cards carry the depth/shadows. */
 @utility app-surface {
-  background-color: #170c33;
+  background-color: #f6f0e8;
   background-image: var(--gradient-app-bg);
 }
 

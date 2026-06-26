@@ -53,7 +53,7 @@ export function DemoProfilePanel() {
         <Link
           href="/settings"
           className={cn(
-            "inline-flex min-h-9 items-center gap-1 rounded-md bg-surface-raised px-4 py-1 text-caption font-bold text-on-dark ring-1 ring-purple-soft/35 transition hover:bg-white/5 hover:ring-purple-soft",
+            "inline-flex min-h-9 items-center gap-1 rounded-md bg-surface-raised px-4 py-1 text-caption font-bold text-on-dark ring-1 ring-purple-soft/35 transition hover:bg-purple/8 hover:ring-purple-soft",
           )}
         >
           فتح إعدادات الملف

@@ -21,7 +21,7 @@ export default function TeacherChildrenPage() {
         actions={
           <Link
             href="/teacher/halaqa"
-            className="inline-flex min-h-9 shrink-0 items-center whitespace-nowrap rounded-pill bg-surface-raised px-3.5 text-caption font-bold text-on-dark ring-1 ring-purple-soft/30 transition hover:bg-white/5 hover:ring-purple-soft"
+            className="inline-flex min-h-9 shrink-0 items-center whitespace-nowrap rounded-pill bg-surface-raised px-3.5 text-caption font-bold text-on-dark ring-1 ring-purple-soft/30 transition hover:bg-purple/8 hover:ring-purple-soft"
           >
             كود الحلقة
           </Link>

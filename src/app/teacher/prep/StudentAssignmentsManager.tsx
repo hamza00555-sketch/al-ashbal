@@ -29,7 +29,7 @@ function lessonToSubmissionType(allowed: LessonSubmissionType[]): AssignmentSubm
 }
 
 const inputClass =
-  "min-h-11 w-full rounded-md border border-white/10 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft";
+  "min-h-11 w-full rounded-md border border-purple/12 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft";
 const fieldLabel = "text-caption text-on-dark-muted";
 
 const STATUS_LABEL: Record<AssignmentStatus, string> = {

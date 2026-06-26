@@ -32,7 +32,7 @@ export function NotificationList({
               type="button"
               onClick={() => onSelect?.(n)}
               className={cn(
-                "flex w-full items-start gap-3 rounded-md p-3 text-start transition hover:bg-white/5",
+                "flex w-full items-start gap-3 rounded-md p-3 text-start transition hover:bg-purple/8",
                 read && "opacity-60",
               )}
             >

@@ -117,15 +117,15 @@ export default function TeacherOverviewPage() {
         {/* Quick tasks */}
         <Card className="flex flex-col gap-3">
           <SectionTitle title="مهام اليوم" />
-          <Link href="/teacher/reviews" className="flex items-center justify-between gap-3 rounded-md bg-surface-raised px-4 py-3 text-button text-on-dark transition hover:bg-white/5">
+          <Link href="/teacher/reviews" className="flex items-center justify-between gap-3 rounded-md bg-surface-raised px-4 py-3 text-button text-on-dark transition hover:bg-purple/8">
             <span>مراجعة التسميعات</span>
             <Badge tone={pendingReviews.length > 0 ? "gold" : "neutral"}>{pendingReviews.length}</Badge>
           </Link>
-          <Link href="/teacher/attendance" className="flex items-center justify-between gap-3 rounded-md bg-surface-raised px-4 py-3 text-button text-on-dark transition hover:bg-white/5">
+          <Link href="/teacher/attendance" className="flex items-center justify-between gap-3 rounded-md bg-surface-raised px-4 py-3 text-button text-on-dark transition hover:bg-purple/8">
             <span>تسجيل حضور حلقة اليوم</span>
             <span className="inline-flex size-5 text-purple-soft"><IconCalendar /></span>
           </Link>
-          <Link href="/teacher/children" className="flex items-center justify-between gap-3 rounded-md bg-surface-raised px-4 py-3 text-button text-on-dark transition hover:bg-white/5">
+          <Link href="/teacher/children" className="flex items-center justify-between gap-3 rounded-md bg-surface-raised px-4 py-3 text-button text-on-dark transition hover:bg-purple/8">
             <span>أطفال الحلقة</span>
             <span className="inline-flex size-5 text-purple-soft"><IconUsers /></span>
           </Link>

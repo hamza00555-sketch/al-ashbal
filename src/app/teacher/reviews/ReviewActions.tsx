@@ -91,7 +91,7 @@ export function ReviewActions({ item, entry }: { item: ReviewItem; entry?: Revie
             value={noteDraft}
             onChange={(e) => setNoteDraft(e.target.value)}
             placeholder="ملاحظة للطفل / ولي الأمر"
-            className="min-h-11 rounded-md border border-white/10 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft"
+            className="min-h-11 rounded-md border border-purple/12 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft"
           />
           <Button variant="secondary" size="sm" onClick={saveNote}>حفظ الملاحظة</Button>
         </div>

@@ -20,7 +20,7 @@ import { IconBook } from "../_icons";
 import { MaterialLessons } from "./MaterialLessons";
 
 const inputClass =
-  "min-h-11 w-full rounded-md border border-white/10 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft";
+  "min-h-11 w-full rounded-md border border-purple/12 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft";
 const fieldLabel = "text-caption text-on-dark-muted";
 
 const TYPE_OPTIONS = Object.keys(MATERIAL_TYPE_LABEL) as MaterialType[];
@@ -39,7 +39,7 @@ function OrderBtn({ dir, disabled, onClick }: { dir: "up" | "down"; disabled: bo
       disabled={disabled}
       onClick={onClick}
       aria-label={dir === "up" ? "رفع الترتيب" : "خفض الترتيب"}
-      className="inline-flex size-9 items-center justify-center rounded-md text-body text-on-dark-muted transition hover:bg-white/5 hover:text-on-dark disabled:cursor-not-allowed disabled:opacity-35"
+      className="inline-flex size-9 items-center justify-center rounded-md text-body text-on-dark-muted transition hover:bg-purple/8 hover:text-on-dark disabled:cursor-not-allowed disabled:opacity-35"
     >
       {dir === "up" ? "↑" : "↓"}
     </button>
@@ -172,7 +172,7 @@ export function MaterialsManager({ halaqaId }: { halaqaId: string }) {
         </div>
 
         {/* secondary, quieter actions */}
-        <div className="flex flex-wrap items-center gap-x-1 gap-y-1 border-t border-white/10 pt-2">
+        <div className="flex flex-wrap items-center gap-x-1 gap-y-1 border-t border-purple/12 pt-2">
           <Button variant="ghost" size="sm" onClick={() => setMaterialVisibility(halaqaId, m.id, !m.showInChildProgress)}>
             {m.showInChildProgress ? "إخفاء من التقدّم" : "إظهار في التقدّم"}
           </Button>

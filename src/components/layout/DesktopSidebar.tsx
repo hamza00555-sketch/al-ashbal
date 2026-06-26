@@ -29,7 +29,7 @@ export function DesktopSidebar({
       aria-label="القائمة الجانبية"
       className={cn(
         // border-s = inline-start border → the right edge in RTL.
-        "hidden w-64 shrink-0 flex-col gap-6 border-s border-white/10 bg-surface p-6 md:flex",
+        "hidden w-64 shrink-0 flex-col gap-6 border-s border-purple/10 bg-surface-raised p-6 md:flex",
         className,
       )}
     >
@@ -40,8 +40,8 @@ export function DesktopSidebar({
           const itemClass = cn(
             "flex items-center gap-3 rounded-md px-4 py-3 text-button transition",
             active
-              ? "bg-purple/15 text-purple-soft"
-              : "text-on-dark-muted hover:bg-white/5 hover:text-on-dark",
+              ? "bg-purple/12 font-bold text-purple ring-1 ring-purple/15"
+              : "text-on-dark-muted hover:bg-purple/8 hover:text-on-dark",
           );
           const inner = (
             <>

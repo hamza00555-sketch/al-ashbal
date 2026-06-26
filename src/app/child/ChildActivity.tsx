@@ -40,17 +40,17 @@ export function ChildActivity({
     <>
       <Card variant="gradient" className="flex flex-col gap-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <span><Badge tone="success">نشاط مفتوح الآن</Badge></span>
-          <Badge tone="purple">{ACTIVITY_TYPE_LABEL[activity.type]}</Badge>
+          <span><Badge tone="success" onAccent>نشاط مفتوح الآن</Badge></span>
+          <Badge tone="purple" onAccent>{ACTIVITY_TYPE_LABEL[activity.type]}</Badge>
         </div>
         <h2 className="text-h2 break-words">{activity.title}</h2>
         {activity.description && (
-          <p className="text-body text-on-dark-muted break-words">{activity.description}</p>
+          <p className="text-body text-cream/85 break-words">{activity.description}</p>
         )}
-        <span className="text-caption text-on-dark-muted">
+        <span className="text-caption text-cream/75">
           {activity.questions.length} {activity.questions.length === 1 ? "سؤال" : "أسئلة"}
         </span>
-        {sent && <p className="text-caption text-mint">تم إرسال إجابتك</p>}
+        {sent && <p className="text-caption text-cream">تم إرسال إجابتك</p>}
         <div className="lg:max-w-xs">
           <Button variant="primary" fullWidth onClick={() => setOpen(true)}>
             {sent ? "عرض النشاط" : "ابدأ النشاط"}

@@ -17,7 +17,7 @@ import { ChildActivity } from "./ChildActivity";
 import { ChildTodayCard } from "./ChildTodayCard";
 
 const glanceLink =
-  "flex min-h-11 items-center justify-center gap-2 rounded-md bg-surface-raised px-4 text-caption font-bold text-on-dark transition hover:bg-white/5";
+  "flex min-h-11 items-center justify-center gap-2 rounded-md bg-surface-raised px-4 text-caption font-bold text-on-dark transition hover:bg-purple/8";
 
 export default function ChildHomePage() {
   const { viewer, child } = getChildContext();
@@ -60,7 +60,7 @@ export default function ChildHomePage() {
               </div>
               <Link
                 href="/child/tasks"
-                className="flex min-h-11 items-center justify-center rounded-md bg-surface-raised px-4 text-caption font-bold text-on-dark transition hover:bg-white/5"
+                className="flex min-h-11 items-center justify-center rounded-md bg-surface-raised px-4 text-caption font-bold text-on-dark transition hover:bg-purple/8"
               >
                 اذهب إلى مهامي
               </Link>

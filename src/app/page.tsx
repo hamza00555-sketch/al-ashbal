@@ -19,7 +19,7 @@ export default function Home() {
         <span className="gradient-badge flex size-16 items-center justify-center rounded-pill text-h2 font-extrabold text-on-light shadow-glow lg:size-20">
           ش
         </span>
-        <h1 className="text-h1 text-cream lg:text-display">الأشبال</h1>
+        <h1 className="text-h1 font-extrabold text-purple lg:text-display">الأشبال</h1>
         <p className="max-w-[320px] text-body text-on-dark-muted lg:max-w-md">
           رحلة الشبل في القرآن والتجويد والسلوك — بمتابعة آمنة ومحفّزة.
         </p>
@@ -34,19 +34,19 @@ export default function Home() {
         </Link>
         <Link
           href="/parent"
-          className="flex min-h-11 w-full items-center justify-center rounded-lg border border-white/10 bg-surface-raised px-8 text-button font-bold text-on-dark transition hover:bg-white/5"
+          className="flex min-h-11 w-full items-center justify-center rounded-lg border border-purple/12 bg-surface-raised px-8 text-button font-bold text-on-dark transition hover:bg-purple/8"
         >
           تجربة ولي الأمر
         </Link>
         <Link
           href="/teacher"
-          className="flex min-h-11 w-full items-center justify-center rounded-lg border border-white/10 bg-surface-raised px-8 text-button font-bold text-on-dark transition hover:bg-white/5"
+          className="flex min-h-11 w-full items-center justify-center rounded-lg border border-purple/12 bg-surface-raised px-8 text-button font-bold text-on-dark transition hover:bg-purple/8"
         >
           لوحة المعلم
         </Link>
         <Link
           href="/guest"
-          className="flex min-h-11 w-full items-center justify-center rounded-lg border border-white/10 bg-surface-raised px-8 text-button font-bold text-on-dark transition hover:bg-white/5"
+          className="flex min-h-11 w-full items-center justify-center rounded-lg border border-purple/12 bg-surface-raised px-8 text-button font-bold text-on-dark transition hover:bg-purple/8"
         >
           ضيف الشرف
         </Link>

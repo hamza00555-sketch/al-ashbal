@@ -13,7 +13,7 @@ import {
 } from "@/lib/demo/halaqaEnrollment";
 
 const inputClass =
-  "min-h-11 w-full rounded-md border border-white/10 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft";
+  "min-h-11 w-full rounded-md border border-purple/12 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft";
 
 /**
  * Demo-only enrollment by halaqa code. The parent enters the teacher's halaqa

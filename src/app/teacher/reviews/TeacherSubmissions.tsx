@@ -136,7 +136,7 @@ function SubmissionCard({
                     onClick={() => setRating(i)}
                     className={cn(
                       "min-h-11 w-full rounded-md border px-4 text-start text-body font-bold transition",
-                      active ? "border-purple-soft bg-purple/15 text-on-dark" : "border-white/10 bg-surface-raised text-on-dark-muted hover:text-on-dark",
+                      active ? "border-purple-soft bg-purple/15 text-on-dark" : "border-purple/12 bg-surface-raised text-on-dark-muted hover:text-on-dark",
                     )}
                   >
                     {r.label}
@@ -150,7 +150,7 @@ function SubmissionCard({
                 value={rateNote}
                 onChange={(e) => setRateNote(e.target.value)}
                 placeholder="ملاحظة للطفل / ولي الأمر"
-                className="min-h-11 rounded-md border border-white/10 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft"
+                className="min-h-11 rounded-md border border-purple/12 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft"
               />
             </label>
             <div className="flex flex-wrap gap-2">
@@ -166,7 +166,7 @@ function SubmissionCard({
             value={note}
             onChange={(e) => setNote(e.target.value)}
             placeholder="ملاحظة للطفل / ولي الأمر"
-            className="min-h-11 rounded-md border border-white/10 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft"
+            className="min-h-11 rounded-md border border-purple/12 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft"
           />
           <Button variant="secondary" size="sm" onClick={saveNote}>حفظ الملاحظة</Button>
         </div>

@@ -93,25 +93,25 @@ function ActiveActivityCard({ activity, halaqaChildren }: { activity: Activity; 
   return (
     <Card variant="gradient" className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <span><Badge tone="success">مفعّل الآن</Badge></span>
-        <Badge tone="purple">{ACTIVITY_TYPE_LABEL[activity.type]}</Badge>
+        <span><Badge tone="success" onAccent>مفعّل الآن</Badge></span>
+        <Badge tone="purple" onAccent>{ACTIVITY_TYPE_LABEL[activity.type]}</Badge>
       </div>
       <h2 className="text-h2 break-words">{activity.title}</h2>
       {activity.description && (
-        <p className="text-body text-on-dark-muted break-words">{activity.description}</p>
+        <p className="text-body text-cream/85 break-words">{activity.description}</p>
       )}
       <div className="flex flex-wrap gap-2">
-        <Badge tone="neutral">
+        <Badge tone="neutral" onAccent>
           {activity.questions.length} {activity.questions.length === 1 ? "سؤال" : "أسئلة"}
         </Badge>
-        {activity.durationMinutes ? <Badge tone="neutral">{activity.durationMinutes} دقيقة</Badge> : null}
+        {activity.durationMinutes ? <Badge tone="neutral" onAccent>{activity.durationMinutes} دقيقة</Badge> : null}
       </div>
       <ul className="flex flex-col gap-1">
         {activity.questions.map((q, i) => (
-          <li key={q.questionId} className="flex items-center gap-2 text-caption text-on-dark-muted break-words">
-            <span className="text-purple-soft">{i + 1}.</span>
+          <li key={q.questionId} className="flex items-center gap-2 text-caption text-cream/80 break-words">
+            <span className="text-cream">{i + 1}.</span>
             <span className="min-w-0 flex-1 break-words">{q.prompt}</span>
-            <Badge tone="neutral">{QUESTION_TYPE_LABEL[q.type]}</Badge>
+            <Badge tone="neutral" onAccent>{QUESTION_TYPE_LABEL[q.type]}</Badge>
           </li>
         ))}
       </ul>

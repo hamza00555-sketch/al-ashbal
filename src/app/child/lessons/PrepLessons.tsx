@@ -9,7 +9,7 @@ import {
   type LessonPrep,
 } from "@/lib/demo/lessonPrep";
 
-function PrepLessonCard({ prep, variant }: { prep: LessonPrep; variant: "gradient" | "surface" }) {
+function PrepLessonCard({ prep, variant }: { prep: LessonPrep; variant: "contrast" | "surface" }) {
   return (
     <Card variant={variant} className="flex flex-col gap-3">
       <div className="flex items-center justify-between gap-2">
@@ -44,7 +44,7 @@ export function PrepLessons({ halaqaId }: { halaqaId: string }) {
     <section className="flex flex-col gap-3">
       <SectionTitle title="من تحضير المعلم" subtitle="درس اليوم والدروس القادمة" />
       {today.map((p) => (
-        <PrepLessonCard key={p.lessonId} prep={p} variant="gradient" />
+        <PrepLessonCard key={p.lessonId} prep={p} variant="contrast" />
       ))}
       {upcoming.length > 0 && (
         <div className="grid gap-3 lg:grid-cols-2">

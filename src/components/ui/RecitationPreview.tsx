@@ -22,7 +22,7 @@ export function RecitationPreview({
       role="img"
       aria-label="معاينة تسميع تجريبية"
     >
-      <span className="inline-flex size-12 items-center justify-center rounded-pill bg-white/10 text-on-dark shadow-glow">
+      <span className="inline-flex size-12 items-center justify-center rounded-pill bg-purple/10 text-on-dark shadow-glow">
         <svg viewBox="0 0 24 24" className="size-6" fill="currentColor" aria-hidden>
           <path d="M8 5v14l11-7z" />
         </svg>

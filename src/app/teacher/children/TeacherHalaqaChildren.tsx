@@ -33,7 +33,7 @@ export function TeacherHalaqaChildren({
             <Link
               key={child.id}
               href={`/teacher/children/${child.id}`}
-              className="flex flex-col items-center gap-2 rounded-lg p-2 text-center transition hover:bg-white/5"
+              className="flex flex-col items-center gap-2 rounded-lg p-2 text-center transition hover:bg-purple/8"
             >
               <span className="rounded-pill p-1 ring-2 ring-purple-soft/50">
                 <ChildDisplayAvatar childId={child.id} fallbackName={child.displayName} fallbackSrc={childAvatarSrc(child.gender)} size="childCard" />

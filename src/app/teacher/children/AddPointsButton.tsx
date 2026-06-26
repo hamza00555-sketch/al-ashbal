@@ -112,7 +112,7 @@ export function AddPointsButton({
                         ? negative
                           ? "border-coral bg-coral/15 text-on-dark"
                           : "border-purple-soft bg-purple/15 text-on-dark"
-                        : "border-white/10 bg-surface-raised text-on-dark-muted hover:text-on-dark",
+                        : "border-purple/12 bg-surface-raised text-on-dark-muted hover:text-on-dark",
                     )}
                   >
                     <span>{preset.label}</span>
@@ -128,7 +128,7 @@ export function AddPointsButton({
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 placeholder="مثال: شارك بفاعلية في الحلقة"
-                className="min-h-11 w-full rounded-md border border-white/10 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft"
+                className="min-h-11 w-full rounded-md border border-purple/12 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft"
               />
             </label>
 

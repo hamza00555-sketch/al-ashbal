@@ -6,7 +6,7 @@ import { useTodayLessonPlan } from "@/lib/demo/lessonPrep";
 import { useChildActiveHalaqaId } from "@/lib/demo/halaqaEnrollment";
 
 const ctaPrimary =
-  "flex min-h-11 items-center justify-center rounded-md bg-surface-raised px-5 text-button font-bold text-on-dark ring-1 ring-purple-soft/40 transition hover:bg-white/5";
+  "flex min-h-11 items-center justify-center rounded-md bg-surface-raised px-5 text-button font-bold text-on-dark ring-1 ring-purple-soft/40 transition hover:bg-purple/8";
 const ctaGate =
   "gradient-cta flex min-h-11 items-center justify-center rounded-md px-6 text-button font-bold text-cream shadow-glow transition hover:brightness-110";
 
@@ -26,17 +26,17 @@ export function ChildTodayCard({ halaqaId, childId }: { halaqaId: string; childI
   return (
     <Card variant="gradient" className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-caption text-on-dark-muted">درس اليوم</span>
-        <Badge tone={parts.length ? "purple" : "neutral"}>{parts.length ? "من تحضير المعلم" : "لا جديد"}</Badge>
+        <span className="text-caption text-cream/80">درس اليوم</span>
+        <Badge tone={parts.length ? "purple" : "neutral"} onAccent>{parts.length ? "من تحضير المعلم" : "لا جديد"}</Badge>
       </div>
 
       {parts.length > 0 ? (
         <ul className="flex flex-col gap-1">
           {parts.map((p) => (
             <li key={p.lessonId} className="text-h2 break-words">
-              <span className="text-on-dark">{p.subject}</span>
+              <span className="text-cream">{p.subject}</span>
               {(p.surahOrTopic || p.title) && (
-                <span className="text-on-dark-muted"> · {p.surahOrTopic || p.title}</span>
+                <span className="text-cream/75"> · {p.surahOrTopic || p.title}</span>
               )}
             </li>
           ))}

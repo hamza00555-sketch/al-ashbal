@@ -43,7 +43,7 @@ export function DemoExperienceSwitcher({ current }: { current?: string }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-2 rounded-pill bg-surface-raised px-4 py-2 text-caption font-bold text-on-dark transition hover:bg-white/5"
+        className="inline-flex items-center gap-2 rounded-pill bg-surface-raised px-4 py-2 text-caption font-bold text-on-dark transition hover:bg-purple/8"
       >
         <span className="inline-flex size-4"><SwapIcon /></span>
         تبديل التجربة
@@ -73,7 +73,7 @@ export function DemoExperienceSwitcher({ current }: { current?: string }) {
                   rowBase,
                   current === x.id
                     ? "bg-purple/15 text-purple-soft"
-                    : "bg-surface-raised text-on-dark hover:bg-white/5",
+                    : "bg-surface-raised text-on-dark hover:bg-purple/8",
                 )}
               >
                 {x.label}

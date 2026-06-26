@@ -54,7 +54,7 @@ function SettingsForm({ target, onMessage }: { target: SaveTarget; onMessage: (m
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="اكتب الاسم الظاهر"
-          className="min-h-11 w-full rounded-md border border-white/10 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft"
+          className="min-h-11 w-full rounded-md border border-purple/12 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft"
         />
       </label>
 
@@ -71,7 +71,7 @@ function SettingsForm({ target, onMessage }: { target: SaveTarget; onMessage: (m
                 onClick={() => setAvatar(src)}
                 className={cn(
                   "rounded-pill p-1 transition",
-                  active ? "ring-2 ring-purple-soft" : "ring-1 ring-white/10 hover:ring-white/30",
+                  active ? "ring-2 ring-purple" : "ring-1 ring-purple/15 hover:ring-purple/40",
                 )}
               >
                 <Avatar name="أفاتار" size="lg" src={src} />
@@ -117,7 +117,7 @@ export function SettingsView({ roleParam, childId }: { roleParam?: Role; childId
   const backHref = ROLE_HOME[role];
   const formKey = `${role}:${childId ?? "-"}:${displayName}:${avatarUrl ?? ""}`;
   const backBtnClass =
-    "inline-flex min-h-9 shrink-0 items-center gap-1 whitespace-nowrap rounded-pill bg-surface-raised px-3.5 py-1.5 text-caption font-bold text-on-dark ring-1 ring-purple-soft/30 transition hover:bg-white/5 hover:ring-purple-soft";
+    "inline-flex min-h-9 shrink-0 items-center gap-1 whitespace-nowrap rounded-pill bg-surface-raised px-3.5 py-1.5 text-caption font-bold text-on-dark ring-1 ring-purple-soft/30 transition hover:bg-purple/8 hover:ring-purple-soft";
 
   return (
     <>

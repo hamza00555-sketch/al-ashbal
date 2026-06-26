@@ -4,14 +4,14 @@ import { cn } from "@/lib/cn";
 export type CardVariant = "surface" | "raised" | "contrast" | "gradient";
 
 const variantClasses: Record<CardVariant, string> = {
-  // Default primary surface — rich purple gradient card with highlight + hairline border.
+  // Default surface — soft white/warm card with highlight + plum hairline border.
   surface: "card-elevated text-on-dark",
-  // Emphasis card — same gradient with a soft edge glow.
+  // Emphasis card — same finish with a slightly stronger soft shadow/glow.
   raised: "card-glow text-on-dark",
-  // The LIMITED light card — cream/off-white with dark-purple text.
-  contrast: "card-contrast shadow-soft ring-1 ring-black/5",
-  // Hero card — brighter lavender→purple gradient with glow + lavender outline.
-  gradient: "gradient-hero text-on-dark shadow-glow ring-1 ring-purple-soft/30",
+  // Soft lavender-cream accent card — deep-plum text.
+  contrast: "card-contrast shadow-soft ring-1 ring-purple/10",
+  // Hero card — PURPLE gradient with light (cream) text + soft glow.
+  gradient: "gradient-hero text-cream shadow-glow ring-1 ring-white/15",
 };
 
 export interface CardProps extends HTMLAttributes<HTMLDivElement> {

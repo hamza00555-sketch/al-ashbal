@@ -41,7 +41,7 @@ export function ProgressBar({
         </div>
       )}
       <div
-        className="h-3 w-full overflow-hidden rounded-pill bg-white/10"
+        className="h-3 w-full overflow-hidden rounded-pill bg-purple/12"
         role="progressbar"
         aria-valuenow={rounded}
         aria-valuemin={0}

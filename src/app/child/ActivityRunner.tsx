@@ -148,7 +148,7 @@ export function ActivityRunner({
       </div>
 
       {/* progress */}
-      <div className="h-1.5 w-full overflow-hidden rounded-pill bg-white/10">
+      <div className="h-1.5 w-full overflow-hidden rounded-pill bg-purple/10">
         <div
           className="h-full rounded-pill bg-purple-soft transition-all"
           style={{ width: `${((step + 1) / questions.length) * 100}%` }}
@@ -202,7 +202,7 @@ function QuestionView({
           onChange={(e) => onChange(e.target.value)}
           placeholder="اكتب إجابتك هنا"
           rows={3}
-          className="min-h-20 w-full rounded-md border border-white/10 bg-surface px-4 py-2 text-body text-on-dark outline-none transition focus:border-purple-soft"
+          className="min-h-20 w-full rounded-md border border-purple/12 bg-surface px-4 py-2 text-body text-on-dark outline-none transition focus:border-purple-soft"
         />
       );
     case "task_acknowledgement": {
@@ -220,7 +220,7 @@ function QuestionView({
             onChange={(e) => onChange({ ...v, note: e.target.value })}
             placeholder="ملاحظة اختيارية"
             rows={2}
-            className="min-h-16 w-full rounded-md border border-white/10 bg-surface px-4 py-2 text-body text-on-dark outline-none transition focus:border-purple-soft"
+            className="min-h-16 w-full rounded-md border border-purple/12 bg-surface px-4 py-2 text-body text-on-dark outline-none transition focus:border-purple-soft"
           />
         </div>
       );
@@ -260,7 +260,7 @@ function ChoiceButtons({
               big && "min-h-16 text-center text-card-title",
               selected
                 ? "border-purple-soft bg-purple/15 text-on-dark"
-                : "border-white/10 bg-surface text-on-dark-muted hover:text-on-dark",
+                : "border-purple/12 bg-surface text-on-dark-muted hover:text-on-dark",
             )}
           >
             {opt}

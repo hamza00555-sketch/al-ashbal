@@ -16,11 +16,11 @@ export type ButtonSize = "sm" | "md" | "lg";
 const variantClasses: Record<ButtonVariant, string> = {
   primary: "gradient-cta text-cream shadow-glow ring-1 ring-white/15 hover:brightness-110",
   secondary:
-    "bg-surface-raised text-on-dark ring-1 ring-purple-soft/35 hover:ring-purple-soft hover:bg-white/5",
-  ghost: "bg-transparent text-on-dark-muted hover:bg-white/5 hover:text-on-dark",
-  surface: "bg-surface text-on-dark border border-white/10 hover:bg-surface-raised",
-  contrast: "bg-cream text-on-light shadow-soft hover:brightness-95",
-  danger: "bg-coral text-on-light hover:brightness-95",
+    "bg-surface-raised text-on-dark ring-1 ring-purple/20 shadow-soft hover:ring-purple/40 hover:bg-purple/5",
+  ghost: "bg-transparent text-on-dark-muted hover:bg-purple/8 hover:text-on-dark",
+  surface: "bg-surface text-on-dark ring-1 ring-purple/12 hover:bg-surface-raised",
+  contrast: "bg-cream text-on-light shadow-soft ring-1 ring-purple/10 hover:brightness-[0.97]",
+  danger: "bg-coral text-cream shadow-soft hover:brightness-105",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
