@@ -14,7 +14,7 @@ export default function ParentLayout({ children }: { children: ReactNode }) {
   const viewer = getMockUser("parent");
   const seed = getNotificationsForViewer(viewer);
   return (
-    <AppShell sidebar={<ParentDesktopNav />} mobileNav={<ParentMobileNav />}>
+    <AppShell sidebar={<ParentDesktopNav />} mobileNav={<ParentMobileNav />} ambient="parent">
       <div className="mx-auto flex w-full max-w-[430px] flex-col gap-6 md:max-w-[1120px]">
         <div className="flex items-center justify-between gap-2">
           <DemoExperienceSwitcher current="parent" />

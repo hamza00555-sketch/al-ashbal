@@ -45,7 +45,7 @@ export default function ChildHomePage() {
           <ChildTodayCard halaqaId={child.halaqaId} childId={child.id} />
 
           {openTasks > 0 && (
-            <Card className="flex flex-wrap items-center justify-between gap-3">
+            <Card className="anim-rise anim-delay-1 flex flex-wrap items-center justify-between gap-3">
               <div className="flex min-w-0 items-center gap-3">
                 <AppAssetIcon
                   src="/assets/icons/icon_tasks.png"
@@ -77,7 +77,7 @@ export default function ChildHomePage() {
 
         {/* side column */}
         <div className="flex flex-col gap-6">
-          <Card className="flex flex-col gap-3">
+          <Card className="anim-rise anim-delay-2 flex flex-col gap-3">
             <SectionTitle title="حالة اليوم" />
             <div className="flex items-center justify-between gap-2">
               <span className="text-body text-on-dark-muted">الحضور</span>
@@ -91,7 +91,7 @@ export default function ChildHomePage() {
             </div>
           </Card>
 
-          <Card className="flex flex-col gap-4">
+          <Card className="anim-rise anim-delay-3 flex flex-col gap-4">
             <SectionTitle title="لمحة عن التقدّم" />
             <ProgressBar value={progress?.currentProgressBar.current ?? 0} tone="purple" label="رحلة الشبل" />
             <div className="grid grid-cols-2 gap-3">

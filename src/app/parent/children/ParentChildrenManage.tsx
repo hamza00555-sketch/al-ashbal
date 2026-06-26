@@ -23,11 +23,11 @@ export function ParentChildrenManage({ parentId }: { parentId: string }) {
 
   if (linked.length === 0) {
     return (
-      <Card className="flex flex-col items-start gap-3">
+      <Card className="anim-rise flex flex-col items-start gap-3">
         <p className="text-body text-on-dark-muted">لم يتم ربط أي طفل بعد.</p>
         <Link
           href="/parent/link-child"
-          className="inline-flex min-h-9 items-center rounded-pill bg-purple/15 px-4 text-caption font-bold text-purple-soft ring-1 ring-purple-soft/40 transition hover:bg-purple/25"
+          className="anim-cta-breathe inline-flex min-h-9 items-center rounded-pill bg-purple px-5 text-caption font-bold text-cream shadow-glow ring-1 ring-white/15 transition hover:brightness-110"
         >
           ربط أطفالك
         </Link>
@@ -37,8 +37,8 @@ export function ParentChildrenManage({ parentId }: { parentId: string }) {
 
   return (
     <div className="flex flex-col gap-3">
-      {linked.map((c) => (
-        <Card key={c.id} variant="contrast" className="relative isolate flex items-center gap-3 overflow-hidden">
+      {linked.map((c, i) => (
+        <Card key={c.id} variant="contrast" style={{ animationDelay: `${i * 0.06}s` }} className="anim-rise relative isolate flex items-center gap-3 overflow-hidden">
           <CardOverlayMotif motif="halo" className="-start-5 top-1/2 size-24 -translate-y-1/2 text-purple-soft opacity-[0.12]" />
           <span className="relative z-10">
             <LiveChildStatusAvatar childId={c.id} fallbackName={c.displayName} fallbackSrc={childAvatarSrc(c.gender)} level="excellent" size="childCard" />

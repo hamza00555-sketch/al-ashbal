@@ -22,7 +22,15 @@ export function ChildPoints({ childId }: { childId: string }) {
     <Card className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <AppAssetIcon src="/assets/icons/icon_points.png" size="hero" artworkScale={1.6} className="text-gold" fallback={<IconStar />} />
+          <span className="relative inline-flex">
+            <AppAssetIcon src="/assets/icons/icon_points.png" size="hero" artworkScale={1.6} className="text-gold" fallback={<IconStar />} />
+            {points.length > 0 && (
+              <>
+                <span aria-hidden className="anim-sparkle absolute -top-1 -end-1 size-1.5 rounded-full bg-gold" />
+                <span aria-hidden className="anim-sparkle anim-delay-2 absolute bottom-0 start-0 size-1 rounded-full bg-purple-soft" />
+              </>
+            )}
+          </span>
           <SectionTitle title="نقاطي" />
         </div>
         {points.length > 0 && <Badge tone="gold">إجمالي {total}</Badge>}

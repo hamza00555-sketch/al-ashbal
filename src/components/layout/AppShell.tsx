@@ -24,8 +24,27 @@ export interface AppShellProps {
   header?: ReactNode;
   /** App background direction. Falls back to bg-surface color if the file is missing. */
   backgroundKey?: AppBackgroundKey;
+  /**
+   * Continuous ambient motion behind the content. ONLY for Child/Parent areas
+   * (Teacher stays calm). Pointer-events-none + clipped, so it never affects
+   * layout, scrolling, or clicks. Disabled under prefers-reduced-motion (CSS).
+   */
+  ambient?: "child" | "parent";
   children: ReactNode;
   className?: string;
+}
+
+/** Soft, blurred floating blobs — light ambient life for child/parent pages. */
+function AmbientLayer({ tone }: { tone: "child" | "parent" }) {
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+      <span className="anim-float-a absolute -top-20 -start-12 size-64 rounded-full bg-purple/12 blur-2xl" />
+      <span className="anim-float-b absolute top-1/3 -end-16 size-72 rounded-full bg-gold/10 blur-2xl" />
+      {tone === "child" && (
+        <span className="anim-float-a absolute bottom-12 start-1/4 size-48 rounded-full bg-mint/10 blur-2xl" />
+      )}
+    </div>
+  );
 }
 
 /**
@@ -42,6 +61,7 @@ export function AppShell({
   mobileNav,
   header,
   backgroundKey = "none",
+  ambient,
   children,
   className,
 }: AppShellProps) {
@@ -55,9 +75,12 @@ export function AppShell({
       )}
     >
       {sidebar}
-      <div className="flex min-w-0 flex-1 flex-col">
-        {header && <div className="px-6 pt-6">{header}</div>}
-        <main className="flex-1 px-6 py-6 pb-24 md:pb-6">{children}</main>
+      <div className="relative flex min-w-0 flex-1 flex-col">
+        {header && <div className="relative z-10 px-6 pt-6">{header}</div>}
+        <main className="relative flex-1 overflow-x-clip px-6 py-6 pb-24 md:pb-6">
+          {ambient && <AmbientLayer tone={ambient} />}
+          <div className="relative z-10">{children}</div>
+        </main>
       </div>
       {mobileNav}
     </div>

@@ -83,7 +83,11 @@ export function ParentSubmissions({
             <Card
               key={s.taskId}
               id={`submission-${s.id}`}
-              className={cn("flex flex-col gap-3", highlighted && "ring-2 ring-purple-soft")}
+              className={cn(
+                "anim-rise flex flex-col gap-3",
+                mode === "pending" && "anim-pulse-ring",
+                highlighted && "ring-2 ring-purple-soft",
+              )}
             >
               <div className="flex items-center gap-3">
                 <Avatar name={s.childName} size="lg" src={childAvatarById(s.childId)} />

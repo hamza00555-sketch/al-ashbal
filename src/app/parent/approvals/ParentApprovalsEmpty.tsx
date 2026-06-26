@@ -18,10 +18,10 @@ export function ParentApprovalsEmpty({ parentUserId }: { parentUserId: string })
   if (pending > 0) return null;
 
   return (
-    <Card className="flex items-center gap-3">
+    <Card className="anim-rise flex items-center gap-3">
       <AppIllustration
         name="illustration_parent_approval"
-        className="size-16 shrink-0"
+        className="anim-float-b size-16 shrink-0"
         fallback={
           <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-pill bg-mint/15 p-2.5 text-mint">
             <IconVideo />

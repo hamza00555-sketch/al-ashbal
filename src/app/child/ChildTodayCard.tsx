@@ -24,7 +24,7 @@ export function ChildTodayCard({ halaqaId, childId }: { halaqaId: string; childI
   const parts = today.slice(0, 4);
 
   return (
-    <Card variant="gradient" className="flex flex-col gap-4">
+    <Card variant="gradient" className="anim-rise anim-breathe flex flex-col gap-4">
       <div className="flex items-center justify-between gap-2">
         <span className="text-caption text-cream/80">درس اليوم</span>
         <Badge tone={parts.length ? "purple" : "neutral"} onAccent>{parts.length ? "من تحضير المعلم" : "لا جديد"}</Badge>

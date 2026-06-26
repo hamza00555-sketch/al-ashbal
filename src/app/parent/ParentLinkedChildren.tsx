@@ -22,25 +22,26 @@ export function ParentLinkedChildren({ parentId }: { parentId: string }) {
     <section className="flex flex-col gap-3">
       <SectionTitle title="أطفالي" subtitle={`${linked.length} مرتبطون بك`} />
       {linked.length === 0 ? (
-        <Card className="flex flex-col items-start gap-3">
+        <Card className="anim-rise flex flex-col items-start gap-3">
           <p className="text-body text-on-dark-muted">لم يتم ربط أي طفل بعد.</p>
           <p className="text-caption text-on-dark-muted">
             في النسخة الحقيقية سيتم الربط بدعوة أو كود موافقة. الآن يمكنك ربط طفل للتجربة.
           </p>
           <Link
             href="/parent/link-child"
-            className="inline-flex min-h-9 items-center rounded-pill bg-purple/15 px-4 text-caption font-bold text-purple-soft ring-1 ring-purple-soft/40 transition hover:bg-purple/25"
+            className="anim-cta-breathe inline-flex min-h-9 items-center rounded-pill bg-purple px-5 text-caption font-bold text-cream shadow-glow ring-1 ring-white/15 transition hover:brightness-110"
           >
             ربط أطفالك
           </Link>
         </Card>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {linked.map((c) => (
+          {linked.map((c, i) => (
             <Link
               key={c.id}
               href={`/parent/children/${c.id}`}
-              className="card-contrast relative isolate flex flex-col items-center gap-2 overflow-hidden rounded-lg p-4 text-center shadow-soft ring-1 ring-black/5 transition hover:brightness-[1.03]"
+              style={{ animationDelay: `${i * 0.06}s` }}
+              className="card-contrast anim-rise relative isolate flex flex-col items-center gap-2 overflow-hidden rounded-lg p-4 text-center shadow-soft ring-1 ring-purple/10 transition-transform duration-200 hover:-translate-y-0.5"
             >
               <CardOverlayMotif motif="halo" className="-top-5 left-1/2 size-28 -translate-x-1/2 text-purple-soft opacity-[0.13]" />
               <span className="relative z-10">

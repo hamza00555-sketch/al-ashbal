@@ -50,7 +50,10 @@ export default async function ChildTasksPage({
       <Card
         key={task.id}
         id={`task-${task.id}`}
-        className={cn("flex flex-col gap-3", highlighted && "ring-2 ring-purple-soft")}
+        className={cn(
+          "flex flex-col gap-3 transition-transform duration-200 hover:-translate-y-0.5",
+          highlighted && "ring-2 ring-purple-soft",
+        )}
       >
         <div className="flex items-start gap-3">
           <AppAssetIcon

@@ -41,7 +41,7 @@ function needsRecording(a: StudentAssignment): boolean {
 function AssignmentCard({ a, ctx }: { a: StudentAssignment; ctx: StudentAssignmentTasksProps }) {
   const [message, setMessage] = useState<string | null>(null);
   return (
-    <Card className="flex flex-col gap-3">
+    <Card className="anim-rise flex flex-col gap-3 transition-transform duration-200 hover:-translate-y-0.5">
       <div className="flex items-start gap-3">
         <AppAssetIcon
           src={`/assets/icons/${ASSIGNMENT_ICON[a.type].name}.png`}

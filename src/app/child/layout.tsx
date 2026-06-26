@@ -14,7 +14,7 @@ export default function ChildLayout({ children }: { children: ReactNode }) {
   const viewer = getMockUser("child");
   const seed = getNotificationsForViewer(viewer);
   return (
-    <AppShell sidebar={<ChildDesktopNav />} mobileNav={<ChildMobileNav />}>
+    <AppShell sidebar={<ChildDesktopNav />} mobileNav={<ChildMobileNav />} ambient="child">
       <div className="mx-auto flex w-full max-w-[430px] flex-col gap-6 md:max-w-[1120px]">
         <div className="flex items-center justify-between gap-2">
           <DemoExperienceSwitcher current="child" />
