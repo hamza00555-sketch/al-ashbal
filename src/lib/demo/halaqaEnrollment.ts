@@ -173,6 +173,35 @@ export function getEnrolledChildIdsForHalaqa(halaqaId: string): string[] {
   return readEnrollments().filter((e) => e.halaqaId === halaqaId).map((e) => e.childId);
 }
 
+/** Alias: children (ids) enrolled in a halaqa — the teacher's roster source. */
+export function getEnrolledChildrenForHalaqa(halaqaId: string): string[] {
+  return getEnrolledChildIdsForHalaqa(halaqaId);
+}
+
+// ---- active-halaqa resolution ----------------------------------------------
+// One rule for the whole app: a child's ACTIVE halaqa is their local active
+// enrollment when it exists. The seed identity is only a fallback so the
+// child's OWN demo page can still open — never for parent/teacher visibility.
+
+/** The child's active enrollment record (local source of truth), or null. */
+export function getActiveDemoEnrollmentForChild(childId: string): DemoHalaqaEnrollment | null {
+  return readEnrollments().find((e) => e.childId === childId && e.status === "active") ?? null;
+}
+
+/** The parent's active enrollments (children they enrolled). */
+export function getActiveDemoEnrollmentsForParent(parentId: string): DemoHalaqaEnrollment[] {
+  return readEnrollments().filter((e) => e.parentId === parentId && e.status === "active");
+}
+
+/**
+ * The child's ACTIVE halaqa id: the enrolled halaqa if any, else the seed
+ * fallback (so the demo child page can still open). Returns undefined only when
+ * there is no enrollment AND no fallback was provided.
+ */
+export function getChildActiveHalaqaId(childId: string, seedFallback?: string): string | undefined {
+  return getActiveDemoEnrollmentForChild(childId)?.halaqaId ?? seedFallback;
+}
+
 // ---- reactive hooks --------------------------------------------------------
 
 function subscribeInvite(cb: () => void) {
@@ -225,4 +254,21 @@ export function useEnrolledChildIdsForParent(parentId: string): string[] {
 export function useEnrolledChildIdsForHalaqa(halaqaId: string): string[] {
   const getIds = useCallback(() => getEnrolledChildIdsForHalaqa(halaqaId), [halaqaId]);
   return useEnrolledIds(getIds);
+}
+
+/**
+ * Reactive ACTIVE halaqa id for a child: the enrolled halaqa when present, else
+ * the seed fallback. Use this anywhere the child's own content depends on their
+ * halaqa (today lesson, assignments, prep) so enrollment is the source of truth.
+ */
+export function useChildActiveHalaqaId(childId: string, seedFallback: string): string {
+  const cache = useRef<{ sig: string; value: string }>({ sig: "∅", value: seedFallback });
+  const getSnapshot = useCallback((): string => {
+    const value = getChildActiveHalaqaId(childId, seedFallback) ?? seedFallback;
+    if (value === cache.current.value && cache.current.sig !== "∅") return cache.current.value;
+    cache.current = { sig: value, value };
+    return value;
+  }, [childId, seedFallback]);
+  const getServer = useCallback((): string => seedFallback, [seedFallback]);
+  return useSyncExternalStore(subscribeEnroll, getSnapshot, getServer);
 }

@@ -7,6 +7,7 @@ import {
   useActiveActivityForHalaqa,
   useChildAnswer,
 } from "@/lib/demo/activities";
+import { useChildActiveHalaqaId } from "@/lib/demo/halaqaEnrollment";
 import { ActivityRunner } from "./ActivityRunner";
 
 /**
@@ -25,7 +26,9 @@ export function ChildActivity({
   childName: string;
   childUserId: string;
 }) {
-  const activity = useActiveActivityForHalaqa(halaqaId);
+  // The class activity follows the child's active (enrolled) halaqa; seed fallback only.
+  const activeHalaqaId = useChildActiveHalaqaId(childId, halaqaId);
+  const activity = useActiveActivityForHalaqa(activeHalaqaId);
   const myAnswer = useChildAnswer(activity?.activityId, childId);
   const [open, setOpen] = useState(false);
 
@@ -63,7 +66,7 @@ export function ChildActivity({
               childId={childId}
               childName={childName}
               childUserId={childUserId}
-              halaqaId={halaqaId}
+              halaqaId={activeHalaqaId}
               existing={myAnswer}
               onClose={() => setOpen(false)}
             />

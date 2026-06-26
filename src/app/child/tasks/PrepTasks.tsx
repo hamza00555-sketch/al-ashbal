@@ -10,6 +10,7 @@ import {
   type LessonPrep,
   type RequirementType,
 } from "@/lib/demo/lessonPrep";
+import { useChildActiveHalaqaId } from "@/lib/demo/halaqaEnrollment";
 import { IconBook, IconTasks, IconVideo } from "../_icons";
 import { RecitationTaskAction } from "./RecitationTaskAction";
 
@@ -97,7 +98,9 @@ function PrepTaskCard({ prep, ctx }: { prep: LessonPrep; ctx: PrepTasksProps }) 
 
 /** Tasks derived from the teacher's saved prep (for the child's halaqa only). */
 export function PrepTasks(props: PrepTasksProps) {
-  const preps = usePrepsForHalaqa(props.halaqaId).filter((p) => p.requirementType !== "none");
+  // Prep-derived tasks follow the child's active (enrolled) halaqa; seed fallback only.
+  const activeHalaqaId = useChildActiveHalaqaId(props.childId, props.halaqaId);
+  const preps = usePrepsForHalaqa(activeHalaqaId).filter((p) => p.requirementType !== "none");
   if (preps.length === 0) return null;
 
   return (

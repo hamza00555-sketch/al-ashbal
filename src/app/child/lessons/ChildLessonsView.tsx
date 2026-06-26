@@ -2,6 +2,7 @@
 
 import { Badge, Card, SectionTitle } from "@/components";
 import { usePrepsForHalaqa, type LessonPrep } from "@/lib/demo/lessonPrep";
+import { useChildActiveHalaqaId } from "@/lib/demo/halaqaEnrollment";
 import { JoinLessonButton } from "./JoinLessonButton";
 
 /** Compact lesson card (material · topic · ayah · short note). Small by design. */
@@ -29,7 +30,9 @@ function LessonChip({ prep }: { prep: LessonPrep }) {
  * No student tasks here — tasks live in /child/tasks.
  */
 export function ChildLessonsView({ halaqaId, childId }: { halaqaId: string; childId: string }) {
-  const preps = usePrepsForHalaqa(halaqaId);
+  // Lessons come from the child's ACTIVE (enrolled) halaqa; seed is only fallback.
+  const activeHalaqaId = useChildActiveHalaqaId(childId, halaqaId);
+  const preps = usePrepsForHalaqa(activeHalaqaId);
   const today = preps.filter((p) => p.lessonStatus === "today");
   const upcoming = preps.filter((p) => p.lessonStatus === "upcoming");
   const gateLessonId = today[0]?.lessonId;

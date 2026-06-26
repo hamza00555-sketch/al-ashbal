@@ -42,7 +42,7 @@ export default function ChildHomePage() {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* main column */}
         <div className="flex flex-col gap-6 lg:col-span-2">
-          <ChildTodayCard halaqaId={child.halaqaId} />
+          <ChildTodayCard halaqaId={child.halaqaId} childId={child.id} />
 
           {openTasks > 0 && (
             <Card className="flex flex-wrap items-center justify-between gap-3">
