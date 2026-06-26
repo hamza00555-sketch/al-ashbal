@@ -89,22 +89,44 @@ export interface RecordingMedia {
   mimeType: string;
 }
 
-/** Loads a recording from IndexedDB and exposes an object URL (revoked on cleanup). */
-export function useRecordingUrl(recordingId: string | null): RecordingMedia | null {
-  const [loaded, setLoaded] = useState<{ id: string; media: RecordingMedia } | null>(null);
+/** Load status of a recording: still loading, ready, or missing/failed. */
+export type RecordingLoadState =
+  | { status: "loading" }
+  | { status: "ready"; media: RecordingMedia }
+  | { status: "error" };
+
+/**
+ * Loads a recording from IndexedDB and exposes an object URL (revoked on
+ * cleanup). Distinguishes "still loading" from "missing/failed" so the UI can
+ * show an error instead of an endless spinner.
+ */
+export function useRecordingLoad(recordingId: string | null): RecordingLoadState {
+  const [loaded, setLoaded] = useState<{ id: string; state: RecordingLoadState }>({
+    id: "",
+    state: { status: "loading" },
+  });
 
   useEffect(() => {
-    if (!recordingId || typeof indexedDB === "undefined") return;
+    if (!recordingId) return;
     let active = true;
     let objectUrl: string | null = null;
+    // getRecording rejects if IndexedDB is unavailable or the read fails, and
+    // resolves null when the recording is missing — both map to "error".
     getRecording(recordingId)
       .then((rec) => {
-        if (!active || !rec) return;
+        if (!active) return;
+        if (!rec) {
+          setLoaded({ id: recordingId, state: { status: "error" } });
+          return;
+        }
         objectUrl = URL.createObjectURL(rec.blob);
-        setLoaded({ id: recordingId, media: { url: objectUrl, type: rec.type, mimeType: rec.mimeType } });
+        setLoaded({
+          id: recordingId,
+          state: { status: "ready", media: { url: objectUrl, type: rec.type, mimeType: rec.mimeType } },
+        });
       })
       .catch(() => {
-        /* ignore */
+        if (active) setLoaded({ id: recordingId, state: { status: "error" } });
       });
     return () => {
       active = false;
@@ -112,6 +134,13 @@ export function useRecordingUrl(recordingId: string | null): RecordingMedia | nu
     };
   }, [recordingId]);
 
-  // Only return media that matches the current id (null while loading / when cleared).
-  return loaded && loaded.id === recordingId ? loaded.media : null;
+  // Only trust the resolved state when it matches the current id; while a new id
+  // is still loading (or none is set), report "loading".
+  return loaded.id === (recordingId ?? "") ? loaded.state : { status: "loading" };
+}
+
+/** Loads a recording and exposes the media once ready (null while loading/failed). */
+export function useRecordingUrl(recordingId: string | null): RecordingMedia | null {
+  const state = useRecordingLoad(recordingId);
+  return state.status === "ready" ? state.media : null;
 }

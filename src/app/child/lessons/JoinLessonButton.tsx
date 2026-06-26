@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AppAssetIcon, Badge, Button } from "@/components";
 import { useAttendance } from "@/lib/demo/attendance";
+import { openExternalLink } from "@/lib/url";
 import { IconBook } from "../_icons";
 
 const GATE_CLOSED_MESSAGE = "بوابة الحضور مغلقة حاليًا، لن يتم تسجيل أي حضور الآن.";
@@ -47,9 +48,7 @@ export function JoinLessonButton({
       return;
     }
     const label = result.status === "present" ? "حاضر" : "متأخر";
-    const meetUrl = state.gate.meetUrl;
-    if (meetUrl && /^https?:\/\//.test(meetUrl)) {
-      window.open(meetUrl, "_blank", "noopener,noreferrer");
+    if (openExternalLink(state.gate.meetUrl)) {
       setMessage(`تم تسجيل حضورك تجريبيًا: ${label} — يُفتح رابط الدرس في تبويب جديد.`);
     } else {
       setMessage(`تم تسجيل حضورك تجريبيًا: ${label}، لكن رابط الدرس غير مفعّل الآن.`);

@@ -1,18 +1,28 @@
 "use client";
 
-import { useRecordingUrl } from "@/lib/demo/recordings";
+import { useRecordingLoad } from "@/lib/demo/recordings";
 
 /** Plays a recitation recording (audio/video) loaded from IndexedDB. */
 export function RecordingPlayer({ recordingId }: { recordingId: string }) {
-  const media = useRecordingUrl(recordingId);
+  const state = useRecordingLoad(recordingId);
 
-  if (!media) {
+  if (state.status === "error") {
+    return (
+      <div className="flex aspect-video w-full items-center justify-center rounded-md bg-night px-3 text-center text-caption text-on-dark-muted">
+        تعذّر تحميل التسجيل — قد يكون محفوظًا على جهاز آخر أو حُذف.
+      </div>
+    );
+  }
+
+  if (state.status === "loading") {
     return (
       <div className="flex aspect-video w-full items-center justify-center rounded-md bg-night text-caption text-on-dark-muted">
         جارٍ تحميل التسجيل…
       </div>
     );
   }
+
+  const { media } = state;
 
   if (media.type === "video") {
     return <video controls src={media.url} className="aspect-video w-full rounded-md bg-night" />;

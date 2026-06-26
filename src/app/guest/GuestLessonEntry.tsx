@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button, Card } from "@/components";
 import { useOpenGate } from "@/lib/demo/attendance";
+import { openExternalLink } from "@/lib/url";
 import { IconHalaqa } from "./_icons";
 
 /**
@@ -19,9 +20,7 @@ export function GuestLessonEntry() {
       setMessage("لم يفتح المعلم بوابة الدرس بعد.");
       return;
     }
-    const url = openGate.meetUrl;
-    if (url && /^https?:\/\//.test(url)) {
-      window.open(url, "_blank", "noopener,noreferrer");
+    if (openExternalLink(openGate.meetUrl)) {
       setMessage("يُفتح رابط الدرس في تبويب جديد (دخول الضيف لا يُسجّل حضورًا).");
     } else {
       setMessage("رابط الدرس التجريبي غير مفعّل الآن.");

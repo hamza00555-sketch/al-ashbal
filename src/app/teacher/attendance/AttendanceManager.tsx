@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Avatar, Badge, Button, Card } from "@/components";
 import { cn } from "@/lib/cn";
+import { openExternalLink } from "@/lib/url";
 import {
   summarize,
   useAttendance,
@@ -66,9 +67,7 @@ export function AttendanceManager({
   }
 
   function joinAsTeacher() {
-    const url = gate.meetUrl;
-    if (url && /^https?:\/\//.test(url)) {
-      window.open(url, "_blank", "noopener,noreferrer");
+    if (openExternalLink(gate.meetUrl)) {
       setTeacherMessage("يُفتح رابط الحلقة في تبويب جديد (دخولك لا يُسجّل حضورًا).");
     } else {
       setTeacherMessage("لا يوجد رابط للحلقة الآن.");
