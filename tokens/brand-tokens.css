@@ -39,8 +39,12 @@
   --text-muted: #6B5E84;
 
   /* ---------- Gradients ---------- */
-  /* Calm WARM base — the canvas is light cream with a faint lavender wash. */
-  --gradient-app-bg: linear-gradient(180deg, #FBF6EE 0%, #F6F0FA 56%, #F1E9FB 100%);
+  /* Deep WARM plum canvas — purple is the dominant surface; cream lives in the
+     content cards that float on top. Layered (not flat) for depth. */
+  --gradient-app-bg:
+    radial-gradient(120% 80% at 100% 0%, rgba(141, 107, 255, 0.22) 0%, rgba(141, 107, 255, 0) 55%),
+    radial-gradient(100% 70% at 0% 100%, rgba(231, 174, 61, 0.10) 0%, rgba(231, 174, 61, 0) 55%),
+    linear-gradient(170deg, #2C1660 0%, #1F1147 52%, #281355 100%);
   /* Hero / emphasis cards stay PURPLE (brand pop) with light text. */
   --gradient-hero: linear-gradient(150deg, #8E6BFF 0%, #6D4CFF 44%, #4C1FA6 100%);
   /* Default card finish is light & warm (white → faint cream). */

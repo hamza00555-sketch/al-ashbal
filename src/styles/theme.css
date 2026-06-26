@@ -133,11 +133,12 @@
   color: #2a1a4c;
 }
 
-/* Calm, warm app canvas: a soft cream → faint-lavender vertical gradient.
-   The base only — the cards carry the depth/shadows. */
+/* Deep warm-plum app canvas (purple-dominant). Cream content cards float on
+   top with their own shadows; ambient motion reads clearly on this base. */
 @utility app-surface {
-  background-color: #f6f0e8;
+  background-color: #1f1147;
   background-image: var(--gradient-app-bg);
+  background-attachment: fixed;
 }
 
 /* ------------------------------------------------------------------

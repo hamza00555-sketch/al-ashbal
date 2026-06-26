@@ -12,7 +12,7 @@ export function ParentDesktopNav() {
     <DesktopSidebar
       items={parentNavItems}
       activeId={active}
-      header={<span className="text-card-title font-extrabold text-on-dark">الأشبال</span>}
+      header={<span className="text-card-title font-extrabold text-cream">الأشبال</span>}
     />
   );
 }

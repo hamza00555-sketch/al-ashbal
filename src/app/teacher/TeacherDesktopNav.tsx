@@ -23,7 +23,7 @@ export function TeacherDesktopNav({
     <DesktopSidebar
       items={items}
       activeId={active}
-      header={<span className="text-card-title font-extrabold text-on-dark">الأشبال · المعلم</span>}
+      header={<span className="text-card-title font-extrabold text-cream">الأشبال · المعلم</span>}
     />
   );
 }

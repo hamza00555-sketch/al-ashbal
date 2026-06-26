@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
+import { ChildAmbientMotion, ParentAmbientMotion } from "./AmbientMotion";
 
 /** Background direction keys → responsive (mobile/desktop) image utilities.
  *  Class strings are LITERAL so Tailwind's JIT picks them up. When the PNG is
@@ -34,18 +35,6 @@ export interface AppShellProps {
   className?: string;
 }
 
-/** Soft, blurred floating blobs — light ambient life for child/parent pages. */
-function AmbientLayer({ tone }: { tone: "child" | "parent" }) {
-  return (
-    <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-      <span className="anim-float-a absolute -top-20 -start-12 size-64 rounded-full bg-purple/12 blur-2xl" />
-      <span className="anim-float-b absolute top-1/3 -end-16 size-72 rounded-full bg-gold/10 blur-2xl" />
-      {tone === "child" && (
-        <span className="anim-float-a absolute bottom-12 start-1/4 size-48 rounded-full bg-mint/10 blur-2xl" />
-      )}
-    </div>
-  );
-}
 
 /**
  * App layout frame. RTL-first: in a flex row under dir="rtl" the sidebar
@@ -68,7 +57,7 @@ export function AppShell({
   return (
     <div
       className={cn(
-        "flex min-h-dvh bg-cover bg-center bg-no-repeat text-on-dark",
+        "flex min-h-dvh bg-cover bg-center bg-no-repeat text-cream",
         // Calm dark base by default; image keys (ref/abstract/journey) are opt-in.
         backgroundKey === "none" ? "app-surface" : cn("bg-surface", BACKGROUND_CLASS[backgroundKey]),
         className,
@@ -78,7 +67,8 @@ export function AppShell({
       <div className="relative flex min-w-0 flex-1 flex-col">
         {header && <div className="relative z-10 px-6 pt-6">{header}</div>}
         <main className="relative flex-1 overflow-x-clip px-6 py-6 pb-24 md:pb-6">
-          {ambient && <AmbientLayer tone={ambient} />}
+          {ambient === "child" && <ChildAmbientMotion />}
+          {ambient === "parent" && <ParentAmbientMotion />}
           <div className="relative z-10">{children}</div>
         </main>
       </div>

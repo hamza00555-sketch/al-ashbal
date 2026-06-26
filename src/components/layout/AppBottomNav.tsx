@@ -31,7 +31,7 @@ export function AppBottomNav({ items, activeId }: { items: BottomNavItem[]; acti
   return (
     <nav
       aria-label="التنقل"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-purple/10 bg-surface-raised/95 backdrop-blur pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_24px_rgba(76,31,166,0.10)] md:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#23124f]/95 text-cream backdrop-blur pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_24px_rgba(0,0,0,0.30)] md:hidden"
     >
       <div className="mx-auto flex h-[76px] w-full max-w-[430px] items-end justify-around gap-2 px-6 pb-2">
         {items.map((item) => {
@@ -43,7 +43,7 @@ export function AppBottomNav({ items, activeId }: { items: BottomNavItem[]; acti
               aria-current={active ? "page" : undefined}
               className={cn(
                 "flex flex-1 flex-col items-center justify-end gap-0.5 text-[13px] leading-none transition",
-                active ? "font-bold text-purple" : "text-on-dark-muted hover:text-on-dark",
+                active ? "font-bold text-gold" : "text-cream/60 hover:text-cream",
               )}
             >
               <span className="relative inline-flex">

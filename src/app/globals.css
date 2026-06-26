@@ -23,10 +23,10 @@
     /* RTL is also set via the dir attribute in layout.tsx; kept for safety. */
     direction: rtl;
     font-family: var(--font-primary);
-    /* Warm cream canvas (matches the AppShell app-surface gradient top).
-       Cards sit white/elevated on top. */
-    background: #f6f0e8;
-    color: var(--text-on-dark);
+    /* Deep warm-plum canvas (matches the AppShell app-surface). Cream content
+       cards sit elevated on top. */
+    background: #1f1147;
+    color: #fdf8ef;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
@@ -72,6 +72,18 @@
   0%, 100% { transform: scale(1); }
   50%      { transform: scale(1.025); }
 }
+@keyframes ash-twinkle {
+  0%, 100% { opacity: 0.15; transform: scale(0.6); }
+  50%      { opacity: 1; transform: scale(1.25); }
+}
+@keyframes ash-breathe-soft {
+  0%, 100% { opacity: 0.45; transform: scale(0.92); }
+  50%      { opacity: 0.85; transform: scale(1.08); }
+}
+@keyframes ash-float-slow {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%      { transform: translate3d(0, -10px, 0); }
+}
 
 @layer utilities {
   /* Entrance (one-shot) — staggered via delay helpers */
@@ -83,15 +95,18 @@
   /* Continuous ambient (Child/Parent only) */
   .anim-float-a { animation: ash-float-a 8s ease-in-out infinite; }
   .anim-float-b { animation: ash-float-b 10s ease-in-out infinite; }
+  .anim-float-slow { animation: ash-float-slow 14s ease-in-out infinite; }
   .anim-breathe { animation: ash-breathe 4.5s ease-in-out infinite; }
+  .anim-breathe-soft { animation: ash-breathe-soft 5.5s ease-in-out infinite; }
   .anim-sparkle { animation: ash-sparkle 3s ease-in-out infinite; }
+  .anim-twinkle { animation: ash-twinkle 3.2s ease-in-out infinite; }
   .anim-pulse-ring { animation: ash-pulse-ring 2.4s ease-out infinite; }
   .anim-cta-breathe { animation: ash-cta-breathe 3.6s ease-in-out infinite; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .anim-rise, .anim-float-a, .anim-float-b, .anim-breathe,
-  .anim-sparkle, .anim-pulse-ring, .anim-cta-breathe {
+  .anim-rise, .anim-float-a, .anim-float-b, .anim-float-slow, .anim-breathe,
+  .anim-breathe-soft, .anim-sparkle, .anim-twinkle, .anim-pulse-ring, .anim-cta-breathe {
     animation: none !important;
   }
 }
