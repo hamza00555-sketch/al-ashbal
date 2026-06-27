@@ -19,7 +19,7 @@ export default function TeacherLayout({ children }: { children: ReactNode }) {
       sidebar={<TeacherDesktopNav teacherId={viewer.id} dbPendingReviews={dbPendingReviews} />}
       mobileNav={<TeacherMobileNav teacherId={viewer.id} dbPendingReviews={dbPendingReviews} />}
     >
-      <div className="mx-auto flex w-full max-w-[1180px] flex-col gap-6">
+      <div className="mx-auto flex w-full max-w-[1180px] flex-col gap-5">
         <div className="flex items-center justify-between gap-2">
           <DemoExperienceSwitcher current="teacher" />
           <NotificationBell userId={viewer.id} seed={seed} />

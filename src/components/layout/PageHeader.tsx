@@ -25,14 +25,13 @@ export function PageHeader({
     <header
       className={cn(
         // Purple hero band — anchors every page with brand plum + cream text.
-        "gradient-hero relative isolate flex items-start justify-between gap-4 overflow-hidden rounded-lg p-5 text-cream shadow-glow ring-1 ring-white/15 sm:p-6",
+        "gradient-hero relative isolate flex items-start justify-between gap-3 overflow-hidden rounded-lg p-4 text-cream shadow-glow ring-1 ring-white/15 sm:gap-4 sm:p-5",
         className,
       )}
     >
-      <span aria-hidden className="pointer-events-none absolute -top-10 -start-8 size-40 rounded-full bg-white/10 blur-2xl" />
-      <div className="relative z-10 flex min-w-0 items-center gap-4">
+      <div className="relative z-10 flex min-w-0 items-center gap-3 sm:gap-4">
         {leading}
-        <div className="flex min-w-0 flex-col gap-1">
+        <div className="flex min-w-0 flex-col gap-0.5">
           {eyebrow && <span className="text-caption text-cream/70">{eyebrow}</span>}
           <h1 className="text-h1 break-words text-cream">{title}</h1>
           {subtitle && <p className="text-body text-cream/80">{subtitle}</p>}

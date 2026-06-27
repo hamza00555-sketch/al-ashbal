@@ -24,7 +24,7 @@ export default function ChildProgressPage() {
 
       <ProgressRingsCard childId={child.id} halaqaId={child.halaqaId} />
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-5 lg:grid-cols-2">
         <CubJourneyCard childId={child.id} halaqaId={child.halaqaId} />
 
         <ChildPoints childId={child.id} />

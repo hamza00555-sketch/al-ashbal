@@ -127,7 +127,7 @@ export default async function ChildTasksPage({
       />
 
       {tasks.length > 0 ? (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-5">
           {activeTasks.length > 0 ? (
             <section className="flex flex-col gap-3">
               <h2 className="text-body font-bold text-on-dark">تحتاج إنجاز</h2>
