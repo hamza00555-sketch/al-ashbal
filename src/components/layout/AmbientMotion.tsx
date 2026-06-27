@@ -1,3 +1,6 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/cn";
 
 /*
@@ -40,8 +43,12 @@ export function ChildAmbientMotion() {
   );
 }
 
-/** Parent: calmer & slower — soft glow + a couple of gentle shapes, fewer stars. */
+/** Parent: calmer & slower — soft glow + a couple of gentle shapes, fewer stars.
+ *  Suppressed on /parent/children to keep that empty/list screen quiet and
+ *  product-ready (no decorative particles there). */
 export function ParentAmbientMotion() {
+  const pathname = usePathname();
+  if (pathname === "/parent/children") return null;
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
       <span className="anim-float-slow absolute -top-20 -start-12 size-80 rounded-full bg-purple/30 blur-3xl" />

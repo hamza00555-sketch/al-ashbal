@@ -1,5 +1,5 @@
-/* Parent · children (/parent/children) — linked children with link/unlink. */
-import Link from "next/link";
+/* Parent · children (/parent/children) — linked children with link/unlink.
+   One clear "ربط طفل" CTA lives inside the list/empty state (not the header). */
 import { PageHeader } from "@/components";
 import { getParentContext } from "../_shared";
 import { ParentChildrenManage } from "./ParentChildrenManage";
@@ -9,18 +9,7 @@ export default function ParentChildrenPage() {
 
   return (
     <>
-      <PageHeader
-        title="أطفالي"
-        subtitle="الأطفال المرتبطون بحسابك"
-        actions={
-          <Link
-            href="/parent/link-child"
-            className="inline-flex min-h-9 shrink-0 items-center whitespace-nowrap rounded-pill bg-surface-raised px-3.5 text-caption font-bold text-on-dark ring-1 ring-purple-soft/30 transition hover:bg-purple/8 hover:ring-purple-soft"
-          >
-            ربط طفل
-          </Link>
-        }
-      />
+      <PageHeader title="أطفالي" subtitle="الأطفال المرتبطون بحسابك" />
       <ParentChildrenManage parentId={viewer.id} />
     </>
   );

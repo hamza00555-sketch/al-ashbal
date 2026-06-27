@@ -23,13 +23,16 @@ export function ParentChildrenManage({ parentId }: { parentId: string }) {
 
   if (linked.length === 0) {
     return (
-      <Card className="anim-rise flex flex-col items-start gap-3">
-        <p className="text-body text-on-dark-muted">لم يتم ربط أي طفل بعد.</p>
+      <Card className="flex flex-col items-start gap-2">
+        <h2 className="text-card-title font-bold">لم يتم ربط أي طفل بعد</h2>
+        <p className="text-body text-on-dark-muted">
+          أدخل كود الحلقة الذي يرسله لك المعلم، ثم أنشئ ملف طفلك واربطه بالحَلَقة.
+        </p>
         <Link
           href="/parent/link-child"
-          className="anim-cta-breathe inline-flex min-h-9 items-center rounded-pill bg-purple px-5 text-caption font-bold text-cream shadow-glow ring-1 ring-white/15 transition hover:brightness-110"
+          className="mt-1 inline-flex min-h-11 items-center gap-2 rounded-md bg-purple px-5 text-button font-bold text-cream shadow-card ring-1 ring-white/15 transition hover:brightness-110"
         >
-          ربط أطفالك
+          ربط طفل
         </Link>
       </Card>
     );
@@ -37,6 +40,14 @@ export function ParentChildrenManage({ parentId }: { parentId: string }) {
 
   return (
     <div className="flex flex-col gap-3">
+      <div className="flex justify-end">
+        <Link
+          href="/parent/link-child"
+          className="inline-flex min-h-9 items-center gap-1.5 rounded-pill bg-surface-raised px-3.5 text-caption font-bold text-on-dark ring-1 ring-purple/15 transition hover:bg-purple/8 hover:ring-purple/30"
+        >
+          ربط طفل
+        </Link>
+      </div>
       {linked.map((c, i) => (
         <Card key={c.id} variant="contrast" style={{ animationDelay: `${i * 0.06}s` }} className="anim-rise relative isolate flex items-center gap-3 overflow-hidden">
           <CardOverlayMotif motif="halo" className="-start-5 top-1/2 size-24 -translate-y-1/2 text-purple-soft opacity-[0.12]" />

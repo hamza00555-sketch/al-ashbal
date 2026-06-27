@@ -34,7 +34,7 @@ function SwapIcon() {
  * Demo-only experience switcher (NOT real auth/login). Opens a side drawer with
  * links to the different role experiences.
  */
-export function DemoExperienceSwitcher({ current }: { current?: string }) {
+export function DemoExperienceSwitcher({ current, compact = false }: { current?: string; compact?: boolean }) {
   const [open, setOpen] = useState(false);
   const rowBase = "flex items-center justify-between gap-3 rounded-md px-4 py-3 text-button transition";
 
@@ -43,9 +43,16 @@ export function DemoExperienceSwitcher({ current }: { current?: string }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-2 rounded-pill bg-surface-raised px-4 py-2 text-caption font-bold text-on-dark transition hover:bg-purple/8"
+        aria-label="تبديل التجربة"
+        className={cn(
+          "inline-flex items-center gap-1.5 rounded-pill font-bold transition",
+          compact
+            ? // Quiet/dev affordance — does not compete with the real action.
+              "px-2.5 py-1 text-[11px] text-cream/55 hover:bg-white/10 hover:text-cream"
+            : "bg-surface-raised px-4 py-2 text-caption text-on-dark hover:bg-purple/8",
+        )}
       >
-        <span className="inline-flex size-4"><SwapIcon /></span>
+        <span className={cn("inline-flex", compact ? "size-3.5" : "size-4")}><SwapIcon /></span>
         تبديل التجربة
       </button>
 

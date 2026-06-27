@@ -17,7 +17,7 @@ export default function ParentLayout({ children }: { children: ReactNode }) {
     <AppShell sidebar={<ParentDesktopNav />} mobileNav={<ParentMobileNav />} ambient="parent">
       <div className="mx-auto flex w-full max-w-[430px] flex-col gap-4 md:max-w-[1120px]">
         <div className="flex items-center justify-between gap-2">
-          <DemoExperienceSwitcher current="parent" />
+          <DemoExperienceSwitcher current="parent" compact />
           <NotificationBell userId={viewer.id} seed={seed} />
         </div>
         {children}
