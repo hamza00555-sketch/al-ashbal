@@ -22,7 +22,7 @@ export function TeacherReviewAlert({
   return (
     <Card className="flex flex-wrap items-center justify-between gap-3">
       <div className="flex min-w-0 items-center gap-3">
-        <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-pill bg-purple/15 p-2.5 text-purple-soft">
+        <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-pill bg-purple/15 p-2 text-purple">
           <IconVideo />
         </span>
         <p className="text-body font-bold break-words">

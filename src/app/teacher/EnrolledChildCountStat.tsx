@@ -13,7 +13,7 @@ export function EnrolledChildCountStat({ halaqaId }: { halaqaId: string }) {
       label="أطفال الحلقة"
       value={ids.length}
       tone="purple"
-      icon={<span className="inline-flex size-6 items-center justify-center"><IconUsers /></span>}
+      icon={<span className="inline-flex size-8 items-center justify-center"><IconUsers /></span>}
     />
   );
 }

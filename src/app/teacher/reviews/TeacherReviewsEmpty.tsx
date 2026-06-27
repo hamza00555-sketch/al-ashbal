@@ -23,7 +23,7 @@ export function TeacherReviewsEmpty({ teacherId }: { teacherId: string }) {
         name="illustration_waiting_review"
         className="size-16 shrink-0"
         fallback={
-          <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-pill bg-mint/15 p-2.5 text-mint">
+          <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-pill bg-mint/15 p-2 text-mint">
             <IconVideo />
           </span>
         }

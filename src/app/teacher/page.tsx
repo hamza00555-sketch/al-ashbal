@@ -15,7 +15,7 @@ import { getTeacherContext } from "./_shared";
 import { TeacherReviewAlert } from "./TeacherReviewAlert";
 import { EnrolledChildCountStat } from "./EnrolledChildCountStat";
 
-const chip = "inline-flex size-6 items-center justify-center";
+const chip = "inline-flex size-8 items-center justify-center";
 
 /** Teacher control-center tiles — the primary way to reach the daily pages. */
 const TEACHER_TOOLS = [
@@ -96,7 +96,7 @@ export default function TeacherOverviewPage() {
           <SectionTitle title="ملخص آخر درس" />
           {lastLesson ? (
             <div className="flex items-start gap-3">
-              <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-md bg-purple/15 p-2.5 text-purple-soft">
+              <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-md bg-purple/15 p-2 text-purple">
                 <IconBook />
               </span>
               <div className="flex min-w-0 flex-col gap-1">
@@ -121,13 +121,13 @@ export default function TeacherOverviewPage() {
             <span>مراجعة التسميعات</span>
             <Badge tone={pendingReviews.length > 0 ? "gold" : "neutral"}>{pendingReviews.length}</Badge>
           </Link>
-          <Link href="/teacher/attendance" className="flex items-center justify-between gap-3 rounded-md bg-surface-raised px-4 py-3 text-button text-on-dark transition hover:bg-purple/8">
+          <Link href="/teacher/attendance" className="flex items-center justify-between gap-3 rounded-md bg-surface-raised px-4 py-2.5 text-button text-on-dark transition hover:bg-purple/8">
             <span>تسجيل حضور حلقة اليوم</span>
-            <span className="inline-flex size-5 text-purple-soft"><IconCalendar /></span>
+            <span className="inline-flex size-6 text-purple"><IconCalendar /></span>
           </Link>
-          <Link href="/teacher/children" className="flex items-center justify-between gap-3 rounded-md bg-surface-raised px-4 py-3 text-button text-on-dark transition hover:bg-purple/8">
+          <Link href="/teacher/children" className="flex items-center justify-between gap-3 rounded-md bg-surface-raised px-4 py-2.5 text-button text-on-dark transition hover:bg-purple/8">
             <span>أطفال الحلقة</span>
-            <span className="inline-flex size-5 text-purple-soft"><IconUsers /></span>
+            <span className="inline-flex size-6 text-purple"><IconUsers /></span>
           </Link>
         </Card>
       </div>
