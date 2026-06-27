@@ -70,7 +70,7 @@ export default function TeacherOverviewPage() {
             <Link
               key={t.href}
               href={t.href}
-              className="flex aspect-square flex-col items-center justify-center gap-1.5 rounded-lg bg-[#E6DAFF] p-3 text-center text-[#2B1238] shadow-soft ring-1 ring-[#6940A5]/15 transition hover:brightness-[0.97]"
+              className="flex aspect-square flex-col items-center justify-center gap-2 rounded-lg bg-[#E6DAFF] p-4 text-center text-[#2B1238] shadow-soft ring-1 ring-[#6940A5]/15 transition hover:brightness-[0.97]"
             >
               <AppAssetIcon src={`/assets/icons/${t.icon}.png`} size="heroLg" fallback={t.fallback} />
               <span className="text-card-title font-bold">{t.label}</span>

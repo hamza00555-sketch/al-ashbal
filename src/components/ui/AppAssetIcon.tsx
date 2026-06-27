@@ -26,7 +26,7 @@ const SIZE: Record<AssetIconSize, { box: string; scale: number }> = {
   lg: { box: "size-16", scale: 1.3 }, // 64px · ~48px
   nav: { box: "size-12", scale: 1.35 }, // 48px · ~36px
   hero: { box: "size-18", scale: 1.3 }, // 72px · ~52px
-  heroLg: { box: "size-28", scale: 1.35 }, // 112px · ~80px — big dashboard tiles
+  heroLg: { box: "size-26", scale: 1.35 }, // 104px · ~76px — big dashboard tiles
 };
 
 const VARIANT: Record<AssetIconVariant, string> = {
