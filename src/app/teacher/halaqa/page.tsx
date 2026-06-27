@@ -1,7 +1,7 @@
-/* Teacher · halaqa code (/teacher/halaqa) — invite code to share with parents. */
+/* Teacher · class (/teacher/halaqa) — the single current class roster.
+   No user-facing code: students appear automatically when they register. */
 import { Card, PageHeader } from "@/components";
 import { getTeacherContext } from "../_shared";
-import { HalaqaCodeCard } from "./HalaqaCodeCard";
 import { TeacherHalaqaChildren } from "../children/TeacherHalaqaChildren";
 
 export default function TeacherHalaqaPage() {
@@ -21,8 +21,7 @@ export default function TeacherHalaqaPage() {
 
   return (
     <>
-      <PageHeader title="الحلقة" subtitle="كود الحلقة والأطفال المنضمّون" />
-      <HalaqaCodeCard halaqaId={halaqa.id} halaqaName={halaqa.name} />
+      <PageHeader title="الحلقة" subtitle="الطلاب المسجّلون في صفّك" />
       <TeacherHalaqaChildren halaqaId={halaqa.id} withHeading />
     </>
   );

@@ -19,11 +19,17 @@ export interface DemoCreatedChild {
   avatar?: string;
   age?: number;
   level?: string;
-  /** Internal: the single current halaqa this child belongs to (not exposed in UI). */
+  /** Internal: the single current class this child belongs to (NOT exposed in UI). */
   halaqaId: string;
-  createdByParentId: string;
+  /** Who created the profile (student self-registered, or a parent). */
+  createdBy?: "student" | "parent";
+  /** Set when a parent created the child directly. */
+  createdByParentId?: string;
   createdAt: string;
 }
+
+/** The single current class id (no multi-halaqa; not a user-facing code). */
+export const CURRENT_HALAQA_ID = "h1";
 
 const KEY = "alashbal:demo-created-children";
 const EVENT = "alashbal:demo-created-children-changed";
@@ -71,23 +77,33 @@ export function getCreatedChildrenForParent(parentId: string): DemoCreatedChild[
   return readAll().filter((c) => c.createdByParentId === parentId);
 }
 
-/** Create a new local child for a parent, linked (internally) to the single halaqa. */
-export function createDemoChildForParent(
-  parentId: string,
-  input: { displayName: string; avatar?: string; age?: number; level?: string; halaqaId: string },
-): DemoCreatedChild {
+/** Create a new local child profile (by a student self-registering, or a parent). */
+export function createChild(input: {
+  displayName: string;
+  avatar?: string;
+  age?: number;
+  level?: string;
+  createdBy: "student" | "parent";
+  createdByParentId?: string;
+}): DemoCreatedChild {
   const child: DemoCreatedChild = {
     id: `cc-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
     displayName: input.displayName.trim(),
     avatar: input.avatar,
     age: input.age,
     level: input.level,
-    halaqaId: input.halaqaId,
-    createdByParentId: parentId,
+    halaqaId: CURRENT_HALAQA_ID, // single internal class
+    createdBy: input.createdBy,
+    createdByParentId: input.createdByParentId,
     createdAt: new Date().toISOString(),
   };
   writeAll([...readAll(), child]);
   return child;
+}
+
+/** All created child ids in a class (teacher roster source — registration based). */
+export function getCreatedChildIdsForHalaqa(halaqaId: string): string[] {
+  return readAll().filter((c) => c.halaqaId === halaqaId).map((c) => c.id);
 }
 
 // ---- unified child resolution (created first, then seed) -------------------
@@ -101,7 +117,7 @@ function toProfile(c: DemoCreatedChild): ChildProfile {
     age: c.age,
     gender: "male",
     halaqaId: c.halaqaId,
-    parentIds: [c.createdByParentId],
+    parentIds: c.createdByParentId ? [c.createdByParentId] : [],
     isActive: true,
   };
 }
@@ -120,15 +136,26 @@ export function getAllDemoChildren(): ChildProfile[] {
 
 // ---- reactive hook ---------------------------------------------------------
 
-export function useCreatedChildrenForParent(parentId: string): DemoCreatedChild[] {
+function useCreatedList(getList: () => DemoCreatedChild[]): DemoCreatedChild[] {
   const cache = useRef<{ sig: string; value: DemoCreatedChild[] }>({ sig: "∅", value: EMPTY });
   const getSnapshot = useCallback((): DemoCreatedChild[] => {
-    const list = getCreatedChildrenForParent(parentId);
+    const list = getList();
     const sig = JSON.stringify(list);
     if (sig === cache.current.sig) return cache.current.value;
     cache.current = { sig, value: list };
     return list;
-  }, [parentId]);
+  }, [getList]);
   const getServer = useCallback((): DemoCreatedChild[] => EMPTY, []);
   return useSyncExternalStore(subscribe, getSnapshot, getServer);
+}
+
+export function useCreatedChildrenForParent(parentId: string): DemoCreatedChild[] {
+  const getList = useCallback(() => getCreatedChildrenForParent(parentId), [parentId]);
+  return useCreatedList(getList);
+}
+
+/** Reactive: all created children registered in a class (teacher roster). */
+export function useCreatedChildrenForHalaqa(halaqaId: string): DemoCreatedChild[] {
+  const getList = useCallback(() => readAll().filter((c) => c.halaqaId === halaqaId), [halaqaId]);
+  return useCreatedList(getList);
 }

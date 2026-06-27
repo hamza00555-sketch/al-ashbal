@@ -1,10 +1,9 @@
 /*
   Teacher · children (/teacher/children).
-  A simple VISUAL grid of the teacher's halaqa children — sourced from the local
-  ENROLLMENT store (empty-first): a child appears only after a parent enrolls
-  them with the halaqa code. Tapping a child opens their detail page.
+  A simple VISUAL grid of the class students — every student registered/created
+  in the single current class (registration based). Tapping a child opens their
+  detail page.
 */
-import Link from "next/link";
 import { PageHeader } from "@/components";
 import { getTeacherContext } from "../_shared";
 import { TeacherHalaqaChildren } from "./TeacherHalaqaChildren";
@@ -15,18 +14,7 @@ export default function TeacherChildrenPage() {
 
   return (
     <>
-      <PageHeader
-        title="أطفال الحلقة"
-        subtitle="الأطفال المنضمّون بكود الحلقة"
-        actions={
-          <Link
-            href="/teacher/halaqa"
-            className="inline-flex min-h-9 shrink-0 items-center whitespace-nowrap rounded-pill bg-surface-raised px-3.5 text-caption font-bold text-on-dark ring-1 ring-purple-soft/30 transition hover:bg-purple/8 hover:ring-purple-soft"
-          >
-            كود الحلقة
-          </Link>
-        }
-      />
+      <PageHeader title="أطفال الحلقة" subtitle="الطلاب المسجّلون في صفّك" />
       {halaqa ? <TeacherHalaqaChildren halaqaId={halaqa.id} /> : null}
     </>
   );

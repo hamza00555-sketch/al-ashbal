@@ -1,12 +1,12 @@
 "use client";
 
 import { StatCard } from "@/components";
-import { useEnrolledChildIdsForHalaqa } from "@/lib/demo/halaqaEnrollment";
+import { useCreatedChildrenForHalaqa } from "@/lib/demo/createdChildren";
 import { IconUsers } from "./_icons";
 
-/** Live "أطفال الحلقة" count from the enrollment store (0 until a parent joins). */
+/** Live student count = students registered/created in the current class. */
 export function EnrolledChildCountStat({ halaqaId }: { halaqaId: string }) {
-  const ids = useEnrolledChildIdsForHalaqa(halaqaId);
+  const ids = useCreatedChildrenForHalaqa(halaqaId);
   return (
     <StatCard
       variant="lavender"

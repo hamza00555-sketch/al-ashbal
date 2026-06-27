@@ -19,42 +19,36 @@ export default function Home() {
         <span className="gradient-badge flex size-16 items-center justify-center rounded-pill text-h2 font-extrabold text-on-light shadow-glow lg:size-20">
           ش
         </span>
-        <h1 className="text-h1 font-extrabold text-purple lg:text-display">الأشبال</h1>
-        <p className="max-w-[320px] text-body text-on-dark-muted lg:max-w-md">
-          رحلة الشبل في القرآن والتجويد والسلوك — بمتابعة آمنة ومحفّزة.
+        <h1 className="text-h1 font-extrabold text-cream lg:text-display">الأشبال</h1>
+        <p className="max-w-[320px] text-body text-cream/75 lg:max-w-md">
+          اختر دورك للبدء — طالب أو ولي أمر.
         </p>
       </div>
 
       <div className="relative flex w-full max-w-[430px] flex-col items-center gap-3">
         <Link
-          href="/child"
+          href="/child/start"
           className="gradient-cta flex min-h-12 w-full items-center justify-center rounded-lg px-8 text-button font-bold text-cream shadow-glow transition hover:brightness-110"
         >
-          ادخل تجربة الطفل
+          تسجيل / دخول كطالب
         </Link>
         <Link
           href="/parent"
-          className="flex min-h-11 w-full items-center justify-center rounded-lg border border-purple/12 bg-surface-raised px-8 text-button font-bold text-on-dark transition hover:bg-purple/8"
+          className="flex min-h-11 w-full items-center justify-center rounded-lg bg-surface-raised px-8 text-button font-bold text-on-dark ring-1 ring-purple/12 transition hover:bg-purple/8"
         >
-          تجربة ولي الأمر
+          تسجيل / دخول كولي أمر
         </Link>
         <Link
           href="/teacher"
-          className="flex min-h-11 w-full items-center justify-center rounded-lg border border-purple/12 bg-surface-raised px-8 text-button font-bold text-on-dark transition hover:bg-purple/8"
+          className="flex min-h-11 w-full items-center justify-center rounded-lg bg-white/8 px-8 text-button font-bold text-cream/80 ring-1 ring-white/10 transition hover:bg-white/12 hover:text-cream"
         >
           لوحة المعلم
         </Link>
         <Link
           href="/guest"
-          className="flex min-h-11 w-full items-center justify-center rounded-lg border border-purple/12 bg-surface-raised px-8 text-button font-bold text-on-dark transition hover:bg-purple/8"
+          className="text-caption text-cream/55 transition hover:text-cream"
         >
-          ضيف الشرف
-        </Link>
-        <Link
-          href="/style-guide"
-          className="text-caption text-on-dark-muted transition hover:text-on-dark"
-        >
-          دليل التصميم / معرض المكوّنات
+          ضيف الشرف · دليل التصميم
         </Link>
       </div>
     </main>

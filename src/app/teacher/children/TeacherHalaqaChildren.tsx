@@ -3,14 +3,12 @@
 import Link from "next/link";
 import { Card, ChildDisplayAvatar, ChildDisplayName, SectionTitle } from "@/components";
 import { childAvatarSrc } from "@/lib/avatars";
-import { getDemoChildById } from "@/lib/demo/createdChildren";
-import { useEnrolledChildIdsForHalaqa } from "@/lib/demo/halaqaEnrollment";
+import { getDemoChildById, useCreatedChildrenForHalaqa } from "@/lib/demo/createdChildren";
 
 /**
- * Teacher's halaqa children — sourced from the local enrollment store (NOT the
- * seed roster). A child appears only after a parent enrolls them with the
- * halaqa code. Names/avatars use the per-childId display sync so teacher edits
- * elsewhere stay consistent.
+ * Teacher's class children — every student registered/created in the single
+ * current class (registration-based, NOT parent-link-based). Names/avatars use
+ * the per-childId display sync so edits elsewhere stay consistent.
  */
 export function TeacherHalaqaChildren({
   halaqaId,
@@ -19,7 +17,7 @@ export function TeacherHalaqaChildren({
   halaqaId: string;
   withHeading?: boolean;
 }) {
-  const ids = useEnrolledChildIdsForHalaqa(halaqaId);
+  const ids = useCreatedChildrenForHalaqa(halaqaId).map((c) => c.id);
   const children = ids
     .map((id) => getDemoChildById(id))
     .filter((c): c is NonNullable<typeof c> => Boolean(c));
@@ -46,7 +44,7 @@ export function TeacherHalaqaChildren({
         </Card>
       ) : (
         <Card variant="lavender">
-          <p className="text-body text-on-dark-muted">لا يوجد أطفال في حلقتك. شارك كود الحلقة مع أولياء الأمور للانضمام.</p>
+          <p className="text-body text-on-dark-muted">لا يوجد طلاب مسجّلون في صفّك بعد. يظهر الطالب هنا تلقائيًا عند تسجيله.</p>
         </Card>
       )}
     </section>

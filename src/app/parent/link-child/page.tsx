@@ -1,6 +1,7 @@
 /*
-  Parent · link child (/parent/link-child) — enter the (single) halaqa code,
-  then create a new child and link it to the halaqa. Demo-only, no backend.
+  Parent · onboarding (/parent/link-child) — register parent, then add a child
+  or link a self-registered child by the child's parent-link code.
+  Parent ↔ Child linking (no halaqa code). Demo-only, localStorage.
 */
 import { Card, PageHeader } from "@/components";
 import { getParentContext } from "../_shared";
@@ -11,14 +12,14 @@ export default function ParentLinkChildPage() {
 
   return (
     <>
-      <PageHeader title="ربط طفل بالحَلَقة" subtitle="أدخل كود الحلقة ثم أنشئ طفلك" />
+      <PageHeader title="إضافة أو ربط طفل" subtitle="سجّل طفلك، أو اربط طفلًا سجّل بنفسه" />
       <Card>
         <p className="text-body text-on-dark-muted">
-          احصل على كود الحلقة من المعلّم، أدخله للتأكد من الحلقة، ثم أنشئ ملف طفلك واربطه بها.
-          كل شيء تجريبي ومحفوظ على هذا الجهاز فقط.
+          يمكنك تسجيل طفلك الآن وستحصل على كود دخول تعطيه له، أو ربط طفل سجّل بنفسه
+          باستخدام كود ربط الطفل. كل شيء تجريبي ومحفوظ على هذا الجهاز فقط.
         </p>
       </Card>
-      <LinkChildPicker parentId={viewer.id} />
+      <LinkChildPicker parentId={viewer.id} parentName={viewer.displayName} />
     </>
   );
 }

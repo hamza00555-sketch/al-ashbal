@@ -4,19 +4,12 @@ import Link from "next/link";
 import { Badge, Button, Card, CardOverlayMotif, ChildDisplayName } from "@/components";
 import { childAvatarSrc } from "@/lib/avatars";
 import { getDemoChildById } from "@/lib/demo/createdChildren";
-import { halaqas } from "@/lib/data/halaqas";
-import {
-  getEnrollmentForChild,
-  removeEnrollment,
-  useEnrolledChildIdsForParent,
-} from "@/lib/demo/halaqaEnrollment";
+import { removeParentChildLink, useLinkedChildIdsForParent } from "@/lib/demo/onboarding";
 import { LiveChildStatusAvatar } from "../LiveChildStatusAvatar";
 
-const halaqaName = (id: string) => halaqas.find((h) => h.id === id)?.name ?? id;
-
-/** Enrolled children list with unlink. Empty-first: links to /parent/link-child. */
+/** Parent's linked children with unlink. Empty-first: links to /parent/link-child. */
 export function ParentChildrenManage({ parentId }: { parentId: string }) {
-  const ids = useEnrolledChildIdsForParent(parentId);
+  const ids = useLinkedChildIdsForParent(parentId);
   const linked = ids
     .map((id) => getDemoChildById(id))
     .filter((c): c is NonNullable<typeof c> => Boolean(c));
@@ -26,13 +19,13 @@ export function ParentChildrenManage({ parentId }: { parentId: string }) {
       <Card className="flex flex-col items-start gap-2">
         <h2 className="text-card-title font-bold">لم يتم ربط أي طفل بعد</h2>
         <p className="text-body text-on-dark-muted">
-          أدخل كود الحلقة الذي يرسله لك المعلم، ثم أنشئ ملف طفلك واربطه بالحَلَقة.
+          يمكنك إضافة طفلك الآن، أو ربط طفل سجّل بنفسه باستخدام كود ربط الطفل.
         </p>
         <Link
           href="/parent/link-child"
-          className="mt-1 inline-flex min-h-11 items-center gap-2 rounded-md bg-purple px-5 text-button font-bold text-cream shadow-card ring-1 ring-white/15 transition hover:brightness-110"
+          className="mt-1 inline-flex min-h-11 items-center rounded-md bg-purple px-5 text-button font-bold text-cream shadow-card ring-1 ring-white/15 transition hover:brightness-110"
         >
-          ربط طفل
+          إضافة أو ربط طفل
         </Link>
       </Card>
     );
@@ -45,7 +38,7 @@ export function ParentChildrenManage({ parentId }: { parentId: string }) {
           href="/parent/link-child"
           className="inline-flex min-h-9 items-center gap-1.5 rounded-pill bg-surface-raised px-3.5 text-caption font-bold text-on-dark ring-1 ring-purple/15 transition hover:bg-purple/8 hover:ring-purple/30"
         >
-          ربط طفل
+          إضافة أو ربط طفل
         </Link>
       </div>
       {linked.map((c, i) => (
@@ -58,21 +51,13 @@ export function ParentChildrenManage({ parentId }: { parentId: string }) {
             <span className="text-card-title font-bold">
               <ChildDisplayName childId={c.id} fallback={c.displayName} />
             </span>
-            {(() => {
-              const enr = getEnrollmentForChild(c.id);
-              return (
-                <div className="flex flex-wrap items-center gap-1.5">
-                  <Badge tone="purple" onLight>مرتبط</Badge>
-                  {enr && <Badge tone="neutral" onLight>{halaqaName(enr.halaqaId)} · {enr.halaqaCode}</Badge>}
-                </div>
-              );
-            })()}
+            <span><Badge tone="purple" onLight>مرتبط بك</Badge></span>
           </div>
           <div className="relative z-10 flex shrink-0 flex-col items-end gap-2">
             <Link href={`/parent/children/${c.id}`} className="text-caption font-bold text-purple transition hover:brightness-90">
               عرض التفاصيل
             </Link>
-            <Button variant="ghost" size="sm" onClick={() => removeEnrollment(parentId, c.id)}>إلغاء الربط</Button>
+            <Button variant="ghost" size="sm" onClick={() => removeParentChildLink(parentId, c.id)}>إلغاء الربط</Button>
           </div>
         </Card>
       ))}

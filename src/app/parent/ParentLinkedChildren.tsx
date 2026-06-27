@@ -4,16 +4,16 @@ import Link from "next/link";
 import { Badge, Card, CardOverlayMotif, ChildDisplayName, SectionTitle } from "@/components";
 import { childAvatarSrc } from "@/lib/avatars";
 import { getDemoChildById } from "@/lib/demo/createdChildren";
-import { useEnrolledChildIdsForParent } from "@/lib/demo/halaqaEnrollment";
+import { useLinkedChildIdsForParent } from "@/lib/demo/onboarding";
 import { LiveChildStatusAvatar } from "./LiveChildStatusAvatar";
 
 /**
- * Parent home "أطفالي" — shows ONLY the children this parent has explicitly
- * enrolled into a halaqa (local demo). Empty-first: no children until enrolled,
- * and the empty state links to /parent/link-child (never to the child app).
+ * Parent home "أطفالي" — shows ONLY the children linked to this parent
+ * (parent↔child links, local demo). Empty-first; the empty state links to
+ * /parent/link-child to add or link a child (never to the child app).
  */
 export function ParentLinkedChildren({ parentId }: { parentId: string }) {
-  const ids = useEnrolledChildIdsForParent(parentId);
+  const ids = useLinkedChildIdsForParent(parentId);
   const linked = ids
     .map((id) => getDemoChildById(id))
     .filter((c): c is NonNullable<typeof c> => Boolean(c));
@@ -22,16 +22,16 @@ export function ParentLinkedChildren({ parentId }: { parentId: string }) {
     <section className="flex flex-col gap-3">
       <SectionTitle title="أطفالي" subtitle={`${linked.length} مرتبطون بك`} />
       {linked.length === 0 ? (
-        <Card className="anim-rise flex flex-col items-start gap-3">
-          <p className="text-body text-on-dark-muted">لم يتم ربط أي طفل بعد.</p>
-          <p className="text-caption text-on-dark-muted">
-            في النسخة الحقيقية سيتم الربط بدعوة أو كود موافقة. الآن يمكنك ربط طفل للتجربة.
+        <Card className="flex flex-col items-start gap-2">
+          <h2 className="text-card-title font-bold">لم يتم ربط أي طفل بعد</h2>
+          <p className="text-body text-on-dark-muted">
+            يمكنك إضافة طفلك الآن، أو ربط طفل سجّل بنفسه باستخدام كود ربط الطفل.
           </p>
           <Link
             href="/parent/link-child"
-            className="anim-cta-breathe inline-flex min-h-9 items-center rounded-pill bg-purple px-5 text-caption font-bold text-cream shadow-glow ring-1 ring-white/15 transition hover:brightness-110"
+            className="mt-1 inline-flex min-h-11 items-center rounded-md bg-purple px-5 text-button font-bold text-cream shadow-card ring-1 ring-white/15 transition hover:brightness-110"
           >
-            ربط أطفالك
+            إضافة أو ربط طفل
           </Link>
         </Card>
       ) : (

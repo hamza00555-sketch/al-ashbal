@@ -1,17 +1,15 @@
 "use client";
 
 import { Card } from "@/components";
-import { getDemoChildById } from "@/lib/demo/createdChildren";
+import { getDemoChildById, useCreatedChildrenForHalaqa } from "@/lib/demo/createdChildren";
 import { childAvatarSrc } from "@/lib/avatars";
 import { getChildDisplayProfile, useChildDisplayProfile } from "@/lib/demo/childProfiles";
-import { useEnrolledChildIdsForHalaqa } from "@/lib/demo/halaqaEnrollment";
 import { AttendanceManager, type AttendanceChild } from "./AttendanceManager";
 
 /**
- * Attendance roster sourced from the halaqa ENROLLMENT store (not the seed
- * roster). Only children a parent enrolled with the halaqa code appear, and
- * their name/avatar follow the per-childId display sync. Empty-first: no
- * enrolled children → nothing to mark.
+ * Attendance roster = every student registered/created in the single current
+ * class (registration-based). Name/avatar follow the per-childId display sync.
+ * Empty-first: no registered students → nothing to mark.
  */
 export function TeacherAttendanceRoster({
   halaqaId,
@@ -24,7 +22,7 @@ export function TeacherAttendanceRoster({
   teacherId: string;
   teacherName: string;
 }) {
-  const ids = useEnrolledChildIdsForHalaqa(halaqaId);
+  const ids = useCreatedChildrenForHalaqa(halaqaId).map((c) => c.id);
   // Subscribe to display-name changes so renamed children update live.
   useChildDisplayProfile(ids[0] ?? "__none__");
 
@@ -39,7 +37,7 @@ export function TeacherAttendanceRoster({
   if (childrenList.length === 0) {
     return (
       <Card variant="lavender">
-        <p className="text-body text-on-dark-muted">لا يوجد أطفال منضمّون لتسجيل حضورهم. شارك كود الحلقة مع أولياء الأمور.</p>
+        <p className="text-body text-on-dark-muted">لا يوجد طلاب مسجّلون لتسجيل حضورهم بعد.</p>
       </Card>
     );
   }
