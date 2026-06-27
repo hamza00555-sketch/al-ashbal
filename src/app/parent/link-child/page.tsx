@@ -1,6 +1,6 @@
 /*
-  Parent · link child (/parent/link-child) — explicit, demo-only manual linking
-  of a child to the parent account. No backend.
+  Parent · link child (/parent/link-child) — enter the (single) halaqa code,
+  then create a new child and link it to the halaqa. Demo-only, no backend.
 */
 import { Card, PageHeader } from "@/components";
 import { getParentContext } from "../_shared";
@@ -11,11 +11,11 @@ export default function ParentLinkChildPage() {
 
   return (
     <>
-      <PageHeader title="ربط طفل بالحَلَقة" subtitle="أدخل كود الحلقة ثم اختر الطفل" />
+      <PageHeader title="ربط طفل بالحَلَقة" subtitle="أدخل كود الحلقة ثم أنشئ طفلك" />
       <Card>
         <p className="text-body text-on-dark-muted">
-          احصل على كود الحلقة من المعلّم، أدخله للتأكد من الحلقة، ثم اربط طفلك بها.
-          الربط تجريبي ومحفوظ على هذا الجهاز فقط.
+          احصل على كود الحلقة من المعلّم، أدخله للتأكد من الحلقة، ثم أنشئ ملف طفلك واربطه بها.
+          كل شيء تجريبي ومحفوظ على هذا الجهاز فقط.
         </p>
       </Card>
       <LinkChildPicker parentId={viewer.id} />

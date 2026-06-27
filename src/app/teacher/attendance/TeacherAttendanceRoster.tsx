@@ -1,7 +1,7 @@
 "use client";
 
 import { Card } from "@/components";
-import { childProfiles } from "@/lib/data/children";
+import { getDemoChildById } from "@/lib/demo/createdChildren";
 import { childAvatarSrc } from "@/lib/avatars";
 import { getChildDisplayProfile, useChildDisplayProfile } from "@/lib/demo/childProfiles";
 import { useEnrolledChildIdsForHalaqa } from "@/lib/demo/halaqaEnrollment";
@@ -29,7 +29,7 @@ export function TeacherAttendanceRoster({
   useChildDisplayProfile(ids[0] ?? "__none__");
 
   const childrenList: AttendanceChild[] = ids
-    .map((id) => childProfiles.find((c) => c.id === id))
+    .map((id) => getDemoChildById(id))
     .filter((c): c is NonNullable<typeof c> => Boolean(c))
     .map((c) => {
       const d = getChildDisplayProfile(c.id);

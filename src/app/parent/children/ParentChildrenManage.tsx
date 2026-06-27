@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Badge, Button, Card, CardOverlayMotif, ChildDisplayName } from "@/components";
 import { childAvatarSrc } from "@/lib/avatars";
-import { childProfiles } from "@/lib/data/children";
+import { getDemoChildById } from "@/lib/demo/createdChildren";
 import { halaqas } from "@/lib/data/halaqas";
 import {
   getEnrollmentForChild,
@@ -18,7 +18,7 @@ const halaqaName = (id: string) => halaqas.find((h) => h.id === id)?.name ?? id;
 export function ParentChildrenManage({ parentId }: { parentId: string }) {
   const ids = useEnrolledChildIdsForParent(parentId);
   const linked = ids
-    .map((id) => childProfiles.find((c) => c.id === id))
+    .map((id) => getDemoChildById(id))
     .filter((c): c is NonNullable<typeof c> => Boolean(c));
 
   if (linked.length === 0) {

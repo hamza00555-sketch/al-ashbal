@@ -12,6 +12,7 @@
 import { useCallback, useMemo, useRef, useSyncExternalStore } from "react";
 import { childProfiles } from "@/lib/data/children";
 import { childAvatarById } from "@/lib/avatars";
+import { getCreatedChildById } from "./createdChildren";
 
 export interface ChildDisplay {
   displayName: string;
@@ -24,8 +25,10 @@ const KEY = "alashbal:child-overrides";
 const EVENT = "alashbal:child-overrides-changed";
 const EMPTY: OverrideMap = {};
 
-/** Seed (default) display profile for a child id. */
+/** Seed (default) display profile for a child id — created children win over seed. */
 export function seedChildDisplay(childId: string): ChildDisplay {
+  const created = getCreatedChildById(childId);
+  if (created) return { displayName: created.displayName, avatarUrl: created.avatar ?? childAvatarById(childId) };
   const c = childProfiles.find((x) => x.id === childId);
   return { displayName: c?.displayName ?? "طفل", avatarUrl: childAvatarById(childId) };
 }

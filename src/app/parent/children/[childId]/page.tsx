@@ -26,6 +26,7 @@ import {
 } from "../../_shared";
 import { ParentPoints } from "./ParentPoints";
 import { ParentPrepInfo } from "./ParentPrepInfo";
+import { CreatedChildDetail } from "./CreatedChildDetail";
 
 export function generateStaticParams() {
   // Demo children may be linked at runtime; pre-render all known demo children.
@@ -45,18 +46,12 @@ export default async function ParentChildDetailPage({
 }) {
   const { childId } = await params;
   const { viewer } = getParentContext();
-  // Demo: resolve the child from the seed (linking is local/client-side).
+  // Demo: seed children resolve server-side; parent-CREATED children live only
+  // in localStorage, so they're resolved client-side by CreatedChildDetail.
   const child = childProfiles.find((c) => c.id === childId) ?? null;
 
   if (!child) {
-    return (
-      <>
-        <PageHeader title="تفاصيل الطفل" />
-        <Card>
-          <p className="text-body text-on-dark-muted">لا يمكنك عرض بيانات هذا الطفل.</p>
-        </Card>
-      </>
-    );
+    return <CreatedChildDetail childId={childId} />;
   }
 
   const status = getChildStatusSummary(viewer, child.id);

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Badge, Card, CardOverlayMotif, ChildDisplayName, SectionTitle } from "@/components";
 import { childAvatarSrc } from "@/lib/avatars";
-import { childProfiles } from "@/lib/data/children";
+import { getDemoChildById } from "@/lib/demo/createdChildren";
 import { useEnrolledChildIdsForParent } from "@/lib/demo/halaqaEnrollment";
 import { LiveChildStatusAvatar } from "./LiveChildStatusAvatar";
 
@@ -15,7 +15,7 @@ import { LiveChildStatusAvatar } from "./LiveChildStatusAvatar";
 export function ParentLinkedChildren({ parentId }: { parentId: string }) {
   const ids = useEnrolledChildIdsForParent(parentId);
   const linked = ids
-    .map((id) => childProfiles.find((c) => c.id === id))
+    .map((id) => getDemoChildById(id))
     .filter((c): c is NonNullable<typeof c> => Boolean(c));
 
   return (

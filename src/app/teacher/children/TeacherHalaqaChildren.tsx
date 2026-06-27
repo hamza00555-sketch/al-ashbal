@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Card, ChildDisplayAvatar, ChildDisplayName, SectionTitle } from "@/components";
 import { childAvatarSrc } from "@/lib/avatars";
-import { childProfiles } from "@/lib/data/children";
+import { getDemoChildById } from "@/lib/demo/createdChildren";
 import { useEnrolledChildIdsForHalaqa } from "@/lib/demo/halaqaEnrollment";
 
 /**
@@ -21,7 +21,7 @@ export function TeacherHalaqaChildren({
 }) {
   const ids = useEnrolledChildIdsForHalaqa(halaqaId);
   const children = ids
-    .map((id) => childProfiles.find((c) => c.id === id))
+    .map((id) => getDemoChildById(id))
     .filter((c): c is NonNullable<typeof c> => Boolean(c));
 
   return (
