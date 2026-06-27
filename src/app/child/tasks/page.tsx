@@ -127,7 +127,7 @@ export default async function ChildTasksPage({
       />
 
       {tasks.length > 0 ? (
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-4">
           {activeTasks.length > 0 ? (
             <section className="flex flex-col gap-3">
               <h2 className="text-body font-bold text-on-dark">تحتاج إنجاز</h2>
@@ -146,7 +146,7 @@ export default async function ChildTasksPage({
         </div>
       ) : (
         <Card className="flex flex-col items-center gap-3 text-center">
-          <AppIllustration name="illustration_no_tasks" className="size-28" />
+          <AppIllustration name="illustration_no_tasks" className="size-24" />
           <p className="text-body text-on-dark-muted">لا توجد مهام الآن.</p>
         </Card>
       )}

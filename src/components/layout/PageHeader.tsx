@@ -25,7 +25,7 @@ export function PageHeader({
     <header
       className={cn(
         // Purple hero band — anchors every page with brand plum + cream text.
-        "gradient-hero relative isolate flex items-start justify-between gap-3 overflow-hidden rounded-lg p-4 text-cream shadow-glow ring-1 ring-white/15 sm:gap-4 sm:p-5",
+        "gradient-hero relative isolate flex items-start justify-between gap-3 overflow-hidden rounded-lg px-4 py-3.5 text-cream shadow-card ring-1 ring-white/15 sm:gap-4 sm:px-5 sm:py-4",
         className,
       )}
     >

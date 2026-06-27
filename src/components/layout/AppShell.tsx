@@ -65,8 +65,8 @@ export function AppShell({
     >
       {sidebar}
       <div className="relative flex min-w-0 flex-1 flex-col">
-        {header && <div className="relative z-10 px-4 pt-5 sm:px-6 sm:pt-6">{header}</div>}
-        <main className="relative flex-1 overflow-x-clip px-4 py-5 pb-24 sm:px-6 md:pb-6">
+        {header && <div className="relative z-10 px-4 pt-4 sm:px-6 sm:pt-5">{header}</div>}
+        <main className="relative flex-1 overflow-x-clip px-4 py-4 pb-24 sm:px-6 md:pb-6">
           {ambient === "child" && <ChildAmbientMotion />}
           {ambient === "parent" && <ParentAmbientMotion />}
           <div className="relative z-10">{children}</div>

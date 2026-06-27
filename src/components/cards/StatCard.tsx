@@ -31,7 +31,7 @@ export function StatCard({
   className,
 }: StatCardProps) {
   return (
-    <Card variant={variant} className={cn("flex items-center gap-4", className)}>
+    <Card variant={variant} className={cn("flex items-center gap-3", className)}>
       {icon && (
         <span
           className={cn(

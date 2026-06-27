@@ -15,7 +15,7 @@ export default function ChildLayout({ children }: { children: ReactNode }) {
   const seed = getNotificationsForViewer(viewer);
   return (
     <AppShell sidebar={<ChildDesktopNav />} mobileNav={<ChildMobileNav />} ambient="child">
-      <div className="mx-auto flex w-full max-w-[430px] flex-col gap-5 md:max-w-[1120px]">
+      <div className="mx-auto flex w-full max-w-[430px] flex-col gap-4 md:max-w-[1120px]">
         <div className="flex items-center justify-between gap-2">
           <DemoExperienceSwitcher current="child" />
           <NotificationBell userId={viewer.id} seed={seed} />

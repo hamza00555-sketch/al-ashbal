@@ -32,7 +32,7 @@ export function Card({
 }: CardProps) {
   return (
     <div
-      className={cn("rounded-lg", padded && "p-5", variantClasses[variant], className)}
+      className={cn("rounded-lg", padded && "p-4", variantClasses[variant], className)}
       {...rest}
     >
       {children}

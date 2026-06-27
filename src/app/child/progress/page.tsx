@@ -24,7 +24,7 @@ export default function ChildProgressPage() {
 
       <ProgressRingsCard childId={child.id} halaqaId={child.halaqaId} />
 
-      <div className="grid gap-5 lg:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-2">
         <CubJourneyCard childId={child.id} halaqaId={child.halaqaId} />
 
         <ChildPoints childId={child.id} />
@@ -34,7 +34,7 @@ export default function ChildProgressPage() {
           <Card variant="contrast" className="relative isolate overflow-hidden">
             <CardOverlayMotif motif="badge" className="-bottom-2 -end-1 size-28 text-gold opacity-[0.22]" />
             {badges.length > 0 ? (
-              <div className="relative z-10 flex flex-wrap items-start gap-5">
+              <div className="relative z-10 flex flex-wrap items-start gap-4">
                 {badges.map((b) => {
                   const asset = BADGE_ASSET[b.category];
                   return (

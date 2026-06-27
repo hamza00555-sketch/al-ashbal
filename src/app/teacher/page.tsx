@@ -79,7 +79,7 @@ export default function TeacherOverviewPage() {
         </div>
       </section>
 
-      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard variant="plum" label="حلقة اليوم" value={todayLesson ? todayLesson.startTime : "—"} tone="purple" icon={<span className={chip}><IconCalendar /></span>} hint={todayLesson?.title ?? "لا حلقة اليوم"} />
         {halaqas[0] ? (
           <EnrolledChildCountStat halaqaId={halaqas[0].id} />
@@ -90,7 +90,7 @@ export default function TeacherOverviewPage() {
         <StatCard variant="plum" label="بانتظار المراجعة" value={pendingReviews.length} tone={pendingReviews.length > 0 ? "danger" : "success"} icon={<span className={chip}><IconVideo /></span>} hint="فيديوهات معتمدة" />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-2">
         {/* Last lesson summary */}
         <Card className="flex flex-col gap-4">
           <SectionTitle title="ملخص آخر درس" />
