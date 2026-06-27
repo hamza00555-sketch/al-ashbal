@@ -140,7 +140,7 @@ export function StudentAnswers({
           ))}
         </div>
       ) : (
-        <Card><p className="text-body text-on-dark-muted">لا يوجد أطفال في الحلقة.</p></Card>
+        <Card variant="lavender"><p className="text-body text-on-dark-muted">لا يوجد أطفال في الحلقة.</p></Card>
       )}
     </section>
   );

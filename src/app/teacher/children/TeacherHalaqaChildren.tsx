@@ -28,12 +28,12 @@ export function TeacherHalaqaChildren({
     <section className="flex flex-col gap-3">
       {withHeading && <SectionTitle title="أطفال الحلقة" subtitle={`${children.length} منضمّ — اضغط على الطفل لعرض تفاصيله`} />}
       {children.length > 0 ? (
-        <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
+        <Card variant="lavender" className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
           {children.map((child) => (
             <Link
               key={child.id}
               href={`/teacher/children/${child.id}`}
-              className="flex flex-col items-center gap-2 rounded-lg p-2 text-center transition hover:bg-purple/8"
+              className="flex flex-col items-center gap-2 rounded-lg p-2 text-center transition hover:bg-[#6940A5]/10"
             >
               <span className="rounded-pill p-1 ring-2 ring-purple-soft/50">
                 <ChildDisplayAvatar childId={child.id} fallbackName={child.displayName} fallbackSrc={childAvatarSrc(child.gender)} size="childCard" />
@@ -43,9 +43,9 @@ export function TeacherHalaqaChildren({
               </span>
             </Link>
           ))}
-        </div>
+        </Card>
       ) : (
-        <Card>
+        <Card variant="lavender">
           <p className="text-body text-on-dark-muted">لا يوجد أطفال في حلقتك. شارك كود الحلقة مع أولياء الأمور للانضمام.</p>
         </Card>
       )}

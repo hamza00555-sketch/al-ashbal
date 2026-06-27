@@ -234,7 +234,7 @@ export function StudentAssignmentsManager({
         {active.length > 0 ? (
           <div className="grid gap-3 lg:grid-cols-2">{active.map(renderCard)}</div>
         ) : (
-          <Card><p className="text-body text-on-dark-muted">لا مهام نشطة بعد — أضِف أول مهمة.</p></Card>
+          <Card variant="lavender"><p className="text-body text-on-dark-muted">لا مهام نشطة بعد — أضِف أول مهمة.</p></Card>
         )}
       </section>
 

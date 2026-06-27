@@ -27,20 +27,20 @@ export function HalaqaCodeCard({ halaqaId, halaqaName }: { halaqaId: string; hal
   }
 
   return (
-    <Card className="flex flex-col gap-4">
+    <Card variant="plum" className="flex flex-col gap-4">
       <SectionTitle title="كود الحلقة" subtitle={`${halaqaName} — شاركه مع أولياء الأمور للانضمام`} />
       <div className="flex flex-wrap items-center gap-3">
         <span className="rounded-md bg-surface-raised px-5 py-3 text-h2 font-extrabold tracking-widest text-on-dark ring-1 ring-purple-soft/30">
           {code}
         </span>
-        <Badge tone="purple">تجريبي — محلي</Badge>
+        <Badge tone="purple" onAccent>تجريبي — محلي</Badge>
       </div>
       <div className="flex flex-wrap gap-2">
         <Button variant="primary" size="sm" onClick={copy}>نسخ الكود</Button>
-        <Button variant="ghost" size="sm" onClick={regenerate}>تجديد الكود</Button>
+        <Button variant="ghost" size="sm" className="text-cream/80 hover:bg-white/10 hover:text-cream" onClick={regenerate}>تجديد الكود</Button>
       </div>
-      {message && <p className="text-caption text-on-dark-muted">{message}</p>}
-      <p className="text-caption text-on-dark-muted">
+      {message && <p className="text-caption text-cream/70">{message}</p>}
+      <p className="text-caption text-cream/70">
         ولي الأمر يُدخل هذا الكود في «ربط طفل بالحَلَقة» ثم يختار طفله. لا ينضم أي طفل تلقائيًا.
       </p>
     </Card>

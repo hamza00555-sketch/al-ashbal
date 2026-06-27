@@ -70,7 +70,7 @@ export default function TeacherOverviewPage() {
             <Link
               key={t.href}
               href={t.href}
-              className="card-elevated flex aspect-square flex-col items-center justify-center gap-2 rounded-lg p-4 text-center text-on-dark transition hover:brightness-110"
+              className="flex aspect-square flex-col items-center justify-center gap-2 rounded-lg bg-[#E6DAFF] p-4 text-center text-[#2B1238] shadow-soft ring-1 ring-[#6940A5]/15 transition hover:brightness-[0.97]"
             >
               <AppAssetIcon src={`/assets/icons/${t.icon}.png`} size="hero" fallback={t.fallback} />
               <span className="text-card-title font-bold">{t.label}</span>
@@ -80,14 +80,14 @@ export default function TeacherOverviewPage() {
       </section>
 
       <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="حلقة اليوم" value={todayLesson ? todayLesson.startTime : "—"} tone="purple" icon={<span className={chip}><IconCalendar /></span>} hint={todayLesson?.title ?? "لا حلقة اليوم"} />
+        <StatCard variant="plum" label="حلقة اليوم" value={todayLesson ? todayLesson.startTime : "—"} tone="purple" icon={<span className={chip}><IconCalendar /></span>} hint={todayLesson?.title ?? "لا حلقة اليوم"} />
         {halaqas[0] ? (
           <EnrolledChildCountStat halaqaId={halaqas[0].id} />
         ) : (
-          <StatCard label="أطفال الحلقة" value={0} tone="purple" icon={<span className={chip}><IconUsers /></span>} />
+          <StatCard variant="lavender" label="أطفال الحلقة" value={0} tone="purple" icon={<span className={chip}><IconUsers /></span>} />
         )}
         <StatCard label="الحضور" value={lastLesson ? `${present}/${lastAttendance.length}` : "—"} tone="success" icon={<span className={chip}><IconCalendar /></span>} hint="آخر حلقة" />
-        <StatCard label="بانتظار المراجعة" value={pendingReviews.length} tone={pendingReviews.length > 0 ? "gold" : "success"} icon={<span className={chip}><IconVideo /></span>} hint="فيديوهات معتمدة" />
+        <StatCard variant="plum" label="بانتظار المراجعة" value={pendingReviews.length} tone={pendingReviews.length > 0 ? "danger" : "success"} icon={<span className={chip}><IconVideo /></span>} hint="فيديوهات معتمدة" />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
@@ -115,7 +115,7 @@ export default function TeacherOverviewPage() {
         </Card>
 
         {/* Quick tasks */}
-        <Card className="flex flex-col gap-3">
+        <Card variant="lavender" className="flex flex-col gap-3">
           <SectionTitle title="مهام اليوم" />
           <Link href="/teacher/reviews" className="flex items-center justify-between gap-3 rounded-md bg-surface-raised px-4 py-3 text-button text-on-dark transition hover:bg-purple/8">
             <span>مراجعة التسميعات</span>

@@ -96,7 +96,7 @@ function SubmissionCard({
   }
 
   return (
-    <Card id={`submission-${sub.id}`} className={cn("flex flex-col gap-3", highlighted && "ring-2 ring-purple-soft")}>
+    <Card variant="lavender" id={`submission-${sub.id}`} className={cn("flex flex-col gap-3", highlighted && "ring-2 ring-purple-soft")}>
       <div className="flex min-w-0 flex-col gap-1">
         <span className="text-card-title font-bold break-words">{sub.title}</span>
         <span className="text-caption text-on-dark-muted">{sub.childName} · {sub.recordingType === "video" ? "فيديو" : "صوت"}</span>

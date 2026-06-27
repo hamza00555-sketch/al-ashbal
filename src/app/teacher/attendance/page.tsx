@@ -44,7 +44,7 @@ export default function TeacherAttendancePage() {
           teacherName={viewer.displayName}
         />
       ) : (
-        <Card>
+        <Card variant="lavender">
           <p className="text-body text-on-dark-muted">لا توجد حلقة لتسجيل حضورها الآن.</p>
         </Card>
       )}

@@ -9,6 +9,7 @@ export function EnrolledChildCountStat({ halaqaId }: { halaqaId: string }) {
   const ids = useEnrolledChildIdsForHalaqa(halaqaId);
   return (
     <StatCard
+      variant="lavender"
       label="أطفال الحلقة"
       value={ids.length}
       tone="purple"

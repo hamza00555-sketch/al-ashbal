@@ -185,7 +185,7 @@ export function PrepForm({
             ))}
           </div>
         ) : (
-          <Card><p className="text-body text-on-dark-muted">لا تحضيرات محفوظة بعد.</p></Card>
+          <Card variant="lavender"><p className="text-body text-on-dark-muted">لا تحضيرات محفوظة بعد.</p></Card>
         )}
       </section>
     </div>

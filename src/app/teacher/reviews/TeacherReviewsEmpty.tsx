@@ -18,7 +18,7 @@ export function TeacherReviewsEmpty({ teacherId }: { teacherId: string }) {
   if (mine > 0) return null;
 
   return (
-    <Card className="flex items-center gap-3">
+    <Card variant="lavender" className="flex items-center gap-3">
       <AppIllustration
         name="illustration_waiting_review"
         className="size-16 shrink-0"

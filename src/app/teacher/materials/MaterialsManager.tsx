@@ -238,7 +238,7 @@ export function MaterialsManager({ halaqaId }: { halaqaId: string }) {
             {active.map((m, i) => renderCard(m, i, active))}
           </div>
         ) : (
-          <Card><p className="text-body text-on-dark-muted">لا مواد نشطة — أضِف أول مادة.</p></Card>
+          <Card variant="lavender"><p className="text-body text-on-dark-muted">لا مواد نشطة — أضِف أول مادة.</p></Card>
         )}
       </section>
 

@@ -38,7 +38,7 @@ export function TeacherAttendanceRoster({
 
   if (childrenList.length === 0) {
     return (
-      <Card>
+      <Card variant="lavender">
         <p className="text-body text-on-dark-muted">لا يوجد أطفال منضمّون لتسجيل حضورهم. شارك كود الحلقة مع أولياء الأمور.</p>
       </Card>
     );
