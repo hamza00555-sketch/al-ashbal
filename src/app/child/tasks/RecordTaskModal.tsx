@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { AppAssetIcon, Badge, Button, Modal } from "@/components";
 import { cn } from "@/lib/cn";
 import { IconMic, IconVideo } from "../_icons";
@@ -61,6 +62,8 @@ export function RecordTaskModal({
   const [sending, setSending] = useState(false);
   const [streaming, setStreaming] = useState(false);
   const [previewNote, setPreviewNote] = useState<string | null>(null);
+  // Confirm the active child's identity before sending (shared family device).
+  const [confirming, setConfirming] = useState(false);
 
   const recorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -155,6 +158,7 @@ export function RecordTaskModal({
     setSeconds(0);
     setError(null);
     setPreviewNote(null);
+    setConfirming(false);
     stopTracks();
     setStreaming(false);
     setPhase("idle");
@@ -280,25 +284,51 @@ export function RecordTaskModal({
 
         {error && <Badge tone="danger">{error}</Badge>}
 
-        <div className="flex flex-wrap gap-2">
-          {phase === "idle" && (
-            <Button variant="primary" onClick={startRecording}>بدء التسجيل</Button>
-          )}
-          {phase === "recording" && (
-            <Button variant="danger" onClick={stopRecording}>إيقاف التسجيل</Button>
-          )}
-          {phase === "recorded" && (
-            <>
-              <Button variant="secondary" onClick={reRecord}>إعادة التسجيل</Button>
+        {/* Make the active child's identity obvious before sending. */}
+        {phase === "recorded" && (
+          <p className="rounded-md bg-purple/5 p-3 text-caption text-on-dark ring-1 ring-purple/12">
+            سيتم إرسال التسجيل باسم: <span className="font-bold text-purple">{task.childName}</span>
+          </p>
+        )}
+
+        {/* Confirm-before-send: prevents a sibling submitting under another name. */}
+        {phase === "recorded" && confirming ? (
+          <div className="flex flex-col gap-3 rounded-md bg-surface-raised p-3 ring-1 ring-purple/15">
+            <span className="text-card-title font-bold">تأكيد الإرسال</span>
+            <p className="text-body text-on-dark-muted break-words">
+              سيتم إرسال هذا التسجيل باسم {task.childName}.
+            </p>
+            <div className="flex flex-wrap gap-2">
               <Button variant="primary" onClick={send} disabled={sending}>
-                {sending ? "جارٍ الإرسال…" : "إرسال لولي الأمر"}
+                {sending ? "جارٍ الإرسال…" : "نعم، أرسل"}
               </Button>
-            </>
-          )}
-          {phase === "error" && (
-            <Button variant="secondary" onClick={reRecord}>المحاولة مرة أخرى</Button>
-          )}
-        </div>
+              <Link
+                href="/child/switch"
+                className="inline-flex min-h-11 items-center justify-center rounded-md bg-surface px-5 text-button font-bold text-on-dark ring-1 ring-purple/12 transition hover:bg-purple/8"
+              >
+                تغيير الطفل
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            {phase === "idle" && (
+              <Button variant="primary" onClick={startRecording}>بدء التسجيل</Button>
+            )}
+            {phase === "recording" && (
+              <Button variant="danger" onClick={stopRecording}>إيقاف التسجيل</Button>
+            )}
+            {phase === "recorded" && (
+              <>
+                <Button variant="secondary" onClick={reRecord}>إعادة التسجيل</Button>
+                <Button variant="primary" onClick={() => setConfirming(true)}>إرسال لولي الأمر</Button>
+              </>
+            )}
+            {phase === "error" && (
+              <Button variant="secondary" onClick={reRecord}>المحاولة مرة أخرى</Button>
+            )}
+          </div>
+        )}
 
         <p className="text-caption text-on-dark-muted">
           التسجيل تجريبي ومحفوظ على هذا الجهاز فقط. في النسخة الحقيقية سيتم حفظه بشكل آمن بعد موافقة ولي الأمر.

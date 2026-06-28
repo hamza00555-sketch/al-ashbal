@@ -135,6 +135,11 @@ export function getActiveChildId(): string | null {
   if (typeof window === "undefined") return null;
   return window.localStorage.getItem(ACTIVE_KEY);
 }
+export function clearActiveChildId() {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(ACTIVE_KEY);
+  window.dispatchEvent(new CustomEvent(ACTIVE_EVENT));
+}
 
 // --------------------------------------------------------------- reactive hooks
 function makeSubscribe(eventName: string) {

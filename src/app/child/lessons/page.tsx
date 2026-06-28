@@ -3,13 +3,14 @@
   the teacher's prep) + the attendance gate as the big primary action.
   No student tasks here — those live in /child/tasks.
 */
+"use client";
+
 import { PageHeader } from "@/components";
-import { getChildContext } from "../_shared";
+import { useActiveChild } from "../ChildExperienceGate";
 import { ChildLessonsView } from "./ChildLessonsView";
 
 export default function ChildLessonsPage() {
-  const { child } = getChildContext();
-  if (!child) return <p className="text-body text-on-dark-muted">لا توجد بيانات لعرضها.</p>;
+  const child = useActiveChild();
 
   return (
     <>

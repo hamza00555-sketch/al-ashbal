@@ -9,6 +9,7 @@ import { AppShell, DemoExperienceSwitcher, NotificationBell } from "@/components
 import { getMockUser, getNotificationsForViewer } from "@/lib/data";
 import { ChildDesktopNav } from "./ChildDesktopNav";
 import { ChildMobileNav } from "./ChildMobileNav";
+import { ChildExperienceGate } from "./ChildExperienceGate";
 
 export default function ChildLayout({ children }: { children: ReactNode }) {
   const viewer = getMockUser("child");
@@ -20,7 +21,7 @@ export default function ChildLayout({ children }: { children: ReactNode }) {
           <DemoExperienceSwitcher current="child" />
           <NotificationBell userId={viewer.id} seed={seed} />
         </div>
-        {children}
+        <ChildExperienceGate>{children}</ChildExperienceGate>
       </div>
     </AppShell>
   );

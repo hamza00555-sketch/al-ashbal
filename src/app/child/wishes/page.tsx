@@ -1,13 +1,16 @@
-/* Child wishes (/child/wishes) — privacy note + interactive (mock) wishes. */
+/* Child wishes (/child/wishes) — privacy note + interactive (mock) wishes.
+   Uses the ACTIVE child on this shared family device (see ChildExperienceGate). */
+"use client";
+
 import { AppAssetIcon, Card, PageHeader } from "@/components";
-import { getWishesForViewer } from "@/lib/data";
+import { getMockUser, getWishesForViewer } from "@/lib/data";
 import { IconSparkle } from "../_icons";
-import { getChildContext } from "../_shared";
+import { useActiveChild } from "../ChildExperienceGate";
 import { WishesSection } from "./WishesSection";
 
 export default function ChildWishesPage() {
-  const { viewer, child } = getChildContext();
-  if (!child) return <p className="text-body text-on-dark-muted">لا توجد بيانات لعرضها.</p>;
+  const viewer = getMockUser("child");
+  const child = useActiveChild();
 
   const wishes = getWishesForViewer(viewer, child.id).map((w) => ({
     id: w.id,

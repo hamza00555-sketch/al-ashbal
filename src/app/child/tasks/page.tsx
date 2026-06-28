@@ -1,7 +1,11 @@
-/* Child tasks (/child/tasks) — "مهامي": recitation / memorization / review. */
+/* Child tasks (/child/tasks) — "مهامي": recitation / memorization / review.
+   Uses the ACTIVE child on this shared family device (see ChildExperienceGate). */
+"use client";
+
+import { useSearchParams } from "next/navigation";
 import { AppAssetIcon, AppIllustration, Badge, Card, PageHeader } from "@/components";
 import { cn } from "@/lib/cn";
-import { getTasksForChild, getTeacherIdForHalaqa } from "@/lib/data";
+import { getMockUser, getTasksForChild, getTeacherIdForHalaqa } from "@/lib/data";
 import type { ChildTaskStatus, ChildTaskType } from "@/types";
 import { IconBook, IconTasks, IconVideo } from "../_icons";
 
@@ -12,11 +16,11 @@ const TASK_ICON: Record<ChildTaskType, { name: string; fallback: React.ReactNode
   review: { name: "icon_review", fallback: <IconBook /> },
 };
 import {
-  getChildContext,
   TASK_STATUS,
   TASK_SUBJECT_LABEL,
   TASK_TYPE_LABEL,
 } from "../_shared";
+import { useActiveChild } from "../ChildExperienceGate";
 import { PrepTasks } from "./PrepTasks";
 import { RecitationTaskAction } from "./RecitationTaskAction";
 import { ScrollToId } from "./ScrollToId";
@@ -25,14 +29,11 @@ import { TaskActionButton } from "./TaskActionButton";
 
 const RECORDABLE: ChildTaskStatus[] = ["not_started", "in_progress", "rerecord_needed"];
 
-export default async function ChildTasksPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ taskId?: string }>;
-}) {
-  const { taskId: highlightTaskId } = await searchParams;
-  const { viewer, child } = getChildContext();
-  if (!child) return <p className="text-body text-on-dark-muted">لا توجد بيانات لعرضها.</p>;
+export default function ChildTasksPage() {
+  const searchParams = useSearchParams();
+  const highlightTaskId = searchParams.get("taskId") ?? undefined;
+  const viewer = getMockUser("child");
+  const child = useActiveChild();
 
   const tasks = getTasksForChild(viewer, child.id);
   const childUserId = child.userId ?? "";

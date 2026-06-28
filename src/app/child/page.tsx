@@ -2,17 +2,22 @@
   Child home (/child) — a short follow-up summary, NOT a place to do tasks.
   Greeting, today's lesson brief, today's attendance, progress glance, an
   open-tasks alert (→ /child/tasks), and the active class activity (if any).
+  Uses the ACTIVE child on this shared family device (see ChildExperienceGate).
 */
+"use client";
+
 import Link from "next/link";
 import { AppAssetIcon, Badge, Card, CardOverlayMotif, ChildDisplayAvatar, ChildDisplayName, PageHeader, ProgressBar, SectionTitle, SettingsLink } from "@/components";
 import { childAvatarSrc } from "@/lib/avatars";
 import {
   getAttendanceForChild,
+  getMockUser,
   getProgressForChild,
   getTasksForChild,
 } from "@/lib/data";
 import { IconSparkle, IconStar, IconTasks } from "./_icons";
-import { ATTENDANCE_STATUS, getChildContext, isOpenTask } from "./_shared";
+import { ATTENDANCE_STATUS, isOpenTask } from "./_shared";
+import { useActiveChild } from "./ChildExperienceGate";
 import { ChildActivity } from "./ChildActivity";
 import { ChildTodayCard } from "./ChildTodayCard";
 
@@ -20,8 +25,8 @@ const glanceLink =
   "flex min-h-11 items-center justify-center gap-2 rounded-md bg-surface-raised px-4 text-caption font-bold text-on-dark transition hover:bg-purple/8";
 
 export default function ChildHomePage() {
-  const { viewer, child } = getChildContext();
-  if (!child) return <p className="text-body text-on-dark-muted">لا توجد بيانات لعرضها.</p>;
+  const viewer = getMockUser("child");
+  const child = useActiveChild();
 
   const progress = getProgressForChild(viewer, child.id);
   const tasks = getTasksForChild(viewer, child.id);

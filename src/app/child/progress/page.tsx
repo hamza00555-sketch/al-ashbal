@@ -1,7 +1,10 @@
-/* Child progress (/child/progress) — rings, cub-journey bar, badges. */
+/* Child progress (/child/progress) — rings, cub-journey bar, badges.
+   Uses the ACTIVE child on this shared family device (see ChildExperienceGate). */
+"use client";
+
 import { BadgeMedal, Card, CardOverlayMotif, PageHeader, SectionTitle } from "@/components";
-import { getBadgesForChild } from "@/lib/data";
-import { getChildContext } from "../_shared";
+import { getBadgesForChild, getMockUser } from "@/lib/data";
+import { useActiveChild } from "../ChildExperienceGate";
 import { ChildPoints } from "./ChildPoints";
 import { CubJourneyCard, ProgressRingsCard } from "./ProgressMetrics";
 
@@ -13,8 +16,8 @@ const BADGE_ASSET: Record<string, string | undefined> = {
 };
 
 export default function ChildProgressPage() {
-  const { viewer, child } = getChildContext();
-  if (!child) return <p className="text-body text-on-dark-muted">لا توجد بيانات لعرضها.</p>;
+  const viewer = getMockUser("child");
+  const child = useActiveChild();
 
   const badges = getBadgesForChild(viewer, child.id);
 
