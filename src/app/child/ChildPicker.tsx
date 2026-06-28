@@ -7,7 +7,8 @@
 */
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Badge, Button, Card, ChildDisplayAvatar, ChildDisplayName, SectionTitle } from "@/components";
+import { Badge, Button, Card, ChildDisplayAvatar, ChildDisplayName, PageHeader, SectionTitle } from "@/components";
+import { cn } from "@/lib/cn";
 import { childAvatarSrc } from "@/lib/avatars";
 import type { ChildProfile } from "@/types";
 import { getCreatedChildById } from "@/lib/demo/createdChildren";
@@ -26,7 +27,7 @@ function ChildCard({ child, onPick }: { child: ChildProfile; onPick: () => void 
     <button
       type="button"
       onClick={onPick}
-      className="flex flex-col items-center gap-2 rounded-lg bg-surface-raised p-4 text-center text-on-light shadow-soft ring-1 ring-purple/12 transition hover:bg-purple/5"
+      className="flex w-40 flex-col items-center gap-2 rounded-lg bg-surface-raised p-4 text-center text-on-light shadow-soft ring-1 ring-purple/12 transition hover:bg-purple/5 sm:w-44"
     >
       <span className="rounded-pill p-1 ring-2 ring-purple-soft/50">
         <ChildDisplayAvatar childId={child.id} fallbackName={child.displayName} fallbackSrc={childAvatarSrc(child.gender)} size="profile" />
@@ -42,7 +43,7 @@ function ChildCard({ child, onPick }: { child: ChildProfile; onPick: () => void 
   );
 }
 
-export function ChildPicker({ redirectTo }: { redirectTo?: string }) {
+export function ChildPicker({ redirectTo, hero = false }: { redirectTo?: string; hero?: boolean }) {
   const router = useRouter();
   const available = useAvailableChildren();
   const seed = getSeedDemoChild();
@@ -76,15 +77,20 @@ export function ChildPicker({ redirectTo }: { redirectTo?: string }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <Card variant="gradient" className="flex flex-col gap-1.5">
-        <h1 className="text-h2 font-extrabold">من يستخدم التطبيق الآن؟</h1>
-        <p className="text-body text-cream/85">
-          اختر ملفك قبل بدء المهام، حتى تُسجّل النقاط والتسميع باسمك الصحيح.
-        </p>
-      </Card>
+      {/* Single title: the gate provides its own hero; /child/switch uses the
+          page PageHeader. The body keeps only a light helper line. */}
+      {hero && <PageHeader title="من يستخدم التطبيق الآن؟" subtitle="اختر الطفل قبل بدء المهمة" />}
+      <p className="text-caption text-on-dark-muted">
+        اختر ملفك حتى تُسجّل النقاط والتسميع باسمك الصحيح.
+      </p>
 
       {available.length > 0 ? (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+        <div
+          className={cn(
+            "flex flex-wrap gap-3",
+            available.length === 1 ? "justify-center" : "justify-center sm:justify-start",
+          )}
+        >
           {available.map((child) => (
             <ChildCard key={child.id} child={child} onPick={() => pick(child.id)} />
           ))}

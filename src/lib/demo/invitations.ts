@@ -55,6 +55,101 @@ function rand4(): string {
   return Math.random().toString(36).toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 4).padEnd(4, "0");
 }
 
+// ---- portable demo links (LOCAL DEMO ONLY) ---------------------------------
+//
+// PROTOTYPE ONLY. Invitations live in the creating browser's localStorage, so a
+// link opened in another browser/incognito can't find the invitation by code.
+// As a DEMO fallback we embed a small, NON-SECRET payload (base64url JSON) in
+// the link (?demoInvite=...) so /join can rebuild the invitation locally.
+// This is NOT secure and carries no secrets — REPLACE with a real backend
+// lookup (invitation id → server record) before launch.
+
+export interface DemoInvitePayload {
+  v: number;
+  code: string;
+  type: DemoInvitationType;
+  label?: string;
+  maxChildren?: number;
+  maxParents?: number;
+  createdAt?: string;
+  expiresAt?: string;
+}
+
+function b64urlEncode(obj: unknown): string {
+  if (typeof window === "undefined") return "";
+  const bytes = new TextEncoder().encode(JSON.stringify(obj)); // UTF-8 (Arabic labels)
+  let bin = "";
+  for (const b of bytes) bin += String.fromCharCode(b);
+  return window.btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+function b64urlDecode(raw: string): unknown {
+  if (typeof window === "undefined") return null;
+  const b64 = raw.replace(/-/g, "+").replace(/_/g, "/");
+  const bin = window.atob(b64);
+  const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0));
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+
+/** Encode an invitation into a demo-safe (non-secret) payload for the link. */
+export function encodeInvitePayload(inv: DemoInvitation): string {
+  const payload: DemoInvitePayload = {
+    v: 1,
+    code: inv.code,
+    type: inv.type,
+    label: inv.label,
+    maxChildren: inv.maxChildren,
+    maxParents: inv.maxParents,
+    createdAt: inv.createdAt,
+    expiresAt: inv.expiresAt,
+  };
+  return b64urlEncode(payload);
+}
+
+/** Decode a demoInvite payload (or null when missing/malformed/invalid type). */
+export function decodeInvitePayload(raw: string | undefined | null): DemoInvitePayload | null {
+  if (!raw) return null;
+  try {
+    const obj = b64urlDecode(raw);
+    if (!obj || typeof obj !== "object") return null;
+    const p = obj as DemoInvitePayload;
+    if (typeof p.code !== "string") return null;
+    if (p.type !== "family" && p.type !== "student") return null;
+    return p;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * DEMO fallback: rebuild an invitation in THIS browser's localStorage from a
+ * link payload, if the code matches and no local record exists yet. Returns the
+ * resolved invitation (existing or hydrated), or null when the payload is
+ * unusable (malformed / code mismatch). The invitation is written even if
+ * expired so the normal expiry/validation errors still apply.
+ */
+export function hydrateInvitationFromPayload(raw: string, code: string): DemoInvitation | null {
+  const p = decodeInvitePayload(raw);
+  if (!p) return null;
+  if (normalize(p.code) !== normalize(code)) return null;
+  const existing = findInvitationByCode(p.code);
+  if (existing) return existing;
+  const inv: DemoInvitation = {
+    id: `inv-hydrated-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+    type: p.type,
+    code: normalize(p.code),
+    label: p.label,
+    createdByTeacherId: "", // unknown on this device (demo)
+    createdAt: p.createdAt ?? new Date().toISOString(),
+    expiresAt: p.expiresAt,
+    maxChildren: p.maxChildren,
+    maxParents: p.maxParents,
+    usedChildrenCount: 0,
+    usedParentsCount: 0,
+  };
+  writeAll([inv, ...readAll()]);
+  return inv;
+}
+
 // ---- create / read ---------------------------------------------------------
 
 export function createInvitation(

@@ -10,9 +10,9 @@ import { JoinFlow } from "./JoinFlow";
 export default async function JoinPage({
   searchParams,
 }: {
-  searchParams: Promise<{ code?: string }>;
+  searchParams: Promise<{ code?: string; demoInvite?: string }>;
 }) {
-  const { code } = await searchParams;
+  const { code, demoInvite } = await searchParams;
 
   return (
     <main className="relative flex min-h-dvh flex-col items-center overflow-hidden px-5 py-10">
@@ -32,7 +32,7 @@ export default async function JoinPage({
           </p>
         </header>
 
-        <JoinFlow initialCode={code} />
+        <JoinFlow initialCode={code} initialDemoInvite={demoInvite} />
       </div>
     </main>
   );

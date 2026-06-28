@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Avatar, Badge, Button, Card } from "@/components";
 import { cn } from "@/lib/cn";
@@ -10,13 +10,18 @@ import { createChild } from "@/lib/demo/createdChildren";
 import { addParentChildLink, getOrCreateChildCode, setActiveChild } from "@/lib/demo/onboarding";
 import { addDeviceChildId } from "@/lib/demo/deviceChildren";
 import {
+  decodeInvitePayload,
   findInvitationByCode,
+  hydrateInvitationFromPayload,
   recordInvitationUse,
   remainingChildren,
   useInvitationByCode,
   validateForUse,
   type DemoInvitation,
 } from "@/lib/demo/invitations";
+
+const MISSING_LOCAL_INVITE =
+  "لم نتمكن من قراءة الدعوة في هذا المتصفح. افتح الرابط الكامل الذي أرسله المعلم أو اطلب دعوة جديدة.";
 
 const inputClass =
   "min-h-11 w-full rounded-md border border-purple/12 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft";
@@ -234,7 +239,7 @@ function StudentRegister({ inv }: { inv: DemoInvitation }) {
 }
 
 // --------------------------------------------------------------- entry
-export function JoinFlow({ initialCode }: { initialCode?: string }) {
+export function JoinFlow({ initialCode, initialDemoInvite }: { initialCode?: string; initialDemoInvite?: string }) {
   const [codeInput, setCodeInput] = useState(initialCode ?? "");
   // The code we are actively resolving (auto-read from the URL, or submitted).
   const [activeCode, setActiveCode] = useState(initialCode ?? "");
@@ -243,18 +248,59 @@ export function JoinFlow({ initialCode }: { initialCode?: string }) {
   const [submitted, setSubmitted] = useState(Boolean(initialCode));
   const { inv: resolved, error: resolveError } = useInvitationByCode(activeCode);
 
+  // LOCAL DEMO portability: the link may carry an encoded payload so the
+  // invitation works in a fresh browser. Decode it once (for the URL code only).
+  const payload = useMemo(() => decodeInvitePayload(initialDemoInvite), [initialDemoInvite]);
+  const payloadMatchesCode = Boolean(
+    payload && initialCode && payload.code.trim().toUpperCase() === initialCode.trim().toUpperCase(),
+  );
+
+  // If the code isn't in this browser yet but the link carries a usable payload,
+  // hydrate it into localStorage once; the store hook then re-resolves it.
+  const hydrated = useRef(false);
+  useEffect(() => {
+    if (hydrated.current) return;
+    if (initialDemoInvite && initialCode && !findInvitationByCode(initialCode)) {
+      hydrated.current = true;
+      hydrateInvitationFromPayload(initialDemoInvite, initialCode);
+    }
+  }, [initialDemoInvite, initialCode]);
+
   // Lock onto a freshly-resolved valid invitation. Sticky across later store
   // updates, so completing a last/single-use registration keeps the flow (and
   // its success screen) mounted even after the invitation is marked used.
   const [inv, setInv] = useState<DemoInvitation | null>(null);
   if (resolved && resolved.id !== inv?.id) setInv(resolved);
 
-  const error = inv ? null : submitted ? resolveError ?? (activeCode.trim() ? null : "أدخل كود الدعوة.") : null;
+  // Decide what to show when there is no locked invitation yet.
+  const notFound = !resolved && resolveError === "كود الدعوة غير صحيح";
+  // A valid payload is still hydrating → wait instead of flashing an error.
+  const hydrating = notFound && payloadMatchesCode;
+  let error: string | null = null;
+  if (!inv && !hydrating) {
+    if (resolveError && !notFound) {
+      error = resolveError; // expired / revoked / used (local or hydrated record)
+    } else if (notFound) {
+      // Not in this browser: a present-but-unusable payload is a bad code;
+      // no payload at all is the cross-browser local-demo limitation.
+      error = initialDemoInvite ? "كود الدعوة غير صحيح" : MISSING_LOCAL_INVITE;
+    } else if (submitted && !activeCode.trim()) {
+      error = "أدخل كود الدعوة.";
+    }
+  }
 
   function check(value: string) {
     setInv(null);
     setActiveCode(value);
     setSubmitted(true);
+  }
+
+  if (hydrating) {
+    return (
+      <Card className="flex items-center justify-center py-8">
+        <span className="text-body text-on-dark-muted">جارٍ قراءة الدعوة…</span>
+      </Card>
+    );
   }
 
   if (inv) {

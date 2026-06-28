@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Badge, Button, Card, SectionTitle } from "@/components";
 import {
   createInvitation,
+  encodeInvitePayload,
   remainingChildren,
   revokeInvitation,
   statusOf,
@@ -15,9 +16,11 @@ const inputClass =
   "min-h-11 w-full rounded-md border border-purple/12 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft";
 const fieldLabel = "text-caption text-on-dark-muted";
 
-function linkFor(code: string): string {
+/** Full PORTABLE link: includes the code + a demo-safe encoded payload so the
+ *  link works in another browser/localStorage (local demo only — see store). */
+function linkFor(inv: DemoInvitation): string {
   const origin = typeof window !== "undefined" ? window.location.origin : "";
-  return `${origin}/join?code=${code}`;
+  return `${origin}/join?code=${inv.code}&demoInvite=${encodeInvitePayload(inv)}`;
 }
 function familyMsg(link: string) {
   return `أهلًا، هذه دعوة تسجيل عائلتكم في تطبيق الأشبال. افتحوا الرابط وسجلوا ولي الأمر والأطفال: ${link}`;
@@ -34,7 +37,7 @@ const STATUS_LABEL: Record<string, { label: string; tone: "success" | "warning" 
 
 /** A created-invitation result card (code + link + copy + WhatsApp message). */
 function ResultCard({ inv }: { inv: DemoInvitation }) {
-  const link = linkFor(inv.code);
+  const link = linkFor(inv);
   const msg = inv.type === "family" ? familyMsg(link) : studentMsg(link);
   const [msgState, setMsgState] = useState<string | null>(null);
   async function copy(text: string, what: string) {
@@ -174,7 +177,7 @@ export function InvitationsManager({ teacherId }: { teacherId: string }) {
                     </div>
                   </div>
                   <div className="flex shrink-0 gap-2">
-                    <Button variant="secondary" size="sm" onClick={() => navigator.clipboard?.writeText(linkFor(inv.code)).catch(() => {})}>نسخ الرابط</Button>
+                    <Button variant="secondary" size="sm" onClick={() => navigator.clipboard?.writeText(linkFor(inv)).catch(() => {})}>نسخ الرابط</Button>
                     {statusOf(inv) === "active" && (
                       <Button variant="ghost" size="sm" onClick={() => revokeInvitation(inv.id)}>إيقاف</Button>
                     )}

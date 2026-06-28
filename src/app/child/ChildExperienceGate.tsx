@@ -72,7 +72,7 @@ export function ChildExperienceGate({ children }: { children: ReactNode }) {
   }
   // Avoid flashing the picker before the device state is known on the client.
   if (!hydrated) return <GatePlaceholder />;
-  if (!child) return <ChildPicker />;
+  if (!child) return <ChildPicker hero />;
 
   return (
     <ActiveChildContext.Provider value={child}>
