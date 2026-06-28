@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Card, ChildDisplayAvatar, ChildDisplayName, SectionTitle } from "@/components";
+import { Badge, Card, ChildDisplayAvatar, ChildDisplayName, SectionTitle } from "@/components";
 import { childAvatarSrc } from "@/lib/avatars";
 import { getDemoChildById, useCreatedChildrenForHalaqa } from "@/lib/demo/createdChildren";
 
@@ -17,9 +17,10 @@ export function TeacherHalaqaChildren({
   halaqaId: string;
   withHeading?: boolean;
 }) {
-  const ids = useCreatedChildrenForHalaqa(halaqaId).map((c) => c.id);
-  const children = ids
-    .map((id) => getDemoChildById(id))
+  const created = useCreatedChildrenForHalaqa(halaqaId);
+  const viaInvitation = new Set(created.filter((c) => c.viaInvitation).map((c) => c.id));
+  const children = created
+    .map((c) => getDemoChildById(c.id))
     .filter((c): c is NonNullable<typeof c> => Boolean(c));
 
   return (
@@ -39,6 +40,7 @@ export function TeacherHalaqaChildren({
               <span className="w-full break-words text-caption font-bold">
                 <ChildDisplayName childId={child.id} fallback={child.displayName} />
               </span>
+              {viaInvitation.has(child.id) && <Badge tone="purple">مسجل عبر دعوة</Badge>}
             </Link>
           ))}
         </Card>

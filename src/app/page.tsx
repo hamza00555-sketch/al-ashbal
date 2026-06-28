@@ -1,10 +1,11 @@
 /*
   Landing / entry (Phase 01) — /.
-  A simple, responsive brand entry: centered hero that scales up on larger
-  screens (not a phone-width frame). Mostly purple; white/cream kept to the CTA
-  and the brand mark. The component showcase lives at /style-guide.
+  Invitation-first: the main path is «لدي دعوة» (enter the teacher's invitation
+  code → /join). Teacher sign-in is a secondary action. Direct role entry is
+  kept only as a small local-demo fallback («تجربة محلية»).
 */
 import Link from "next/link";
+import { JoinByCode } from "./JoinByCode";
 
 export default function Home() {
   return (
@@ -20,36 +21,36 @@ export default function Home() {
           ش
         </span>
         <h1 className="text-h1 font-extrabold text-cream lg:text-display">الأشبال</h1>
-        <p className="max-w-[320px] text-body text-cream/75 lg:max-w-md">
-          اختر دورك للبدء — طالب أو ولي أمر.
+        <p className="max-w-[340px] text-body text-cream/75 lg:max-w-md">
+          لديك دعوة من المعلم؟ أدخل كود الدعوة للبدء بتسجيل عائلتك أو الطالب.
         </p>
       </div>
 
       <div className="relative flex w-full max-w-[430px] flex-col items-center gap-3">
-        <Link
-          href="/child/start"
-          className="gradient-cta flex min-h-12 w-full items-center justify-center rounded-lg px-8 text-button font-bold text-cream shadow-glow transition hover:brightness-110"
-        >
-          تسجيل / دخول كطالب
-        </Link>
-        <Link
-          href="/parent"
-          className="flex min-h-11 w-full items-center justify-center rounded-lg bg-surface-raised px-8 text-button font-bold text-on-dark ring-1 ring-purple/12 transition hover:bg-purple/8"
-        >
-          تسجيل / دخول كولي أمر
-        </Link>
+        {/* Primary path — invitation code */}
+        <JoinByCode />
+
+        {/* Secondary — teacher sign-in */}
         <Link
           href="/teacher"
-          className="flex min-h-11 w-full items-center justify-center rounded-lg bg-white/8 px-8 text-button font-bold text-cream/80 ring-1 ring-white/10 transition hover:bg-white/12 hover:text-cream"
+          className="flex min-h-11 w-full items-center justify-center rounded-lg bg-white/8 px-8 text-button font-bold text-cream/85 ring-1 ring-white/10 transition hover:bg-white/12 hover:text-cream"
         >
-          لوحة المعلم
+          دخول المعلم
         </Link>
-        <Link
-          href="/guest"
-          className="text-caption text-cream/55 transition hover:text-cream"
-        >
-          ضيف الشرف · دليل التصميم
-        </Link>
+
+        {/* Tertiary — local demo fallback only */}
+        <div className="mt-2 flex flex-col items-center gap-1.5">
+          <span className="text-caption text-cream/50">تجربة محلية</span>
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-caption text-cream/55">
+            <Link href="/child/switch" className="transition hover:text-cream">مبدّل الأطفال</Link>
+            <span aria-hidden className="text-cream/25">·</span>
+            <Link href="/parent" className="transition hover:text-cream">ولي أمر</Link>
+            <span aria-hidden className="text-cream/25">·</span>
+            <Link href="/teacher" className="transition hover:text-cream">معلم</Link>
+            <span aria-hidden className="text-cream/25">·</span>
+            <Link href="/guest" className="transition hover:text-cream">ضيف الشرف</Link>
+          </div>
+        </div>
       </div>
     </main>
   );

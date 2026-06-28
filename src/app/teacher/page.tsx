@@ -19,6 +19,7 @@ const chip = "inline-flex size-8 items-center justify-center";
 
 /** Teacher control-center tiles — the primary way to reach the daily pages. */
 const TEACHER_TOOLS = [
+  { href: "/teacher/invitations", label: "الدعوات", icon: "icon_children", fallback: <IconUsers /> },
   { href: "/teacher/prep", label: "التحضير", icon: "icon_preparation", fallback: <IconPrep /> },
   { href: "/teacher/attendance", label: "الحضور", icon: "icon_attendance", fallback: <IconCalendar /> },
   { href: "/teacher/children", label: "الأطفال", icon: "icon_children", fallback: <IconUsers /> },

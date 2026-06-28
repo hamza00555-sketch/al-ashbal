@@ -25,6 +25,8 @@ export interface DemoCreatedChild {
   createdBy?: "student" | "parent";
   /** Set when a parent created the child directly. */
   createdByParentId?: string;
+  /** True when the profile was created through a teacher invitation. */
+  viaInvitation?: boolean;
   createdAt: string;
 }
 
@@ -85,6 +87,7 @@ export function createChild(input: {
   level?: string;
   createdBy: "student" | "parent";
   createdByParentId?: string;
+  viaInvitation?: boolean;
 }): DemoCreatedChild {
   const child: DemoCreatedChild = {
     id: `cc-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
@@ -95,6 +98,7 @@ export function createChild(input: {
     halaqaId: CURRENT_HALAQA_ID, // single internal class
     createdBy: input.createdBy,
     createdByParentId: input.createdByParentId,
+    viaInvitation: input.viaInvitation,
     createdAt: new Date().toISOString(),
   };
   writeAll([...readAll(), child]);
