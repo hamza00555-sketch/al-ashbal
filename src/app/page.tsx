@@ -30,9 +30,9 @@ export default function Home() {
         {/* Primary path — invitation code */}
         <JoinByCode />
 
-        {/* Secondary — teacher sign-in */}
+        {/* Secondary — teacher sign-in (local demo access gate) */}
         <Link
-          href="/teacher"
+          href="/teacher/login"
           className="flex min-h-11 w-full items-center justify-center rounded-lg bg-white/8 px-8 text-button font-bold text-cream/85 ring-1 ring-white/10 transition hover:bg-white/12 hover:text-cream"
         >
           دخول المعلم

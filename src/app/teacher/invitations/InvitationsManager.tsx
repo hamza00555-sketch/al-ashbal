@@ -11,6 +11,7 @@ import {
   useInvitationsForTeacher,
   type DemoInvitation,
 } from "@/lib/demo/invitations";
+import { useTeacherSession } from "@/lib/demo/teacherSession";
 
 const inputClass =
   "min-h-11 w-full rounded-md border border-purple/12 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft";
@@ -66,7 +67,11 @@ function ResultCard({ inv }: { inv: DemoInvitation }) {
 }
 
 export function InvitationsManager({ teacherId }: { teacherId: string }) {
-  const invitations = useInvitationsForTeacher(teacherId);
+  // Prefer the active teacher-session id (the gate guarantees one is present);
+  // fall back to the passed id for safety.
+  const session = useTeacherSession();
+  const activeTeacherId = session?.teacherId ?? teacherId;
+  const invitations = useInvitationsForTeacher(activeTeacherId);
 
   // family form
   const [famLabel, setFamLabel] = useState("");
@@ -81,7 +86,8 @@ export function InvitationsManager({ teacherId }: { teacherId: string }) {
   const [stuResult, setStuResult] = useState<DemoInvitation | null>(null);
 
   function createFamily() {
-    const inv = createInvitation(teacherId, {
+    if (!session) return; // no teacher session → the gate will require login
+    const inv = createInvitation(activeTeacherId, {
       type: "family",
       label: famLabel,
       maxChildren: Number(famChildren),
@@ -91,7 +97,8 @@ export function InvitationsManager({ teacherId }: { teacherId: string }) {
     setFamResult(inv);
   }
   function createStudent() {
-    const inv = createInvitation(teacherId, {
+    if (!session) return; // no teacher session → the gate will require login
+    const inv = createInvitation(activeTeacherId, {
       type: "student",
       label: stuLabel,
       expiresDays: stuDays.trim() ? Number(stuDays) : 7,

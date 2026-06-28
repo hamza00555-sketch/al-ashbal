@@ -3,18 +3,24 @@
   Desktop-first dashboard: one AppShell + desktop side-nav + mobile bottom-nav,
   a wide container, and a top utility bar (demo experience switcher + bell) on
   every teacher page. Each page renders only its own content.
+
+  A LOCAL DEMO access gate (TeacherShellGate) wraps the area: the dashboard shell
+  is only shown when a local teacher session exists; /teacher/login renders
+  standalone. NOT real auth — see src/lib/demo/teacherSession.ts.
 */
 import type { ReactNode } from "react";
 import { AppShell, DemoExperienceSwitcher, NotificationBell } from "@/components";
 import { getMockUser, getNotificationsForViewer, getPendingTeacherReviews } from "@/lib/data";
 import { TeacherDesktopNav } from "./TeacherDesktopNav";
 import { TeacherMobileNav } from "./TeacherMobileNav";
+import { TeacherShellGate } from "./TeacherShellGate";
 
 export default function TeacherLayout({ children }: { children: ReactNode }) {
   const viewer = getMockUser("teacher");
   const seed = getNotificationsForViewer(viewer);
   const dbPendingReviews = getPendingTeacherReviews(viewer).length;
-  return (
+
+  const withShell = (
     <AppShell
       sidebar={<TeacherDesktopNav teacherId={viewer.id} dbPendingReviews={dbPendingReviews} />}
       mobileNav={<TeacherMobileNav teacherId={viewer.id} dbPendingReviews={dbPendingReviews} />}
@@ -28,4 +34,6 @@ export default function TeacherLayout({ children }: { children: ReactNode }) {
       </div>
     </AppShell>
   );
+
+  return <TeacherShellGate plain={children} withShell={withShell} />;
 }
