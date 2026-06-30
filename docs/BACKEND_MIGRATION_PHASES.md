@@ -5,23 +5,54 @@
 > checklist + rollback. Golden rule: **never break the closed-demo flows** while
 > migrating; migrate one store at a time behind a thin data-access seam.
 
-**Enabling pattern (do this in Phase 1):** introduce a small data-access layer
+**Enabling pattern (introduced in Phase 1b, not 1a):** a small data-access layer
 (e.g. `src/lib/data/*` adapters) so pages call `getTeacherRoster()` etc. rather
-than localStorage directly. Then each phase swaps one adapter from localStorage
-to Supabase with no page changes. A feature flag (`NEXT_PUBLIC_BACKEND=supabase|local`)
-allows per-environment rollback.
+than localStorage directly. Then each later phase swaps one adapter from
+localStorage to Supabase with no page changes. A feature flag
+(`NEXT_PUBLIC_BACKEND=supabase|local`) allows per-environment rollback.
+
+> **C5 — Phase 1 is split.** The original "Phase 1" bundled *schema* with the
+> *data-access seam*. The seam touches every page (a real refactor), so it is NOT
+> "no behavior change." Phase **1a** is pure infra/schema (zero app change);
+> Phase **1b** is the seam refactor.
 
 ---
 
-## Phase 1 — Supabase setup + schema (no behavior change)
-- **Changes:** add `@supabase/supabase-js` + `@supabase/ssr`; create browser +
-  server clients; add env vars; run schema migrations (all tables, RLS enabled,
-  helper functions, RPC stubs). Seed one `classes` row. Add the data-access seam.
-- **Must not break:** the entire app still runs on localStorage (flag = local).
-- **QA:** build/lint; app behaves exactly as today; `supabase db` migrations apply
-  cleanly; RLS on every table verified with the linter/advisors.
-- **Rollback:** delete the Supabase project/migrations; remove clients. No app
-  logic depended on them yet.
+## Phase 1a — Schema + RLS foundation only (zero app/UI change)
+- **Changes:** create the Supabase project; add `@supabase/supabase-js` +
+  `@supabase/ssr`; create browser + server client utilities + env vars; run the
+  **first schema migration: ALL tables** (including **`child_device_grants` (C1)**
+  and **`submissions UNIQUE(child_id, assignment_id)` (C2)**), **RLS enabled on
+  every table**, helper functions (`is_class_teacher`, `is_linked_parent`,
+  `is_childs_class_teacher`, `has_child_grant`, `can_access_child`), and empty
+  `SECURITY DEFINER` RPC stubs; create the **private `recordings` Storage bucket**.
+  Seed one `classes` row. **No page/UI changes, no data migration, no behavior
+  switch.**
+- **Must not break:** anything — the app still runs 100% on localStorage; no page
+  imports Supabase yet.
+- **QA:** build/lint unchanged; closed-demo QA still 62/62; migrations apply
+  cleanly; **Supabase advisors confirm RLS is ON for every table**; the bucket is
+  private.
+- **Rollback:** delete the project/migrations; remove the client utilities + env.
+  Nothing in the app depended on them.
+
+> **▶ FIRST IMPLEMENTABLE TASK = Phase 1a.** Create the Supabase project, add the
+> client/server utilities + env vars, and write the first migration: all tables
+> (with `child_device_grants` C1 and `submissions UNIQUE(child_id, assignment_id)`
+> C2), RLS enabled on every table, the helper functions, RPC stubs, and the private
+> `recordings` bucket. Seed one `classes` row. Touch **no** pages/UI. Verify with
+> Supabase advisors that RLS is on for every table. This is safe to start now.
+
+## Phase 1b — Data-access seam scaffolding (no behavior switch)
+- **Changes:** introduce typed Supabase client/server utilities and the
+  `src/lib/data/*` adapter seam + server-action / RPC wrappers, behind
+  `NEXT_PUBLIC_BACKEND`. Pages call the seam; the seam still reads/writes
+  **localStorage** while `flag=local`. No user-facing behavior change yet.
+- **Must not break:** every current flow (route audit + must-pass flows) — the seam
+  is a pass-through to the existing localStorage stores.
+- **QA:** build/lint; closed-demo QA still 62/62 with `flag=local`; no page reads
+  localStorage directly anymore (all via the seam).
+- **Rollback:** revert the seam (pages call the stores directly) — it is additive.
 
 ## Phase 2 — Real teacher auth + profile
 - **Changes:** replace the local teacher gate with Supabase Auth (email/password
@@ -61,15 +92,20 @@ allows per-environment rollback.
   child limit enforced; parent of family A cannot see family B's children (RLS).
 - **Rollback:** flag to local onboarding stores.
 
-## Phase 5 — Child switcher uses backend children (activeChildId stays local)
-- **Changes:** `getAvailableChildrenForThisDevice()` resolves from DB
-  (parent-linked children + children activated by access code on this device).
-  `activate_child_on_device(code)` RPC returns a scoped child-access grant;
-  the device stores `activeChildId` + the granted child ids **locally**.
+## Phase 5 — Child switcher on backend + child device grants (C1; activeChildId stays local)
+- **Changes:** introduce **`child_device_grants` (C1)**. `activate_child_on_device(code)`
+  validates the TLB code and **mints a grant** (stores `grant_token_hash`, returns
+  the raw token to the device). `getAvailableChildrenForThisDevice()` resolves from
+  DB = parent-linked children + children the device holds a valid grant for. The
+  device stores `activeChildId` + raw grant tokens **locally**; every child read
+  sends the grant token and the server checks `has_child_grant` — the client
+  `activeChildId` is never the authorization.
 - **Must not break:** `/child/switch` picker, identity strip, single title,
   invalid code → `كود الدخول غير صحيح`, multiple children per device.
 - **QA:** activate child by code on a second device → appears in switcher; switching
-  changes the active child everywhere; device cannot read children it wasn't granted.
+  changes the active child everywhere; **a device with a grant for child A cannot
+  read child B** (forge `activeChildId`/`child_id` → denied by `has_child_grant`);
+  revoking the grant/rotating the code cuts access.
 - **Rollback:** flag to local device-children store.
 
 ## Phase 6 — Learning materials/tasks to backend
@@ -82,17 +118,23 @@ allows per-environment rollback.
   no cross-class leakage.
 - **Rollback:** flag to local content stores.
 
-## Phase 7 — Recordings to Storage + submissions table
-- **Changes:** record → upload the blob to the private `recordings` bucket via a
-  signed upload (server action `submit_recording`), write a `submissions` row with
-  `recording_path`. Playback uses short-lived signed URLs. Parent approval / teacher
-  review update the row (`parent_approvals`, `teacher_reviews`).
+## Phase 7 — Recordings to Storage + submissions table (C2 + C4)
+- **Changes:** the **C4 ordered flow** — `requestUploadIntent` (authorize child +
+  assignment, MIME/size, server-generated path, insert `submissions` `state='uploading'`,
+  enforce **`UNIQUE(child_id, assignment_id)` (C2)**) → signed upload URL → client
+  uploads → `finalizeSubmission` (verify object → `pending_parent`, or
+  `pending_teacher` if no linked parent). Playback uses short-lived signed URLs.
+  Parent approval / teacher review update the row (`parent_approvals`,
+  `teacher_reviews`, both referencing `submission_id`). Orphan-cleanup job for stale
+  `uploading` rows.
 - **Must not break:** record → "سيتم إرسال التسجيل باسم: X" + confirm → parent
   approval shows the right child → teacher review shows the right child; identity
   integrity (submission stored under the correct child).
-- **QA:** submit as نور → stored under نور; only the linked parent + class teacher
-  can fetch the file (signed URL); anon/other parents get 403; large/oversized or
-  wrong MIME rejected.
+- **QA:** submit as نور → stored under نور; **two siblings submitting the same
+  assignment do NOT overwrite each other (C2)**; only the linked parent + class
+  teacher can fetch the file (signed URL); anon/other parents get 403; a
+  client-chosen path is rejected; large/oversized or wrong MIME rejected; a failed
+  upload leaves no orphan (cleanup).
 - **Rollback:** flag to IndexedDB + local submissions (demo only).
 
 ## Phase 8 — Points/progress/attendance to backend

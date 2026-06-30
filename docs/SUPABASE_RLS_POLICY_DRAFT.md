@@ -39,10 +39,35 @@ language sql stable security definer set search_path = public as $$
     where cs.child_id = child and ct.teacher_id = auth.uid()
   );
 $$;
+
+-- C1: does THIS request carry a valid child_device_grant for `child`?
+-- The device sends its raw grant token; the server hashes it into the request
+-- setting `app.child_grant_hash` (e.g. via a Postgres GUC set by the server
+-- action / Edge Function before querying). The grant must belong to the child,
+-- be unexpired, and not revoked. This — NOT a client-supplied child_id — is the
+-- child/device authorization.
+create function has_child_grant(child uuid) returns boolean
+language sql stable security definer set search_path = public as $$
+  select exists (
+    select 1 from child_device_grants g
+    where g.child_id = child
+      and g.revoked_at is null
+      and g.expires_at > now()
+      and g.grant_token_hash = nullif(current_setting('app.child_grant_hash', true), '')
+  );
+$$;
+-- Convenience: a user OR a granted device may access this child.
+create function can_access_child(child uuid) returns boolean
+language sql stable security definer set search_path = public as $$
+  select is_linked_parent(child) or is_childs_class_teacher(child) or has_child_grant(child);
+$$;
 ```
 
 > Note: `auth.uid()` is null for anonymous users → all `is_*` helpers return
-> false, so anon is denied everywhere except the explicit anon policies below.
+> false. A device with no valid grant token also fails `has_child_grant`. So an
+> anon/ungranted caller is denied everywhere except the explicit anon RPCs below.
+> **A client-supplied `child_id` alone never authorizes anything** — the parent
+> session (`is_linked_parent`) or the device grant (`has_child_grant`) does.
 
 ---
 
@@ -70,11 +95,23 @@ Format: `RLS: yes` then SELECT / INSERT / UPDATE / DELETE intent + draft.
 - INSERT/UPDATE/DELETE: service role / admin only.
 
 ### `children`
-- SELECT: `using (is_linked_parent(id) or is_childs_class_teacher(id))`.
+- SELECT: `using (can_access_child(id))` — linked parent OR class teacher OR a
+  valid device grant (C1). A bare client-supplied id never qualifies.
 - INSERT: via server/RPC during registration (service role). (No open client insert.)
 - UPDATE: `using (is_linked_parent(id) or is_childs_class_teacher(id))
-  with check (same)` — limited columns (display_name, avatar, age, level).
+  with check (same)` — limited columns (display_name, avatar, age, level). (A
+  device grant can read but not rename a child; the linked parent edits.)
 - DELETE: denied client-side (soft-delete via status if ever needed).
+
+### `child_device_grants`  **(C1)**
+- SELECT: `using (is_linked_parent(child_id) or is_childs_class_teacher(child_id))`
+  — a parent/teacher can list/inspect a child's device grants. The granted device
+  itself does not browse this table (it holds its raw token locally).
+- INSERT: server/RPC only (`activate_child_on_device` redeems a code → inserts a
+  grant with `grant_token_hash`). Never a raw client insert.
+- UPDATE (revoke): `using (is_linked_parent(child_id) or is_childs_class_teacher(child_id))`
+  (set `revoked_at`); plus server bumps `last_used_at`/`expires_at`.
+- DELETE: denied client-side.
 
 ### `class_students`
 - SELECT: `using (is_class_teacher(class_id) or is_linked_parent(child_id))`.
@@ -102,37 +139,47 @@ Format: `RLS: yes` then SELECT / INSERT / UPDATE / DELETE intent + draft.
 - SELECT: `using (is_class_teacher((select class_id from invitations i where i.id = invitation_id)))`.
 - INSERT/UPDATE/DELETE: service role / RPC only.
 
-### `child_access_codes`
+### `child_access_codes`  *(C3: expirable + rotatable)*
 - SELECT: `using (is_linked_parent(child_id) or is_childs_class_teacher(child_id))`
-  (so a parent can re-show a child's code). **Anon cannot SELECT.**
-- INSERT: server/RPC during registration.
+  (so a parent can re-show a child's active code). **Anon cannot SELECT.**
+- INSERT: server/RPC during registration, or when a parent **regenerates** the
+  code (rotation: insert a new active code + set `revoked_at` on the old).
 - Activation on a device → `activate_child_on_device(code)` RPC (anon-callable,
-  rate-limited) returns a short-lived child-access token; does NOT expose the table.
-- UPDATE/DELETE: denied client-side.
+  **rate-limited**) checks the code is active (not expired/revoked) and **mints a
+  `child_device_grant`** (returns the raw grant token); it does NOT return the
+  table. Redeeming a code does not itself grant access — the grant does.
+- UPDATE (revoke/rotate): `using (is_linked_parent(child_id))`. DELETE: denied client-side.
 
-### `parent_link_codes`
-- SELECT: `using (is_linked_parent(child_id))`. INSERT: server/RPC. Consume via
-  `link_parent_to_child_by_code(code)` RPC. UPDATE/DELETE: denied client-side.
+### `parent_link_codes`  *(C3: expirable + rotatable, single-consume)*
+- SELECT: `using (is_linked_parent(child_id))`. INSERT: server/RPC (or child/parent
+  regenerates). Consume via `link_parent_to_child_by_code(code)` RPC (checks active,
+  not expired/consumed; sets `consumed_*`). **Anon cannot SELECT.**
+- UPDATE (revoke/rotate): server/RPC. DELETE: denied client-side.
 
 ### `learning_materials` / `lessons` / `daily_prep` / `assignments`
-- SELECT: `using (is_class_teacher(class_id) or
+- SELECT: `using ( is_class_teacher(class_id) or
   exists(select 1 from class_students cs where cs.class_id = <class_id> and
-  is_linked_parent(cs.child_id)) )` — teacher of class, or a parent/child of the
-  class. (For `lessons`, resolve `class_id` via the parent material.)
+  can_access_child(cs.child_id)) )` — teacher of the class, or a parent/**granted
+  device** of a child in the class (C1). (For `lessons`, resolve `class_id` via the
+  parent material — or denormalize `class_id` onto `lessons`.)
 - INSERT/UPDATE/DELETE: `using (is_class_teacher(class_id)) with check (is_class_teacher(class_id))`
   — only the class teacher authors content.
 
-### `submissions`
-- SELECT: `using ( is_linked_parent(child_id) or teacher_id = auth.uid()
-  or is_childs_class_teacher(child_id) )`. (Child/device path: a server action
-  scoped to the active child id from the device token.)
-- INSERT: via `submit_recording` RPC/server action (validates the device is
-  authorized for `child_id` and the file path); not a raw client insert.
-- UPDATE: parent transitions `pending_parent`→`pending_teacher`/`rerecord`
-  `using (is_linked_parent(child_id))`; teacher transitions →`accepted`/`rerecord`
-  `using (teacher_id = auth.uid() or is_childs_class_teacher(child_id))`.
-  Enforce allowed state transitions in the RPC.
-- DELETE: denied client-side.
+### `submissions`  **(C1 + C2 + C4)**
+- SELECT: `using ( can_access_child(child_id) or teacher_id = auth.uid() )` —
+  linked parent, class teacher, OR the child's granted device (C1). No
+  client-`child_id`-only access.
+- INSERT: via `submit_recording` server action ONLY (validates `can_access_child`
+  + the assignment + MIME/size, generates the path, enforces the
+  `UNIQUE(child_id, assignment_id)` C2). Not a raw client insert. New rows start
+  `state='uploading'` (C4).
+- UPDATE: state machine, enforced in the finalize/approve/review RPCs —
+  finalize (`uploading`→`pending_parent`) `using (can_access_child(child_id))`;
+  parent (`pending_parent`→`pending_teacher`/`rerecord`) `using (is_linked_parent(child_id))`;
+  teacher (`pending_teacher`→`accepted`/`rerecord`) `using (teacher_id = auth.uid()
+  or is_childs_class_teacher(child_id))`. If a child has **no linked parent**,
+  finalize sends straight to `pending_teacher` (C-review note).
+- DELETE: denied client-side (orphan/`uploading` cleanup is server/retention only).
 
 ### `parent_approvals`
 - SELECT: `using (parent_id = auth.uid() or
@@ -148,14 +195,15 @@ Format: `RLS: yes` then SELECT / INSERT / UPDATE / DELETE intent + draft.
   is_childs_class_teacher((select child_id from submissions s where s.id = submission_id)))`.
 - DELETE: denied.
 
-### `points_ledger`
-- SELECT: `using (is_linked_parent(child_id) or is_childs_class_teacher(child_id))`.
+### `points_ledger`  *(rows reference `submissions.id` via `source_id` when `source_type='submission'`)*
+- SELECT: `using (can_access_child(child_id))` — linked parent, class teacher, OR
+  granted device (C1).
 - INSERT: via server/RPC on teacher review acceptance
   (`with check (is_childs_class_teacher(child_id))`).
 - UPDATE/DELETE: denied (append-only).
 
 ### `child_progress` (or a VIEW)
-- SELECT: `using (is_linked_parent(child_id) or is_childs_class_teacher(child_id))`.
+- SELECT: `using (can_access_child(child_id))` (C1).
 - Writes: server/RPC only (or computed view → no writes).
 
 ### `attendance_records`
@@ -170,8 +218,12 @@ Format: `RLS: yes` then SELECT / INSERT / UPDATE / DELETE intent + draft.
 
 ## Cross-cutting RLS rules (the must-haves)
 
+- **The child/device path is authorized by `has_child_grant`, NEVER by a
+  client-supplied `child_id`** (C1). Child-scoped reads/writes use
+  `can_access_child(child_id)` = linked parent OR class teacher OR valid device
+  grant. `activeChildId` in localStorage is UI convenience only.
 - **Parents read only their linked children** → every child-scoped table guards on
-  `is_linked_parent(child_id)`.
+  `is_linked_parent(child_id)` (within `can_access_child`).
 - **Teachers read only students in their class** → guards on
   `is_childs_class_teacher(child_id)` / `is_class_teacher(class_id)`.
 - **Invitations are managed only by their creator** (`created_by_teacher_id = auth.uid()`)

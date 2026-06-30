@@ -6,6 +6,14 @@
 > `BACKEND_MIGRATION_PHASES.md` against the current code at `079dac4`.
 > Posture: challenge the plan, not defend it.
 
+> **✅ STATUS (post-revision): corrections C1–C7 APPLIED to the docs.** See
+> "Red-team corrections applied" in `SUPABASE_BACKEND_ARCHITECTURE_PLAN.md`. The
+> two Criticals are resolved — C1 (`child_device_grants` + `has_child_grant` /
+> `can_access_child`) and C2 (`submissions UNIQUE(child_id, assignment_id)`), plus
+> C3 (code hardening), C4 (recording upload flow), C5/C7 (Phase 1 split). Verdict
+> moves from "needs revision" → **ready to start Phase 1a**. The original findings
+> below are kept as the record.
+
 ---
 
 ## 1. Executive verdict

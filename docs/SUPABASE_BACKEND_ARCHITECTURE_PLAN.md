@@ -23,6 +23,33 @@ teachers see only their class students; recordings are private.
 
 ---
 
+## Red-team corrections applied (`SUPABASE_BACKEND_ARCHITECTURE_RED_TEAM_REVIEW.md`)
+
+This revision folds in the red-team's required corrections. The plan was
+"NEEDS REVISION"; after these, Phase 1a is safe to start.
+
+- **C1 — `child_device_grants` added.** The child/device path is now authorized by
+  a real server-side grant (token hash stored in `child_device_grants`, validated
+  by `has_child_grant(child_id)` / `can_access_child(child_id)`), **never by a
+  client-supplied `child_id`/`activeChildId`**. (§2, schema, RLS.)
+- **C2 — submission uniqueness fixed.** `submissions` is **`UNIQUE(child_id,
+  assignment_id)`** (+ `source_type`/`source_id`), so siblings can't overwrite each
+  other (the demo's global `taskId` keying is dropped). `parent_approvals`,
+  `teacher_reviews`, and `points_ledger` all reference `submissions.id`. (§5/§8,
+  schema, RLS.)
+- **C3 — code hardening added.** Server-generated codes with real entropy; rate
+  limiting on validate/register/activate/link RPCs; create-RPC retry on collision;
+  validate+consume in one transaction with the counter guard; child-access (TLB)
+  and parent-link (WLD) codes expire and can be regenerated. (§5, schema, RLS.)
+- **C4 — recording upload flow hardened.** Server-generated path only; authorize
+  child + assignment before upload; ordered intent → `uploading` row → signed
+  upload URL → finalize → ready, with orphan cleanup; private bucket + signed URLs
+  only. (§6/§8.)
+- **C5 — Phase 1 split** into **1a (schema + RLS, zero app change)** and **1b (data
+  access seam)**; the explicit first task is defined. (`BACKEND_MIGRATION_PHASES.md`.)
+
+---
+
 ## 1. Current localStorage audit → backend mapping
 
 Each current store, its purpose, and where it goes. "Local" = stays on device.
@@ -68,21 +95,29 @@ store is removed (no `halaqa_code` anywhere, no class selector UI).
   Created during family registration (or signs in later). Sees only linked
   children; approves/sends-back their children's submissions; can link a
   self-registered student by its WLD code.
-- **Child** — **Recommendation: Option A — NOT a full auth user in MVP.**
+- **Child** — **Recommendation: Option A — NOT a full auth user in MVP** (kept as a
+  profile), made safe by the concrete **`child_device_grants`** primitive (C1).
   - Children are `children` rows linked to a parent (`parent_child_links`) and a
     class (`class_students`).
-  - A device opens a child via the **child access code (TLB)** →
-    `activate_child_on_device(code)` RPC returns a **scoped, expiring child-access
-    grant** (a signed token / short-lived row). The device stores `activeChildId`
-    + granted child ids locally.
-  - **Access is still controlled server-side:** every child read/write is
-    authorized by (a) the linked parent's auth session, or (b) the device's child
-    grant — never "trust the client's activeChildId."
+  - A device opens a child by redeeming the **child access code (TLB)** →
+    `activate_child_on_device(code)` server action validates the code (active, not
+    expired/revoked, rate-limited) and **inserts a `child_device_grants` row**
+    storing only `grant_token_hash`. It returns the **raw grant token** to the
+    device, which keeps it (+ `activeChildId`) in localStorage.
+  - **Access is enforced server-side by the grant, not the client.** Every
+    child-scoped read/write checks `can_access_child(child_id)` =
+    `is_linked_parent` OR `is_childs_class_teacher` OR **`has_child_grant`** (which
+    hashes the request's grant token and matches it to that child, unexpired,
+    unrevoked). A client-supplied `child_id` or `activeChildId` **never**
+    authorizes anything on its own.
   - **Why A:** young children don't manage credentials; the family-device model is
     the product; fewer auth users to manage; matches the approved UX.
-  - **Risks & mitigations:** a child grant is a bearer capability → keep it
-    short-lived, revocable (revoke a child's codes), and scoped to one child;
-    don't let the grant read other children; rate-limit code activation.
+  - **Risks & mitigations:** the grant is a bearer capability → store only its hash
+    server-side, keep it short-lived + slidable, scoped to ONE child, revocable by
+    the parent/teacher (revoke the grant and/or rotate the child's TLB code); codes
+    expire and can be regenerated; rate-limit activation. See
+    `SUPABASE_SCHEMA_DRAFT.md` (`child_device_grants`, `child_access_codes`) and the
+    `has_child_grant` predicate in `SUPABASE_RLS_POLICY_DRAFT.md`.
   - **Future upgrade path (Option B):** when older students need cross-device
     self-login, promote `children` to optional auth users (add `children.user_id`)
     and add a child role + policies — without changing the parent/teacher model.
@@ -127,9 +162,11 @@ runs only on the server.
 Normalized, multi-class-capable, RLS-on-everything. Tables: `profiles`,
 `teacher_profiles`, `parent_profiles`, `classes`, `class_teachers`, `children`,
 `class_students`, `parent_child_links`, `invitations`, `invitation_uses`,
-`child_access_codes`, `parent_link_codes`, `learning_materials`, `lessons`,
-`daily_prep`, `assignments`, `submissions`, `parent_approvals`, `teacher_reviews`,
-`points_ledger`, `child_progress` (or view), `attendance_records`, `audit_events`.
+`child_access_codes`, `parent_link_codes`, **`child_device_grants` (C1)**,
+`learning_materials`, `lessons`, `daily_prep`, `assignments`, `submissions`,
+`parent_approvals`, `teacher_reviews`, `points_ledger`, `child_progress` (or view),
+`attendance_records`, `audit_events`. **`submissions` is UNIQUE per
+`(child_id, assignment_id)` (C2).**
 
 ---
 
@@ -161,28 +198,55 @@ Fields on `invitations`: `type`, `code`, `label`, `class_id`,
   The client never writes `used_*_count` and never reads the whole invitations
   table. `validate_invitation(code)` returns only public-safe fields for the join
   screen.
+- **C3 — code hardening (required guardrails):**
+  - **Server-generated codes with sufficient entropy** (lengthen beyond the demo's
+    4 random chars; keep the FAM-/STD- prefix). **Never trust a client-supplied
+    code** as anything but a lookup key.
+  - **Rate-limit** `validate_invitation`, `register_*`, `activate_child_on_device`,
+    and `link_parent_to_child_by_code` at the server-action / RPC layer (per IP +
+    per code) to stop enumeration/brute force.
+  - **Create-RPC retries on unique-violation** (regenerate the code) so a rare
+    collision never surfaces to the teacher.
+  - **Validate + consume in ONE transaction/RPC**: lock the invitation row
+    (`SELECT … FOR UPDATE` or the conditional `UPDATE … WHERE used+N ≤ max
+    RETURNING`) and do the child inserts in the same transaction — so two
+    concurrent uses of the same invitation can't both pass the limit (no race).
+  - **Child-access (TLB) and parent-link (WLD) codes expire and can be
+    regenerated** (rotation revokes the old code). Redeeming a TLB code mints a
+    `child_device_grant`; it does not grant access by itself.
 
 ---
 
 ## 6. Storage plan for recordings
 
 - **Bucket:** `recordings` — **private** (not public).
-- **Path strategy:** `recordings/{class_id}/{child_id}/{submission_id}.{ext}` (or a
-  random object id stored as `submissions.recording_path`). Path encodes the owning
-  class + child so Storage policies can authorize by joining to `submissions`.
-- **Metadata:** `submissions` row holds `recording_path`, `recording_type`,
-  `duration_seconds`, `child_id`, `class_id`, `teacher_id`, state. The file itself
-  carries no PII in its name.
-- **Upload:** only via the `submit_recording` server action (or a signed upload
-  URL minted server-side after authorizing the device for `child_id`). Parents
-  upload for linked children; a device uploads for its active granted child.
-- **Read/download:** **no public URLs.** Playback uses short-lived **signed URLs**
-  minted server-side after an RLS-equivalent check: the requester is the linked
-  parent or the class teacher of that submission's child (or the owning device
-  grant). Anon / unrelated users → denied.
-- **Storage policies:** mirror the table RLS — `using` the same
-  `is_linked_parent` / `is_childs_class_teacher` predicates against the
-  `submissions` row resolved from the path.
+- **Path strategy:** **server-generated only** —
+  `recordings/{class_id}/{child_id}/{submission_id}.{ext}` (or a random object id)
+  stored as `submissions.recording_path`. The **client never chooses the path**
+  (otherwise it could target another child's folder); the server derives it from
+  the authorized `child_id` + the new `submission_id`.
+- **Metadata:** the `submissions` row holds `recording_path`, `recording_type`,
+  `duration_seconds`, `child_id`, `assignment_id`, `class_id`, `teacher_id`, state.
+  The file name carries no PII.
+- **C4 — safe MVP upload flow (row ↔ file kept in sync):**
+  1. Client calls `requestUploadIntent({childId, assignmentId, mime, size})`.
+  2. Server validates `can_access_child(childId)` (parent or device grant), the
+     assignment, MIME allow-list, and size; enforces `UNIQUE(child_id, assignment_id)`.
+  3. Server inserts a `submissions` row `state='uploading'` with the
+     server-generated `recording_path`.
+  4. Server returns a **short-lived signed upload URL** scoped to that path only.
+  5. Client uploads the file to that URL.
+  6. Client calls `finalizeSubmission({submissionId})`.
+  7. Server verifies the object exists at the path, then sets
+     `state='pending_parent'` (or `pending_teacher` if the child has no linked
+     parent). On failure/timeout, a reconciliation job deletes `uploading` rows +
+     their objects older than N minutes (no orphans either way).
+- **Read/download:** **no public URLs.** Playback uses short-lived **signed
+  download URLs** minted server-side after the same `can_access_child` /
+  `teacher_id` check against the submission. Anon / unrelated users → denied.
+- **Storage policies:** mirror the table RLS — authorize against the `submissions`
+  row resolved from the path using `can_access_child(child_id)` / `teacher_id`.
+- **Deletion:** no client delete; only the retention/reconciliation job or an admin.
 - **Production concerns (note for later):** enforce max file size (e.g. ≤ 25–50 MB)
   and an allowed MIME allow-list (audio/webm, audio/mp4, video/webm, video/mp4);
   add malware/content scanning before exposing teacher playback at scale; define a
@@ -220,30 +284,39 @@ For each: caller · inputs · validation · authz · tables touched · output ·
    `invitations` · `{parentLinkCode, childGrant}` · fail: already used.
 6. **createChildAccessCode** — Parent/Server · `{childId}` · `is_linked_parent` ·
    `child_access_codes` · `{code}` · fail: not linked.
-7. **activateChildOnDevice** — Anon/device · `{code}` · code exists+valid ·
-   none (capability) · reads `child_access_codes`→issues grant · `{childGrant,
-   childId}` · fail: bad code "كود الدخول غير صحيح". (rate-limited)
+7. **activateChildOnDevice** — Anon/device · `{code}` · code active (not
+   expired/revoked), rate-limited · capability · reads `child_access_codes` →
+   **inserts `child_device_grants` (stores `grant_token_hash`)** · `{rawGrantToken,
+   childId}` · fail: bad code "كود الدخول غير صحيح". The device keeps the raw token
+   locally and sends it on each child request (C1).
 8. **linkParentToChildByCode** — Parent · `{code}` · WLD valid + not consumed ·
    `parent_id=auth.uid()` · `parent_child_links`, `parent_link_codes` · `{childId}`
    · fail: invalid/duplicate ("مسبقًا").
 9. **createAssignment** — Teacher · `{classId,…}` · `is_class_teacher` ·
    `assignments` · `{assignment}` · fail: not teacher.
-10. **submitRecording** — Parent/device · `{childId,assignmentId,file,meta}` ·
-    device/parent authorized for `childId`, MIME+size ok · upload to Storage +
-    insert `submissions(state=pending_parent)` · `{submissionId}` · fail: unauthorized,
-    bad file.
+10a. **requestUploadIntent** — Parent/device · `{childId,assignmentId,mime,size}` ·
+    `can_access_child(childId)`, MIME+size ok, `UNIQUE(child_id,assignment_id)` ·
+    inserts `submissions(state='uploading')` with server-generated path · returns
+    `{submissionId, signedUploadUrl}` · fail: unauthorized, dup, bad file (C2/C4).
+10b. **finalizeSubmission** — Parent/device · `{submissionId}` ·
+    `can_access_child(child)` + object exists at path · `submissions.state`→
+    `pending_parent` (or `pending_teacher` if no linked parent) · `ok` · fail:
+    object missing → leave `uploading` for cleanup (C4).
 11. **approveSubmissionAsParent** — Parent · `{submissionId,decision}` ·
-    `is_linked_parent(child)` · `submissions.state`, `parent_approvals` · `ok` ·
-    fail: not linked / bad transition.
+    `is_linked_parent(child)` (resolved from the submission id) · `submissions.state`,
+    `parent_approvals` (references `submission_id`) · `ok` · fail: not linked / bad
+    transition.
 12. **reviewSubmissionAsTeacher** — Teacher · `{submissionId,decision,points}` ·
-    `is_childs_class_teacher` · `submissions.state`, `teacher_reviews`,
-    `points_ledger` · `ok` · fail: not class teacher.
+    `is_childs_class_teacher(child)` (from the submission id) · `submissions.state`,
+    `teacher_reviews` (references `submission_id`), `points_ledger`
+    (`source_type='submission'`, `source_id=submission_id`) · `ok` · fail: not class teacher.
 13. **getTeacherRoster** — Teacher · `{}` · `is_class_teacher` · reads `class_students`
     ⨝ `children` · `[children]` · fail: not teacher.
 14. **getParentChildren** — Parent · `{}` · `parent_id=auth.uid()` · `parent_child_links`
     ⨝ `children` · `[children]` · —.
-15. **getChildDashboard** — Parent/device · `{childId}` · authorized for child ·
-    reads tasks/submissions/points scoped to child · `{dashboard}` · fail: unauthorized.
+15. **getChildDashboard** — Parent/device · `{childId}` · `can_access_child(childId)`
+    (parent link OR device grant — never the bare client id) · reads
+    tasks/submissions/points scoped to child · `{dashboard}` · fail: unauthorized.
 
 Most reads can be plain RLS-protected `select`s from the client; the **writes that
 enforce business rules** (4, 5, 7, 8, 10, 11, 12) should be server actions / RPCs.
@@ -268,10 +341,12 @@ key (and any signing secret) un-prefixed and used strictly server-side.
 
 ## 10. Migration plan → see [`BACKEND_MIGRATION_PHASES.md`](./BACKEND_MIGRATION_PHASES.md)
 
-8 phases behind a data-access seam + `NEXT_PUBLIC_BACKEND` flag: (1) setup+schema,
-(2) teacher auth, (3) invitations+/join, (4) family/parent/children, (5) child
-switcher on backend (activeChildId local), (6) materials/tasks, (7) recordings to
-Storage + submissions, (8) points/progress/attendance. Each phase has QA + rollback.
+Phases behind a data-access seam + `NEXT_PUBLIC_BACKEND` flag: **(1a) infra +
+schema + RLS (zero app change), (1b) data-access seam**, (2) teacher auth,
+(3) invitations+/join, (4) family/parent/children, (5) child switcher on backend +
+**child device grants** (activeChildId stays local), (6) materials/tasks,
+(7) recordings to Storage + submissions, (8) points/progress/attendance. Each
+phase has QA + rollback. (C5 splits the old Phase 1.)
 
 ---
 
@@ -303,11 +378,14 @@ private Storage with signed access; removal of hard-coded codes and the
 
 ## 12. Implementation recommendation (opinionated)
 
-**Do first (in order):** Phase 1 (Supabase client/server + schema + RLS + the
-data-access seam) → Phase 2 (real teacher auth, server-side route protection) →
-Phase 3 (backend invitations + `/join`). These remove the three biggest "not real"
-pieces (local teacher gate, client-only invitations, forgeable payload) and give a
-true cross-device demo.
+**Do first (in order):** **Phase 1a** (Supabase project + clients + env + the first
+schema/RLS migration — including `child_device_grants` (C1) and the
+`submissions UNIQUE(child_id, assignment_id)` (C2) — RLS on every table, helper
+functions, RPC stubs; **no app/UI change**) → **Phase 1b** (data-access seam) →
+Phase 2 (real teacher auth + server-side route protection) → Phase 3 (backend
+invitations + `/join`). These remove the three biggest "not real" pieces (local
+teacher gate, client-only invitations, forgeable payload) and give a true
+cross-device demo.
 
 **Move to backend first:** auth (teacher, then parent), invitations, and
 parent/children/links — because they are the trust boundary and the cross-device
