@@ -75,3 +75,13 @@ surprises on tables that should be reachable.
   Phase 7.
 - Anonymous users **cannot enumerate invitations / codes** — validation and use
   go through SECURITY DEFINER RPCs (Phase 3), not table SELECTs.
+
+## Data-access layer (Phase 1b — not wired)
+
+The TypeScript scaffolding that will talk to this database lives in
+`src/lib/supabase/` (clients + env + types) and `src/lib/backend/` (typed
+data-access functions). It is **not imported by the app yet**. The child-device
+grant strategy (raw token on device, hash in DB, server-side validation —
+resolving audit findings H1/H2) is implemented in
+`src/lib/backend/childDeviceGrants.ts`. See
+`docs/SUPABASE_PHASE_1B_DATA_ACCESS_NOTES.md`.
