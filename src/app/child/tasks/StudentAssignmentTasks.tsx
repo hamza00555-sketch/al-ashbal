@@ -9,7 +9,7 @@ import {
   type AssignmentType,
   type StudentAssignment,
 } from "@/lib/demo/studentAssignments";
-import { useChildActiveHalaqaId } from "@/lib/demo/halaqaEnrollment";
+
 import { IconBook, IconTasks, IconVideo } from "../_icons";
 import { RecitationTaskAction } from "./RecitationTaskAction";
 
@@ -108,8 +108,8 @@ function AssignmentCard({ a, ctx }: { a: StudentAssignment; ctx: StudentAssignme
 
 /** Active student assignments for the child's ENROLLED halaqa (independent of lesson prep). */
 export function StudentAssignmentTasks(props: StudentAssignmentTasksProps) {
-  // Assignments follow the child's active (enrolled) halaqa; seed is only fallback.
-  const activeHalaqaId = useChildActiveHalaqaId(props.childId, props.halaqaId);
+  // Single-class model: the passed halaqaId IS the child's class.
+  const activeHalaqaId = props.halaqaId;
   const assignments = useAssignmentsForHalaqa(activeHalaqaId).filter((a) => a.status === "active");
   if (assignments.length === 0) return null;
 

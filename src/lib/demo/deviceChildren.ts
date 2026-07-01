@@ -63,6 +63,13 @@ export function removeDeviceChildId(childId: string) {
   writeDeviceIds(readDeviceIds().filter((id) => id !== childId));
 }
 
+/** Demo reset: clears ONLY the device child-ids list. */
+export function resetDeviceChildIds() {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(DEVICE_KEY);
+  window.dispatchEvent(new CustomEvent(DEVICE_EVENT));
+}
+
 /** The seed/demo child — offered ONLY as a clearly-labelled local fallback. */
 export function getSeedDemoChild(): ChildProfile | null {
   return childProfiles[0] ?? null;

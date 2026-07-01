@@ -77,6 +77,13 @@ export function resetChildOverride(childId: string) {
   writeAll(next);
 }
 
+/** Demo reset: clears ALL child display overrides. */
+export function resetChildOverrides() {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(KEY);
+  window.dispatchEvent(new CustomEvent(EVENT));
+}
+
 // ---- reactive hook ---------------------------------------------------------
 
 function subscribe(callback: () => void) {

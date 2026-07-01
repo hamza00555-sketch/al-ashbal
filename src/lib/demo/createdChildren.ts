@@ -72,6 +72,13 @@ export function getCreatedChildren(): DemoCreatedChild[] {
   return readAll();
 }
 
+/** Demo reset: clears ONLY the created-children store. */
+export function resetCreatedChildren() {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(KEY);
+  window.dispatchEvent(new CustomEvent(EVENT));
+}
+
 export function getCreatedChildById(childId: string): DemoCreatedChild | null {
   return readAll().find((c) => c.id === childId) ?? null;
 }

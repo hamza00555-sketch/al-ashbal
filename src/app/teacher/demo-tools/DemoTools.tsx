@@ -11,6 +11,12 @@ import { resetStudentAssignments } from "@/lib/demo/studentAssignments";
 import { resetNotifications } from "@/lib/demo/notifications";
 import { resetPoints } from "@/lib/demo/points";
 import { clearAllRecordings } from "@/lib/demo/recordings";
+import { resetSubmissions } from "@/lib/demo/submissions";
+import { resetInvitations } from "@/lib/demo/invitations";
+import { resetCreatedChildren } from "@/lib/demo/createdChildren";
+import { resetOnboarding } from "@/lib/demo/onboarding";
+import { resetDeviceChildIds } from "@/lib/demo/deviceChildren";
+import { resetChildOverrides } from "@/lib/demo/childProfiles";
 
 interface ResetItem {
   title: string;
@@ -59,6 +65,25 @@ const ITEMS: ResetItem[] = [
     desc: "يحذف الإشعارات المخزّنة على هذا الجهاز.",
     confirm: "حذف كل الإشعارات التجريبية؟",
     run: resetNotifications,
+  },
+  {
+    title: "إعادة ضبط التسميعات",
+    desc: "يحذف سجلات التسميع (بانتظار الموافقة/المراجعة/المقبولة). لا يحذف ملفات التسجيل نفسها.",
+    confirm: "حذف كل سجلات التسميع التجريبية؟",
+    run: resetSubmissions,
+  },
+  {
+    title: "مسح بيانات العائلات والدعوات",
+    desc: "يحذف الدعوات والأطفال المسجّلين وروابط أولياء الأمور وأكواد الدخول وقائمة أطفال الجهاز. لا يمسّ جلسة المعلم.",
+    confirm: "مسح كل بيانات التسجيل التجريبية (العائلات والدعوات والأطفال)؟",
+    run: () => {
+      resetInvitations();
+      resetCreatedChildren();
+      resetOnboarding();
+      resetDeviceChildIds();
+      resetChildOverrides();
+    },
+    danger: true,
   },
   {
     title: "حذف التسجيلات التجريبية من هذا الجهاز",

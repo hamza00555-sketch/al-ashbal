@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Badge, Card } from "@/components";
 import { useTodayLessonPlan } from "@/lib/demo/lessonPrep";
-import { useChildActiveHalaqaId } from "@/lib/demo/halaqaEnrollment";
+
 
 const ctaPrimary =
   "flex min-h-11 items-center justify-center rounded-md bg-surface-raised px-5 text-button font-bold text-on-dark ring-1 ring-purple-soft/40 transition hover:bg-purple/8";
@@ -16,11 +16,9 @@ const ctaGate =
  * "المادة · الموضوع" list, a "تفاصيل درس اليوم" link and a separate
  * "حضور الحلقة" action. It never shows tasks or a "عرض المهام" button.
  */
-export function ChildTodayCard({ halaqaId, childId }: { halaqaId: string; childId: string }) {
-  // The child's today lesson comes from their ACTIVE (enrolled) halaqa; the seed
-  // halaqaId is only a fallback so the demo page still opens when not enrolled.
-  const activeHalaqaId = useChildActiveHalaqaId(childId, halaqaId);
-  const today = useTodayLessonPlan(activeHalaqaId);
+export function ChildTodayCard({ halaqaId }: { halaqaId: string }) {
+  // Single-class model: the passed halaqaId IS the child's class.
+  const today = useTodayLessonPlan(halaqaId);
   const parts = today.slice(0, 4);
 
   return (

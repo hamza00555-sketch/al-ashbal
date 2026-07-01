@@ -178,6 +178,13 @@ export function getInvitations(): DemoInvitation[] {
   return readAll();
 }
 
+/** Demo reset: clears ONLY the invitations store. */
+export function resetInvitations() {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(KEY);
+  window.dispatchEvent(new CustomEvent(EVENT));
+}
+
 export function findInvitationByCode(code: string): DemoInvitation | null {
   const wanted = normalize(code);
   if (!wanted) return null;

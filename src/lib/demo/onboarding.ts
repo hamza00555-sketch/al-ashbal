@@ -146,6 +146,16 @@ export function clearActiveChildId() {
   window.dispatchEvent(new CustomEvent(ACTIVE_EVENT));
 }
 
+/** Demo reset: clears parent↔child links, link codes, and the active child. */
+export function resetOnboarding() {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(LINK_KEY);
+  window.dispatchEvent(new CustomEvent(LINK_EVENT));
+  window.localStorage.removeItem(CODE_KEY);
+  window.dispatchEvent(new CustomEvent(CODE_EVENT));
+  clearActiveChildId();
+}
+
 // --------------------------------------------------------------- reactive hooks
 function makeSubscribe(eventName: string) {
   return (cb: () => void) => {

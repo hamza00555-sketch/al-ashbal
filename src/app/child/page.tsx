@@ -47,7 +47,7 @@ export default function ChildHomePage() {
       <div className="grid gap-4 lg:grid-cols-3">
         {/* main column */}
         <div className="flex flex-col gap-4 lg:col-span-2">
-          <ChildTodayCard halaqaId={child.halaqaId} childId={child.id} />
+          <ChildTodayCard halaqaId={child.halaqaId} />
 
           {openTasks > 0 && (
             <Card className="anim-rise anim-delay-1 flex flex-wrap items-center justify-between gap-3">
