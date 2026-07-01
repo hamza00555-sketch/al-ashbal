@@ -35,6 +35,7 @@
   --color-on-dark: var(--text-on-dark);
   --color-on-dark-muted: var(--text-muted-on-dark);
   --color-on-light: var(--text-on-light);
+  --color-on-light-muted: #5f4b7a; /* muted plum-gray for cream/contrast cards */
   --color-muted: var(--text-muted);
 
   /* ---------- Semantic states ---------- */

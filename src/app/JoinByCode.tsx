@@ -3,6 +3,7 @@
 /* Landing · invitation-code entry — «لدي دعوة»: type a code and go to /join. */
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button, Input } from "@/components";
 
 export function JoinByCode() {
   const router = useRouter();
@@ -14,24 +15,20 @@ export function JoinByCode() {
   }
 
   return (
-    <div className="flex w-full flex-col gap-2 rounded-lg bg-surface-raised p-4 text-right ring-1 ring-purple/12">
+    <div className="flex w-full flex-col gap-2 rounded-lg bg-surface-raised p-4 text-start ring-1 ring-purple/12">
       <span className="text-card-title font-bold text-on-dark">لدي دعوة</span>
       <p className="text-caption text-on-dark-muted">أدخل كود الدعوة الذي أرسله لك المعلم.</p>
       <div className="flex flex-col gap-2 sm:flex-row">
-        <input
+        <Input
+          aria-label="كود الدعوة"
+          dir="ltr"
           value={code}
           onChange={(e) => setCode(e.target.value)}
           onKeyDown={(e) => { if (e.key === "Enter") go(); }}
           placeholder="مثال: FAM-XXXX"
-          className="min-h-11 w-full rounded-md border border-purple/12 bg-surface px-4 text-body text-on-dark outline-none transition focus:border-purple-soft"
+          className="bg-surface" // darker cream so the field stands out inside this raised card
         />
-        <button
-          type="button"
-          onClick={go}
-          className="min-h-11 shrink-0 rounded-md bg-purple px-6 text-button font-bold text-cream ring-1 ring-white/15 transition hover:brightness-110 sm:w-32"
-        >
-          متابعة
-        </button>
+        <Button onClick={go} className="shrink-0 sm:w-32">متابعة</Button>
       </div>
     </div>
   );

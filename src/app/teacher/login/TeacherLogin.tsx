@@ -43,6 +43,7 @@ export function TeacherLogin() {
         <label className="flex flex-col gap-1.5">
           <span className={fieldLabel}>كود المعلم *</span>
           <input
+            dir="ltr"
             value={code}
             onChange={(e) => { setCode(e.target.value); setError(null); }}
             placeholder="مثال: TCH-XXX"

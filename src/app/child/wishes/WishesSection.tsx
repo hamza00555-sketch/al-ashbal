@@ -48,7 +48,7 @@ export function WishesSection({ initialWishes }: { initialWishes: LocalWish[] })
               <div className="relative z-10 flex min-w-0 flex-col gap-1">
                 <span className="text-card-title font-bold break-words">{wish.title}</span>
                 {wish.description && (
-                  <span className="text-caption break-words text-[#5F4B7A]">{wish.description}</span>
+                  <span className="text-caption break-words text-on-light-muted">{wish.description}</span>
                 )}
               </div>
             </Card>

@@ -127,7 +127,7 @@ export default function ChildHomePage() {
               fallback={<IconStar />}
             />
             <span className="relative z-10 text-card-title font-bold">تقدّمي</span>
-            <span className="relative z-10 text-caption text-[#5F4B7A]">تابع نقاطك وأوسمتك</span>
+            <span className="relative z-10 text-caption text-on-light-muted">تابع نقاطك وأوسمتك</span>
           </Link>
           <Link
             href="/child/wishes"
@@ -141,7 +141,7 @@ export default function ChildHomePage() {
               fallback={<IconSparkle />}
             />
             <span className="relative z-10 text-card-title font-bold">أمنياتي</span>
-            <span className="relative z-10 text-caption text-[#5F4B7A]">اكتب ما تتمنى تحقيقه</span>
+            <span className="relative z-10 text-caption text-on-light-muted">اكتب ما تتمنى تحقيقه</span>
           </Link>
         </div>
       </section>

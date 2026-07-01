@@ -33,22 +33,22 @@ export default function Home() {
         {/* Secondary — teacher sign-in (local demo access gate) */}
         <Link
           href="/teacher/login"
-          className="flex min-h-11 w-full items-center justify-center rounded-lg bg-white/8 px-8 text-button font-bold text-cream/85 ring-1 ring-white/10 transition hover:bg-white/12 hover:text-cream"
+          className="flex min-h-11 w-full items-center justify-center rounded-lg bg-white/8 px-8 text-button font-bold text-cream/85 ring-1 ring-white/10 transition hover:bg-white/12 hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-soft"
         >
           دخول المعلم
         </Link>
 
         {/* Tertiary — local demo fallback only */}
         <div className="mt-2 flex flex-col items-center gap-1.5">
-          <span className="text-caption text-cream/50">تجربة محلية</span>
-          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-caption text-cream/55">
-            <Link href="/child/switch" className="transition hover:text-cream">مبدّل الأطفال</Link>
+          <span className="text-caption text-cream/70">تجربة محلية</span>
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-caption text-cream/75">
+            <Link href="/child/switch" className="rounded-sm transition hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-soft">مبدّل الأطفال</Link>
             <span aria-hidden className="text-cream/25">·</span>
-            <Link href="/parent" className="transition hover:text-cream">ولي أمر</Link>
+            <Link href="/parent" className="rounded-sm transition hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-soft">ولي أمر</Link>
             <span aria-hidden className="text-cream/25">·</span>
-            <Link href="/teacher" className="transition hover:text-cream">معلم</Link>
+            <Link href="/teacher" className="rounded-sm transition hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-soft">معلم</Link>
             <span aria-hidden className="text-cream/25">·</span>
-            <Link href="/guest" className="transition hover:text-cream">ضيف الشرف</Link>
+            <Link href="/guest" className="rounded-sm transition hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-soft">ضيف الشرف</Link>
           </div>
         </div>
       </div>

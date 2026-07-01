@@ -21,13 +21,14 @@ const chip = "inline-flex size-8 items-center justify-center";
 
 /** Teacher control-center tiles — the primary way to reach the daily pages. */
 const TEACHER_TOOLS = [
-  { href: "/teacher/invitations", label: "الدعوات", icon: "icon_children", fallback: <IconUsers /> },
+  // Each tile gets a DISTINCT icon (الدعوات/الأطفال and المواد/الأنشطة used to share one).
+  { href: "/teacher/invitations", label: "الدعوات", icon: "icon_wishes", fallback: <IconBook /> },
   { href: "/teacher/prep", label: "التحضير", icon: "icon_preparation", fallback: <IconPrep /> },
   { href: "/teacher/attendance", label: "الحضور", icon: "icon_attendance", fallback: <IconCalendar /> },
   { href: "/teacher/children", label: "الأطفال", icon: "icon_children", fallback: <IconUsers /> },
   { href: "/teacher/reviews", label: "المراجعات", icon: "icon_review", fallback: <IconVideo /> },
   { href: "/teacher/activities", label: "الأنشطة", icon: "icon_activity", fallback: <IconActivity /> },
-  { href: "/teacher/materials", label: "المواد والتقدم", icon: "icon_progress", fallback: <IconActivity /> },
+  { href: "/teacher/materials", label: "المواد والتقدم", icon: "icon_lessons", fallback: <IconBook /> },
 ];
 
 export default function TeacherOverviewPage() {
@@ -74,7 +75,7 @@ export default function TeacherOverviewPage() {
             <Link
               key={t.href}
               href={t.href}
-              className="flex aspect-square flex-col items-center justify-center gap-2 rounded-lg bg-[#E6DAFF] p-4 text-center text-[#2B1238] shadow-soft ring-1 ring-[#6940A5]/15 transition hover:brightness-[0.97]"
+              className="flex aspect-square flex-col items-center justify-center gap-2 rounded-lg bg-[#E6DAFF] p-4 text-center text-[#2B1238] shadow-soft ring-1 ring-[#6940A5]/15 transition hover:brightness-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-soft"
             >
               <AppAssetIcon src={`/assets/icons/${t.icon}.png`} size="heroLg" fallback={t.fallback} />
               <span className="text-card-title font-bold">{t.label}</span>

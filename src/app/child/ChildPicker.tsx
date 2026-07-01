@@ -32,7 +32,7 @@ function ChildCard({ child, onPick }: { child: ChildProfile; onPick: () => void 
       <span className="w-full break-words text-card-title font-bold">
         <ChildDisplayName childId={child.id} fallback={child.displayName} />
       </span>
-      {child.age ? <span className="text-caption text-[#5F4B7A]">{child.age} سنة</span> : null}
+      {child.age ? <span className="text-caption text-on-light-muted">{child.age} سنة</span> : null}
       <span className="mt-1 inline-flex min-h-9 items-center rounded-md bg-purple px-4 text-caption font-bold text-cream">
         هذا أنا
       </span>
@@ -107,6 +107,8 @@ export function ChildPicker({ redirectTo, hero = false }: { redirectTo?: string;
         <p className="text-caption text-on-dark-muted">أدخل كود دخول الطفل الذي أعطاك إياه ولي أمرك.</p>
         <div className="flex flex-col gap-2 sm:flex-row">
           <input
+            aria-label="كود دخول الطفل"
+            dir="ltr"
             value={code}
             onChange={(e) => { setCode(e.target.value); setCodeError(null); }}
             placeholder="كود دخول الطفل"

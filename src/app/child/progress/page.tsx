@@ -57,7 +57,7 @@ export default function ChildProgressPage() {
                 </span>
                 <div className="flex flex-col gap-1">
                   <span className="text-card-title font-bold text-[#241248]">واصل لتفتح أوسمة جديدة</span>
-                  <span className="text-caption text-[#5F4B7A]">أوسمتك القادمة تظهر هنا.</span>
+                  <span className="text-caption text-on-light-muted">أوسمتك القادمة تظهر هنا.</span>
                 </div>
               </div>
             )}

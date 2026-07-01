@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Badge, Button, Card, SectionTitle, inputClass, fieldLabel, EmptyState } from "@/components";
+import { Badge, Button, Card, CopyButton, Modal, SectionTitle, inputClass, fieldLabel, EmptyState } from "@/components";
 import {
   createInvitation,
   encodeInvitePayload,
@@ -31,6 +31,14 @@ const STATUS_LABEL: Record<string, { label: string; tone: "success" | "warning" 
   expired: { label: "منتهية", tone: "warning" },
   revoked: { label: "موقوفة", tone: "danger" },
 };
+
+/** Short Arabic expiry date for the list row (null when no expiry). */
+function formatExpiry(iso?: string): string | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleDateString("ar", { day: "numeric", month: "long" });
+}
 
 /** A created-invitation result card (code + link + copy + WhatsApp message). */
 function ResultCard({ inv }: { inv: DemoInvitation }) {
@@ -80,6 +88,9 @@ export function InvitationsManager({ teacherId }: { teacherId: string }) {
   const [stuLabel, setStuLabel] = useState("");
   const [stuDays, setStuDays] = useState("7");
   const [stuResult, setStuResult] = useState<DemoInvitation | null>(null);
+
+  // revoke confirmation (destructive + irreversible → confirm first)
+  const [revokeTarget, setRevokeTarget] = useState<DemoInvitation | null>(null);
 
   function createFamily() {
     if (!session) return; // no teacher session → the gate will require login
@@ -163,12 +174,13 @@ export function InvitationsManager({ teacherId }: { teacherId: string }) {
           <div className="flex flex-col gap-2">
             {invitations.map((inv) => {
               const st = STATUS_LABEL[statusOf(inv)];
+              const expiry = formatExpiry(inv.expiresAt);
               return (
                 <Card key={inv.id} variant="lavender" className="flex flex-wrap items-center gap-3">
                   <div className="flex min-w-0 flex-1 flex-col gap-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <Badge tone="purple">{inv.type === "family" ? "عائلة" : "طالب"}</Badge>
-                      <span className="font-extrabold tracking-widest text-purple">{inv.code}</span>
+                      <span dir="ltr" className="font-extrabold tracking-widest text-purple">{inv.code}</span>
                       {inv.label && <span className="text-caption text-on-dark-muted">{inv.label}</span>}
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
@@ -176,13 +188,14 @@ export function InvitationsManager({ teacherId }: { teacherId: string }) {
                       <span className="text-caption text-on-dark-muted">
                         الأطفال: {inv.usedChildrenCount}/{inv.maxChildren ?? 1}
                         {inv.type === "family" ? ` · متبقٍ ${remainingChildren(inv)}` : ""}
+                        {expiry ? ` · تنتهي ${expiry}` : ""}
                       </span>
                     </div>
                   </div>
                   <div className="flex shrink-0 gap-2">
-                    <Button variant="secondary" size="sm" onClick={() => navigator.clipboard?.writeText(linkFor(inv)).catch(() => {})}>نسخ الرابط</Button>
+                    <CopyButton text={linkFor(inv)} label="نسخ الرابط" copiedLabel="تم نسخ الرابط ✓" />
                     {statusOf(inv) === "active" && (
-                      <Button variant="ghost" size="sm" onClick={() => revokeInvitation(inv.id)}>إيقاف</Button>
+                      <Button variant="ghost" size="sm" onClick={() => setRevokeTarget(inv)}>إيقاف</Button>
                     )}
                   </div>
                 </Card>
@@ -191,6 +204,30 @@ export function InvitationsManager({ teacherId }: { teacherId: string }) {
           </div>
         )}
       </section>
+
+      {/* revoke confirmation */}
+      {revokeTarget && (
+        <Modal open onClose={() => setRevokeTarget(null)} title="إيقاف الدعوة">
+          <div className="flex flex-col gap-4">
+            <p className="text-body text-on-dark-muted break-words">
+              سيتم إيقاف الدعوة <span dir="ltr" className="font-bold text-purple">{revokeTarget.code}</span>
+              {revokeTarget.label ? ` (${revokeTarget.label})` : ""} نهائيًا ولن يعمل رابطها بعد الآن.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant="danger"
+                onClick={() => {
+                  revokeInvitation(revokeTarget.id);
+                  setRevokeTarget(null);
+                }}
+              >
+                نعم، أوقف الدعوة
+              </Button>
+              <Button variant="ghost" onClick={() => setRevokeTarget(null)}>إلغاء</Button>
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }

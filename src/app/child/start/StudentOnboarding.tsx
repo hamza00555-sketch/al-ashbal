@@ -122,6 +122,8 @@ export function StudentOnboarding() {
         <p className="text-caption text-on-dark-muted">أدخل كود دخول الطفل الذي أعطاك إياه ولي أمرك.</p>
         <div className="flex flex-col gap-2 sm:flex-row">
           <input
+            aria-label="كود دخول الطفل"
+            dir="ltr"
             value={code}
             onChange={(e) => { setCode(e.target.value); setCodeError(null); }}
             placeholder="كود دخول الطفل"

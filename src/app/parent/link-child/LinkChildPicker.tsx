@@ -96,6 +96,7 @@ export function LinkChildPicker({ parentId, parentName }: { parentId: string; pa
         <span className="text-card-title font-bold">تسجيل ولي أمر</span>
         <div className="flex flex-col gap-2 sm:flex-row">
           <input
+            aria-label="اسم ولي الأمر"
             value={name}
             onChange={(e) => setNameState(e.target.value)}
             placeholder="اسم ولي الأمر"
@@ -152,6 +153,8 @@ export function LinkChildPicker({ parentId, parentName }: { parentId: string; pa
         <p className="text-caption text-on-dark-muted">أدخل كود ربط الطفل الذي حصل عليه طفلك عند تسجيله بنفسه.</p>
         <div className="flex flex-col gap-2 sm:flex-row">
           <input
+            aria-label="كود ربط الطفل"
+            dir="ltr"
             value={code}
             onChange={(e) => { setCode(e.target.value); setLinkError(null); }}
             placeholder="كود ربط الطفل"

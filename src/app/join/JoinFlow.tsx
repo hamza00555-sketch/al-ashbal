@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { AvatarPicker, Badge, Button, Card, LinkButton, inputClass, fieldLabel } from "@/components";
+import { AvatarPicker, Badge, Button, Card, CopyButton, LinkButton, inputClass, fieldLabel } from "@/components";
 import { CHILD_AVATARS, CHILD_LEVELS } from "@/lib/childOptions";
 import { getMockUser } from "@/lib/data";
 import { setRoleOverride } from "@/lib/auth/demoSession";
@@ -77,9 +77,12 @@ function FamilyRegister({ inv }: { inv: DemoInvitation }) {
         <p className="text-body text-on-dark-muted">احتفظ بأكواد دخول الأطفال، يمكن لكل طفل استخدامها للدخول إلى ملفه.</p>
         <div className="flex flex-col gap-2">
           {done.map((c) => (
-            <div key={c.code} className="flex items-center justify-between gap-2 rounded-md bg-purple/5 p-3 ring-1 ring-purple/12">
+            <div key={c.code} className="flex flex-wrap items-center justify-between gap-2 rounded-md bg-purple/5 p-3 ring-1 ring-purple/12">
               <span className="font-bold">{c.name}</span>
-              <span className="font-extrabold tracking-widest text-purple">{c.code}</span>
+              <div className="flex items-center gap-2">
+                <span dir="ltr" className="font-extrabold tracking-widest text-purple">{c.code}</span>
+                <CopyButton text={c.code} label="نسخ الكود" />
+              </div>
             </div>
           ))}
         </div>
@@ -115,10 +118,10 @@ function FamilyRegister({ inv }: { inv: DemoInvitation }) {
               )}
             </div>
             <AvatarPicker value={row.avatar} onChange={(v) => setRow(i, { avatar: v })} />
-            <input value={row.name} onChange={(e) => { setRow(i, { name: e.target.value }); setError(null); }} placeholder="اسم الطفل *" className={inputClass} />
+            <input aria-label={`اسم الطفل ${i + 1}`} value={row.name} onChange={(e) => { setRow(i, { name: e.target.value }); setError(null); }} placeholder="اسم الطفل *" className={inputClass} />
             <div className="grid gap-2 sm:grid-cols-2">
-              <input type="number" min={3} max={18} value={row.age} onChange={(e) => setRow(i, { age: e.target.value })} placeholder="العمر (اختياري)" className={inputClass} />
-              <select value={row.level} onChange={(e) => setRow(i, { level: e.target.value })} className={inputClass}>
+              <input aria-label={`عمر الطفل ${i + 1}`} type="number" min={3} max={18} value={row.age} onChange={(e) => setRow(i, { age: e.target.value })} placeholder="العمر (اختياري)" className={inputClass} />
+              <select aria-label={`مستوى الطفل ${i + 1}`} value={row.level} onChange={(e) => setRow(i, { level: e.target.value })} className={inputClass}>
                 <option value="">المستوى (اختياري)</option>
                 {CHILD_LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
               </select>
@@ -173,7 +176,10 @@ function StudentRegister({ inv }: { inv: DemoInvitation }) {
       <Card className="flex flex-col gap-3">
         <h2 className="text-card-title font-bold">تم إنشاء ملفك بنجاح</h2>
         <p className="text-body text-on-dark-muted">أعطِ هذا الكود لولي أمرك ليربط حسابه بك:</p>
-        <span className="text-h2 font-extrabold tracking-widest text-purple">{done.code}</span>
+        <div className="flex flex-wrap items-center gap-2">
+          <span dir="ltr" className="text-h2 font-extrabold tracking-widest text-purple">{done.code}</span>
+          <CopyButton text={done.code} label="نسخ الكود" />
+        </div>
         <LinkButton href="/child" className="sm:max-w-xs">لوحتي</LinkButton>
       </Card>
     );
@@ -293,6 +299,8 @@ export function JoinFlow({ initialCode, initialDemoInvite }: { initialCode?: str
       <p className="text-caption text-on-dark-muted">أدخل كود الدعوة الذي أرسله لك المعلم.</p>
       <div className="flex flex-col gap-2 sm:flex-row">
         <input
+          aria-label="كود الدعوة"
+          dir="ltr"
           value={codeInput}
           onChange={(e) => { setCodeInput(e.target.value); setSubmitted(false); }}
           placeholder="مثال: FAM-XXXX"
