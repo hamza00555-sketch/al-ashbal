@@ -76,6 +76,13 @@ surprises on tables that should be reachable.
 - Anonymous users **cannot enumerate invitations / codes** — validation and use
   go through SECURITY DEFINER RPCs (Phase 3), not table SELECTs.
 
+## Live project status
+
+Migrations are **validated locally** (all 8 apply cleanly on PostgreSQL 16) but
+have **NOT been applied to a live Supabase project** in this environment — no live
+credentials are present here. To connect a real project and apply the migrations,
+follow **`docs/SUPABASE_LIVE_PROJECT_SETUP.md`**, then run `npm run verify:supabase`.
+
 ## Data-access layer (Phase 1b — not wired)
 
 The TypeScript scaffolding that will talk to this database lives in

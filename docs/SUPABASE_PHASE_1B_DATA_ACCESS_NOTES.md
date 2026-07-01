@@ -96,6 +96,13 @@ client's `activeChildId`/`child_id`.
 - `has_child_grant`'s RLS GUC path (migration 006) is still optional belt-and-
   suspenders; the primary device path is the server-action+admin flow above.
 
+## Live project status
+
+The migrations are **validated locally** but **not applied to a live Supabase
+project** yet (no live credentials in this environment). Before Phase 2, the user
+must create a project and apply `supabase/migrations/001–008` — see
+**`docs/SUPABASE_LIVE_PROJECT_SETUP.md`** and run `npm run verify:supabase`.
+
 ## Next phase recommendation
 
 **Phase 2 — real teacher Auth + server-side route protection.** Wire
@@ -103,3 +110,5 @@ client's `activeChildId`/`child_id`.
 (`requireTeacher`, `getCurrentTeacherProfile`), keeping child/parent/join on
 localStorage. Then Phase 3 (backend invitations + `/join`). The child-device grant
 functions here get wired in **Phase 5**, and recordings in **Phase 7**.
+**Prerequisite:** a live Supabase project with the migrations applied
+(SUPABASE_LIVE_PROJECT_SETUP.md).
