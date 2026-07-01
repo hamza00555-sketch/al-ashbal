@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
-import { Avatar, Badge, Button, Card } from "@/components";
-import { cn } from "@/lib/cn";
+import { AvatarPicker, Badge, Button, Card, LinkButton, inputClass, fieldLabel } from "@/components";
+import { CHILD_AVATARS, CHILD_LEVELS } from "@/lib/childOptions";
 import { getMockUser } from "@/lib/data";
 import { setRoleOverride } from "@/lib/auth/demoSession";
 import { createChild } from "@/lib/demo/createdChildren";
@@ -23,34 +22,10 @@ import {
 const MISSING_LOCAL_INVITE =
   "لم نتمكن من قراءة الدعوة في هذا المتصفح. افتح الرابط الكامل الذي أرسله المعلم أو اطلب دعوة جديدة.";
 
-const inputClass =
-  "min-h-11 w-full rounded-md border border-purple/12 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft";
-const fieldLabel = "text-caption text-on-dark-muted";
-const AVATARS = ["/assets/avatars/avatar_child_boy_01.png", "/assets/avatars/avatar_child_girl_01.png"];
-const LEVELS = ["مبتدئ", "متوسط", "متقدم"];
-
 const DEMO_PARENT_ID = getMockUser("parent").id;
 
 interface ChildRow { name: string; age: string; level: string; avatar: string }
-const emptyRow = (): ChildRow => ({ name: "", age: "", level: "", avatar: AVATARS[0] });
-
-function AvatarPicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
-  return (
-    <div className="flex gap-2">
-      {AVATARS.map((src) => (
-        <button
-          key={src}
-          type="button"
-          aria-pressed={value === src}
-          onClick={() => onChange(src)}
-          className={cn("rounded-pill p-1 transition", value === src ? "ring-2 ring-purple" : "ring-1 ring-purple/15 hover:ring-purple/40")}
-        >
-          <Avatar name="أفاتار" size="md" src={src} />
-        </button>
-      ))}
-    </div>
-  );
-}
+const emptyRow = (): ChildRow => ({ name: "", age: "", level: "", avatar: CHILD_AVATARS[0].src });
 
 // --------------------------------------------------------------- family
 function FamilyRegister({ inv }: { inv: DemoInvitation }) {
@@ -109,12 +84,8 @@ function FamilyRegister({ inv }: { inv: DemoInvitation }) {
           ))}
         </div>
         <div className="flex flex-wrap gap-2">
-          <Link href="/parent" className="inline-flex min-h-11 items-center justify-center rounded-md bg-purple px-5 text-button font-bold text-cream ring-1 ring-white/15 transition hover:brightness-110">
-            لوحة ولي الأمر
-          </Link>
-          <Link href="/child/switch" className="inline-flex min-h-11 items-center justify-center rounded-md bg-surface-raised px-5 text-button font-bold text-on-dark ring-1 ring-purple/12 transition hover:bg-purple/8">
-            مبدّل الأطفال
-          </Link>
+          <LinkButton href="/parent">لوحة ولي الأمر</LinkButton>
+          <LinkButton href="/child/switch" variant="secondary">مبدّل الأطفال</LinkButton>
         </div>
       </Card>
     );
@@ -149,7 +120,7 @@ function FamilyRegister({ inv }: { inv: DemoInvitation }) {
               <input type="number" min={3} max={18} value={row.age} onChange={(e) => setRow(i, { age: e.target.value })} placeholder="العمر (اختياري)" className={inputClass} />
               <select value={row.level} onChange={(e) => setRow(i, { level: e.target.value })} className={inputClass}>
                 <option value="">المستوى (اختياري)</option>
-                {LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
+                {CHILD_LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
               </select>
             </div>
           </div>
@@ -170,7 +141,7 @@ function FamilyRegister({ inv }: { inv: DemoInvitation }) {
 // --------------------------------------------------------------- student
 function StudentRegister({ inv }: { inv: DemoInvitation }) {
   const [name, setName] = useState("");
-  const [avatar, setAvatar] = useState(AVATARS[0]);
+  const [avatar, setAvatar] = useState<string>(CHILD_AVATARS[0].src);
   const [age, setAge] = useState("");
   const [level, setLevel] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -203,9 +174,7 @@ function StudentRegister({ inv }: { inv: DemoInvitation }) {
         <h2 className="text-card-title font-bold">تم إنشاء ملفك بنجاح</h2>
         <p className="text-body text-on-dark-muted">أعطِ هذا الكود لولي أمرك ليربط حسابه بك:</p>
         <span className="text-h2 font-extrabold tracking-widest text-purple">{done.code}</span>
-        <Link href="/child" className="inline-flex min-h-11 items-center justify-center rounded-md bg-purple px-5 text-button font-bold text-cream ring-1 ring-white/15 transition hover:brightness-110 sm:max-w-xs">
-          لوحتي
-        </Link>
+        <LinkButton href="/child" className="sm:max-w-xs">لوحتي</LinkButton>
       </Card>
     );
   }
@@ -226,7 +195,7 @@ function StudentRegister({ inv }: { inv: DemoInvitation }) {
           <input type="number" min={3} max={18} value={age} onChange={(e) => setAge(e.target.value)} placeholder="العمر (اختياري)" className={inputClass} />
           <select value={level} onChange={(e) => setLevel(e.target.value)} className={inputClass}>
             <option value="">المستوى (اختياري)</option>
-            {LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
+            {CHILD_LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
           </select>
         </div>
         {error && <Badge tone="danger">{error}</Badge>}

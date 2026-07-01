@@ -1,24 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { Avatar, Badge, Button, Card } from "@/components";
-import { cn } from "@/lib/cn";
+import { Avatar, AvatarPicker, Badge, Button, Card, LinkButton, inputClass, fieldLabel } from "@/components";
+import { CHILD_AVATARS, CHILD_LEVELS } from "@/lib/childOptions";
 import { createChild, getCreatedChildById } from "@/lib/demo/createdChildren";
 import { findChildLinkCode, getOrCreateChildCode, setActiveChild } from "@/lib/demo/onboarding";
-
-const inputClass =
-  "min-h-11 w-full rounded-md border border-purple/12 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft";
-const fieldLabel = "text-caption text-on-dark-muted";
-const AVATARS = ["/assets/avatars/avatar_child_boy_01.png", "/assets/avatars/avatar_child_girl_01.png"];
-const LEVELS = ["مبتدئ", "متوسط", "متقدم"];
 
 interface ActiveChild { name: string; avatar?: string }
 
 export function StudentOnboarding() {
   // self-registration
   const [name, setName] = useState("");
-  const [avatar, setAvatar] = useState<string>(AVATARS[0]);
+  const [avatar, setAvatar] = useState<string>(CHILD_AVATARS[0].src);
   const [age, setAge] = useState("");
   const [level, setLevel] = useState("");
   const [regError, setRegError] = useState<string | null>(null);
@@ -77,12 +70,9 @@ export function StudentOnboarding() {
             <span className="break-words text-h2 font-extrabold">{active.name}</span>
             <span className="text-caption text-cream/75">تم فتح ملفك. تابع إلى لوحتك.</span>
           </div>
-          <Link
-            href="/child"
-            className="ms-auto inline-flex min-h-11 shrink-0 items-center rounded-md bg-surface-raised px-4 text-button font-bold text-on-dark transition hover:bg-purple/8"
-          >
+          <LinkButton href="/child" variant="secondary" className="ms-auto shrink-0">
             لوحتي
-          </Link>
+          </LinkButton>
         </Card>
       )}
 
@@ -100,19 +90,7 @@ export function StudentOnboarding() {
         <form onSubmit={register} className="flex flex-col gap-3">
           <div className="flex flex-col gap-2">
             <span className={fieldLabel}>الصورة (اختياري)</span>
-            <div className="flex gap-2">
-              {AVATARS.map((src) => (
-                <button
-                  key={src}
-                  type="button"
-                  aria-pressed={avatar === src}
-                  onClick={() => setAvatar(src)}
-                  className={cn("rounded-pill p-1 transition", avatar === src ? "ring-2 ring-purple" : "ring-1 ring-purple/15 hover:ring-purple/40")}
-                >
-                  <Avatar name="أفاتار" size="lg" src={src} />
-                </button>
-              ))}
-            </div>
+            <AvatarPicker value={avatar} onChange={setAvatar} size="lg" />
           </div>
           <label className="flex flex-col gap-1.5">
             <span className={fieldLabel}>اسمك *</span>
@@ -127,7 +105,7 @@ export function StudentOnboarding() {
               <span className={fieldLabel}>المستوى (اختياري)</span>
               <select value={level} onChange={(e) => setLevel(e.target.value)} className={inputClass}>
                 <option value="">—</option>
-                {LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
+                {CHILD_LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
               </select>
             </label>
           </div>

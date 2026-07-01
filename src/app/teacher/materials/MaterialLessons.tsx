@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Badge, Button } from "@/components";
+import { Badge, Button, fieldLabel } from "@/components";
 import {
   addMaterialLesson,
   archiveMaterialLesson,
@@ -17,7 +17,6 @@ import {
 
 const inputClass =
   "min-h-10 w-full rounded-md border border-purple/12 bg-surface-raised px-3 text-body text-on-dark outline-none transition focus:border-purple-soft";
-const fieldLabel = "text-caption text-on-dark-muted";
 const SUB_TYPES = Object.keys(LESSON_SUBMISSION_LABEL) as LessonSubmissionType[];
 
 interface DraftState {

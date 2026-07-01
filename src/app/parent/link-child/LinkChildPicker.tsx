@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Avatar, Badge, Button, Card } from "@/components";
-import { cn } from "@/lib/cn";
+import { Avatar, AvatarPicker, Badge, Button, Card, inputClass, fieldLabel } from "@/components";
+import { CHILD_AVATARS, CHILD_LEVELS } from "@/lib/childOptions";
 import { setRoleOverride } from "@/lib/auth/demoSession";
 import {
   createChild,
@@ -16,12 +16,6 @@ import {
   removeParentChildLink,
   useLinkedChildIdsForParent,
 } from "@/lib/demo/onboarding";
-
-const inputClass =
-  "min-h-11 w-full rounded-md border border-purple/12 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft";
-const fieldLabel = "text-caption text-on-dark-muted";
-const AVATARS = ["/assets/avatars/avatar_child_boy_01.png", "/assets/avatars/avatar_child_girl_01.png"];
-const LEVELS = ["مبتدئ", "متوسط", "متقدم"];
 
 /**
  * Parent onboarding: register the parent name, then EITHER create a child
@@ -38,7 +32,7 @@ export function LinkChildPicker({ parentId, parentName }: { parentId: string; pa
 
   // create child
   const [cName, setCName] = useState("");
-  const [avatar, setAvatar] = useState<string>(AVATARS[0]);
+  const [avatar, setAvatar] = useState<string>(CHILD_AVATARS[0].src);
   const [age, setAge] = useState("");
   const [level, setLevel] = useState("");
   const [createError, setCreateError] = useState<string | null>(null);
@@ -78,7 +72,7 @@ export function LinkChildPicker({ parentId, parentName }: { parentId: string; pa
     setCName("");
     setAge("");
     setLevel("");
-    setAvatar(AVATARS[0]);
+    setAvatar(CHILD_AVATARS[0].src);
   }
 
   function linkByCode() {
@@ -120,19 +114,7 @@ export function LinkChildPicker({ parentId, parentName }: { parentId: string; pa
         <form onSubmit={createChildNow} className="flex flex-col gap-3">
           <div className="flex flex-col gap-2">
             <span className={fieldLabel}>الصورة (اختياري)</span>
-            <div className="flex gap-2">
-              {AVATARS.map((src) => (
-                <button
-                  key={src}
-                  type="button"
-                  aria-pressed={avatar === src}
-                  onClick={() => setAvatar(src)}
-                  className={cn("rounded-pill p-1 transition", avatar === src ? "ring-2 ring-purple" : "ring-1 ring-purple/15 hover:ring-purple/40")}
-                >
-                  <Avatar name="أفاتار" size="lg" src={src} />
-                </button>
-              ))}
-            </div>
+            <AvatarPicker value={avatar} onChange={setAvatar} size="lg" />
           </div>
           <label className="flex flex-col gap-1.5">
             <span className={fieldLabel}>اسم الطفل *</span>
@@ -147,7 +129,7 @@ export function LinkChildPicker({ parentId, parentName }: { parentId: string; pa
               <span className={fieldLabel}>المستوى (اختياري)</span>
               <select value={level} onChange={(e) => setLevel(e.target.value)} className={inputClass}>
                 <option value="">—</option>
-                {LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
+                {CHILD_LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
               </select>
             </label>
           </div>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Badge, Button, Card, SectionTitle } from "@/components";
+import { Badge, Button, Card, SectionTitle, inputClass, fieldLabel, EmptyState } from "@/components";
 import {
   addAssignment,
   ASSIGNMENT_SUBMISSION_LABEL,
@@ -27,10 +27,6 @@ function lessonToSubmissionType(allowed: LessonSubmissionType[]): AssignmentSubm
   if (audio) return "audio";
   return "none";
 }
-
-const inputClass =
-  "min-h-11 w-full rounded-md border border-purple/12 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft";
-const fieldLabel = "text-caption text-on-dark-muted";
 
 const STATUS_LABEL: Record<AssignmentStatus, string> = {
   active: "نشطة",
@@ -234,7 +230,7 @@ export function StudentAssignmentsManager({
         {active.length > 0 ? (
           <div className="grid gap-3 lg:grid-cols-2">{active.map(renderCard)}</div>
         ) : (
-          <Card variant="lavender"><p className="text-body text-on-dark-muted">لا مهام نشطة بعد — أضِف أول مهمة.</p></Card>
+          <EmptyState title="لا مهام نشطة بعد" hint="أضِف أول مهمة للطلاب." />
         )}
       </section>
 

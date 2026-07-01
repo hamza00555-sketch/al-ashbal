@@ -7,7 +7,7 @@
 */
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Badge, Button, Card, ChildDisplayAvatar, ChildDisplayName, PageHeader, SectionTitle } from "@/components";
+import { Badge, Button, Card, ChildDisplayAvatar, ChildDisplayName, PageHeader, SectionTitle, inputClass } from "@/components";
 import { cn } from "@/lib/cn";
 import { childAvatarSrc } from "@/lib/avatars";
 import type { ChildProfile } from "@/types";
@@ -18,9 +18,6 @@ import {
   getSeedDemoChild,
   useAvailableChildren,
 } from "@/lib/demo/deviceChildren";
-
-const inputClass =
-  "min-h-11 w-full rounded-md border border-purple/12 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft";
 
 function ChildCard({ child, onPick }: { child: ChildProfile; onPick: () => void }) {
   return (

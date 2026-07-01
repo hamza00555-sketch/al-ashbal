@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Badge, Button, Card, SectionTitle } from "@/components";
+import { Badge, Button, Card, SectionTitle, inputClass, fieldLabel, EmptyState } from "@/components";
 import {
   createInvitation,
   encodeInvitePayload,
@@ -12,10 +12,6 @@ import {
   type DemoInvitation,
 } from "@/lib/demo/invitations";
 import { useTeacherSession } from "@/lib/demo/teacherSession";
-
-const inputClass =
-  "min-h-11 w-full rounded-md border border-purple/12 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft";
-const fieldLabel = "text-caption text-on-dark-muted";
 
 /** Full PORTABLE link: includes the code + a demo-safe encoded payload so the
  *  link works in another browser/localStorage (local demo only — see store). */
@@ -162,7 +158,7 @@ export function InvitationsManager({ teacherId }: { teacherId: string }) {
       <section className="flex flex-col gap-3">
         <SectionTitle title="الدعوات الحالية" subtitle={`${invitations.length} دعوة`} />
         {invitations.length === 0 ? (
-          <Card variant="lavender"><p className="text-body text-on-dark-muted">لا توجد دعوات بعد — أنشئ دعوة عائلة أو طالب.</p></Card>
+          <EmptyState title="لا توجد دعوات بعد" hint="أنشئ دعوة عائلة أو طالب وشاركها." />
         ) : (
           <div className="flex flex-col gap-2">
             {invitations.map((inv) => {

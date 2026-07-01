@@ -4,15 +4,11 @@
    code it creates a local teacher session and opens /teacher. */
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Badge, Button, Card } from "@/components";
+import { Badge, Button, Card, inputClass, fieldLabel } from "@/components";
 import {
   findTeacherByCode,
   setActiveTeacherSession,
 } from "@/lib/demo/teacherSession";
-
-const inputClass =
-  "min-h-11 w-full rounded-md border border-purple/12 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft";
-const fieldLabel = "text-caption text-on-dark-muted";
 
 export function TeacherLogin() {
   const router = useRouter();

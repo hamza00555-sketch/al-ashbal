@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Badge, Card, ChildDisplayAvatar, ChildDisplayName, SectionTitle } from "@/components";
+import { Badge, Card, ChildDisplayAvatar, ChildDisplayName, EmptyState, SectionTitle } from "@/components";
 import { childAvatarSrc } from "@/lib/avatars";
 import { getDemoChildById, useCreatedChildrenForHalaqa } from "@/lib/demo/createdChildren";
 
@@ -45,9 +45,10 @@ export function TeacherHalaqaChildren({
           ))}
         </Card>
       ) : (
-        <Card variant="lavender">
-          <p className="text-body text-on-dark-muted">لا يوجد طلاب مسجّلون في صفّك بعد. يظهر الطالب هنا تلقائيًا عند تسجيله.</p>
-        </Card>
+        <EmptyState
+          title="لا يوجد طلاب مسجّلون في صفّك بعد"
+          hint="يظهر الطالب هنا تلقائيًا عند تسجيله عبر دعوة."
+        />
       )}
     </section>
   );

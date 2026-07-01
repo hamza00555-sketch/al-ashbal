@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AppAssetIcon, Badge, Button, Card, SectionTitle } from "@/components";
+import { AppAssetIcon, Badge, Button, Card, SectionTitle, inputClass, fieldLabel, EmptyState } from "@/components";
 import { cn } from "@/lib/cn";
 import {
   addMaterial,
@@ -18,10 +18,6 @@ import {
 } from "@/lib/demo/materials";
 import { IconBook } from "../_icons";
 import { MaterialLessons } from "./MaterialLessons";
-
-const inputClass =
-  "min-h-11 w-full rounded-md border border-purple/12 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft";
-const fieldLabel = "text-caption text-on-dark-muted";
 
 const TYPE_OPTIONS = Object.keys(MATERIAL_TYPE_LABEL) as MaterialType[];
 
@@ -238,7 +234,7 @@ export function MaterialsManager({ halaqaId }: { halaqaId: string }) {
             {active.map((m, i) => renderCard(m, i, active))}
           </div>
         ) : (
-          <Card variant="lavender"><p className="text-body text-on-dark-muted">لا مواد نشطة — أضِف أول مادة.</p></Card>
+          <EmptyState title="لا مواد نشطة" hint="أضِف أول مادة." />
         )}
       </section>
 

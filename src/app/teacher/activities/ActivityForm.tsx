@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Badge, Button, Card, SectionTitle } from "@/components";
+import { Badge, Button, Card, SectionTitle, inputClass, fieldLabel } from "@/components";
 import { pushNotification } from "@/lib/demo/notifications";
 import {
   ACTIVITY_TYPE_LABEL,
@@ -13,10 +13,6 @@ import {
   type QuestionType,
 } from "@/lib/demo/activities";
 import type { HalaqaChild } from "./ActivitiesManager";
-
-const inputClass =
-  "min-h-11 w-full rounded-md border border-purple/12 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft";
-const fieldLabel = "text-caption text-on-dark-muted";
 
 const ACTIVITY_TYPES: ActivityType[] = [
   "quick_question",

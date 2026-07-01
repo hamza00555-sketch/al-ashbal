@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Badge, Button, Card, SectionTitle } from "@/components";
+import { Badge, Button, Card, SectionTitle, inputClass, fieldLabel, EmptyState } from "@/components";
 import {
   lessonPrepTitle,
   savePrep,
@@ -10,10 +10,6 @@ import {
   type LessonPrep,
   type LessonPrepStatus,
 } from "@/lib/demo/lessonPrep";
-
-const inputClass =
-  "min-h-11 w-full rounded-md border border-purple/12 bg-surface-raised px-4 text-body text-on-dark outline-none transition focus:border-purple-soft";
-const fieldLabel = "text-caption text-on-dark-muted";
 
 export function PrepForm({
   teacherId,
@@ -185,7 +181,7 @@ export function PrepForm({
             ))}
           </div>
         ) : (
-          <Card variant="lavender"><p className="text-body text-on-dark-muted">لا تحضيرات محفوظة بعد.</p></Card>
+          <EmptyState title="لا تحضيرات محفوظة بعد" hint="احفظ تحضير درس اليوم ليظهر هنا." />
         )}
       </section>
     </div>

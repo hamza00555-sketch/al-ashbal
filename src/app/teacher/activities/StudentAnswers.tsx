@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Badge, Button, Card, SectionTitle } from "@/components";
+import { Badge, Button, Card, SectionTitle, EmptyState } from "@/components";
 import {
   activityResult,
   answerStats,
@@ -140,7 +140,7 @@ export function StudentAnswers({
           ))}
         </div>
       ) : (
-        <Card variant="lavender"><p className="text-body text-on-dark-muted">لا يوجد أطفال في الحلقة.</p></Card>
+        <EmptyState title="لا يوجد أطفال في الحلقة" hint="يظهر الطلاب هنا بعد تسجيلهم." />
       )}
     </section>
   );

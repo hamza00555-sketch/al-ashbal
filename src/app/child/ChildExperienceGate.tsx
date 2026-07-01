@@ -9,9 +9,8 @@
   /child/start (onboarding) and /child/switch (the picker itself) are NOT gated.
 */
 import { createContext, useContext, type ReactNode } from "react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Card, ChildDisplayAvatar, ChildDisplayName } from "@/components";
+import { Card, ChildDisplayAvatar, ChildDisplayName, LinkButton } from "@/components";
 import { childAvatarSrc } from "@/lib/avatars";
 import type { ChildProfile } from "@/types";
 import { useHydrated, useResolvedActiveChild } from "@/lib/demo/deviceChildren";
@@ -43,12 +42,9 @@ function ChildActiveBar({ child }: { child: ChildProfile }) {
           </span>
         </div>
       </div>
-      <Link
-        href="/child/switch"
-        className="inline-flex min-h-9 shrink-0 items-center rounded-md bg-surface-raised px-4 text-caption font-bold text-on-dark ring-1 ring-purple/12 transition hover:bg-purple/8"
-      >
+      <LinkButton href="/child/switch" variant="secondary" size="sm" className="shrink-0">
         تبديل الطفل
-      </Link>
+      </LinkButton>
     </Card>
   );
 }

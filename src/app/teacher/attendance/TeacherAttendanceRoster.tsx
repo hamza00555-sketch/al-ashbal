@@ -1,6 +1,6 @@
 "use client";
 
-import { Card } from "@/components";
+import { EmptyState } from "@/components";
 import { getDemoChildById, useCreatedChildrenForHalaqa } from "@/lib/demo/createdChildren";
 import { childAvatarSrc } from "@/lib/avatars";
 import { getChildDisplayProfile, useChildDisplayProfile } from "@/lib/demo/childProfiles";
@@ -36,9 +36,10 @@ export function TeacherAttendanceRoster({
 
   if (childrenList.length === 0) {
     return (
-      <Card variant="lavender">
-        <p className="text-body text-on-dark-muted">لا يوجد طلاب مسجّلون لتسجيل حضورهم بعد.</p>
-      </Card>
+      <EmptyState
+        title="لا يوجد طلاب مسجّلون بعد"
+        hint="يظهر الطلاب هنا بعد تسجيلهم عبر الدعوات."
+      />
     );
   }
 

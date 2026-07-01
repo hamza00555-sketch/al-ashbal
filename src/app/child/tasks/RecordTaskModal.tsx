@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import { AppAssetIcon, Badge, Button, Modal } from "@/components";
+import { AppAssetIcon, Badge, Button, LinkButton, Modal } from "@/components";
 import { cn } from "@/lib/cn";
 import { IconMic, IconVideo } from "../_icons";
 import { pushNotification } from "@/lib/demo/notifications";
@@ -315,12 +314,7 @@ export function RecordTaskModal({
               <Button variant="primary" onClick={send} disabled={sending}>
                 {sending ? "جارٍ الإرسال…" : "نعم، أرسل"}
               </Button>
-              <Link
-                href="/child/switch"
-                className="inline-flex min-h-11 items-center justify-center rounded-md bg-surface px-5 text-button font-bold text-on-dark ring-1 ring-purple/12 transition hover:bg-purple/8"
-              >
-                تغيير الطفل
-              </Link>
+              <LinkButton href="/child/switch" variant="surface">تغيير الطفل</LinkButton>
             </div>
           </div>
         ) : (
