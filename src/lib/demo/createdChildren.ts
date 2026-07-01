@@ -12,6 +12,7 @@
 import { useCallback, useRef, useSyncExternalStore } from "react";
 import type { ChildProfile } from "@/types";
 import { childProfiles } from "@/lib/data/children";
+import { getParentIdsForChild } from "./onboarding";
 
 export interface DemoCreatedChild {
   id: string;
@@ -114,14 +115,20 @@ export function getCreatedChildIdsForHalaqa(halaqaId: string): string[] {
 
 /** Normalize a created child into the shared ChildProfile shape. */
 function toProfile(c: DemoCreatedChild): ChildProfile {
+  // Creator parent + any parent linked later (e.g. claimed a self-registered
+  // student via the WLD code) — so submissions route to a real parent.
+  const parentIds = Array.from(
+    new Set([...(c.createdByParentId ? [c.createdByParentId] : []), ...getParentIdsForChild(c.id)]),
+  );
   return {
     id: c.id,
     userId: "", // created children have no child-app login (demo limitation)
     displayName: c.displayName,
     age: c.age,
-    gender: "male",
+    // Derive gender from the avatar the child/parent actually picked.
+    gender: c.avatar?.includes("girl") ? "female" : "male",
     halaqaId: c.halaqaId,
-    parentIds: c.createdByParentId ? [c.createdByParentId] : [],
+    parentIds,
     isActive: true,
   };
 }

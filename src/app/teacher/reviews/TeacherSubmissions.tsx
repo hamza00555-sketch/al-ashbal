@@ -40,7 +40,7 @@ function SubmissionCard({
   function confirmAccept() {
     if (rating === null) return;
     const chosen = RECITATION_RATINGS[rating];
-    updateSubmission(sub.taskId, { state: "accepted" });
+    updateSubmission(sub.taskId, sub.childId, { state: "accepted" });
     if (chosen.value > 0 && sub.teacherId) {
       // de-duped by (recitation, child) so accepting twice never double-counts.
       recordSourcedPoints({
@@ -80,7 +80,7 @@ function SubmissionCard({
   }
 
   function requestRerecord() {
-    updateSubmission(sub.taskId, { state: "rerecord" });
+    updateSubmission(sub.taskId, sub.childId, { state: "rerecord" });
     pushNotification({ userId: sub.childUserId, title: "المعلم طلب إعادة التسميع", body: "خلّينا نعيد التسميع بشكل أوضح.", type: "review_rerecord", href: `/child/tasks?taskId=${sub.taskId}` });
     if (sub.parentUserId) {
       pushNotification({ userId: sub.parentUserId, title: "المعلم طلب إعادة التسميع", body: `طلب المعلم إعادة تسميع ${sub.childName}.`, type: "review_rerecord", href: `/parent/children/${sub.childId}` });
@@ -88,7 +88,7 @@ function SubmissionCard({
   }
   function saveNote() {
     const trimmed = note.trim();
-    updateSubmission(sub.taskId, { note: trimmed || undefined });
+    updateSubmission(sub.taskId, sub.childId, { note: trimmed || undefined });
     if (trimmed) {
       pushNotification({ userId: sub.childUserId, title: "لديك ملاحظة جديدة على التسميع", body: trimmed, type: "review_note", href: `/child/tasks?taskId=${sub.taskId}` });
     }
@@ -212,7 +212,7 @@ export function TeacherSubmissions({
       <div className="grid gap-6 lg:grid-cols-2">
         {items.map((s) => (
           <SubmissionCard
-            key={s.taskId}
+            key={s.id}
             sub={s}
             highlighted={s.id === highlightSubmissionId}
             teacherName={teacherName}

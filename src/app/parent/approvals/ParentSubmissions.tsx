@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import { AppAssetIcon, Avatar, Badge, Button, Card, RecordingPlayer, SectionTitle } from "@/components";
+import { AppAssetIcon, Badge, Button, Card, ChildDisplayAvatar, RecordingPlayer, SectionTitle } from "@/components";
 import { cn } from "@/lib/cn";
-import { childAvatarById } from "@/lib/avatars";
 import { pushNotification } from "@/lib/demo/notifications";
 import { updateSubmission, useSubmissions, type Submission } from "@/lib/demo/submissions";
 import { IconVideo } from "../_icons";
@@ -39,7 +38,7 @@ export function ParentSubmissions({
   if (list.length === 0) return null;
 
   function approve(s: Submission) {
-    updateSubmission(s.taskId, { state: "pending_teacher" });
+    updateSubmission(s.taskId, s.childId, { state: "pending_teacher" });
     pushNotification({
       userId: s.childUserId,
       title: "تم إرسال تسميعك للمعلم",
@@ -58,7 +57,7 @@ export function ParentSubmissions({
     }
   }
   function rerecord(s: Submission) {
-    updateSubmission(s.taskId, { state: "rerecord" });
+    updateSubmission(s.taskId, s.childId, { state: "rerecord" });
     pushNotification({
       userId: s.childUserId,
       title: "ولي الأمر طلب إعادة تسجيل التسميع",
@@ -81,7 +80,7 @@ export function ParentSubmissions({
           const highlighted = mode === "pending" && s.id === highlightSubmissionId;
           return (
             <Card
-              key={s.taskId}
+              key={s.id}
               id={`submission-${s.id}`}
               className={cn(
                 "anim-rise flex flex-col gap-3",
@@ -90,7 +89,7 @@ export function ParentSubmissions({
               )}
             >
               <div className="flex items-center gap-3">
-                <Avatar name={s.childName} size="lg" src={childAvatarById(s.childId)} />
+                <ChildDisplayAvatar childId={s.childId} fallbackName={s.childName} size="lg" />
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
                   <span className="text-card-title font-bold break-words">{s.title}</span>
                   <span className="text-caption text-on-dark-muted">{s.childName} · {s.recordingType === "video" ? "فيديو" : "صوت"}</span>

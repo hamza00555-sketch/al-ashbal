@@ -53,13 +53,13 @@ export function StudentOnboarding() {
   function enterCode() {
     const rec = findChildLinkCode(code);
     if (!rec || rec.purpose !== "child_access_parent_created") {
-      setCodeError("كود الربط غير صحيح");
+      setCodeError("كود الدخول غير صحيح");
       return;
     }
     setCodeError(null);
     const child = getCreatedChildById(rec.childId);
     if (!child) {
-      setCodeError("كود الربط غير صحيح");
+      setCodeError("كود الدخول غير صحيح");
       return;
     }
     setActiveChild(child.id);

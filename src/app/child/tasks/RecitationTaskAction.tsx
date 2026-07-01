@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Badge, type BadgeTone, Button } from "@/components";
-import { useSubmissions, type SubmissionState } from "@/lib/demo/submissions";
+import { submissionKey, useSubmissions, type SubmissionState } from "@/lib/demo/submissions";
 import { RecordTaskModal } from "./RecordTaskModal";
 
 const SUB_LABEL: Record<SubmissionState, { label: string; tone: BadgeTone }> = {
@@ -38,7 +38,8 @@ export function RecitationTaskAction(props: RecitationTaskActionProps) {
   const { taskId, baseCanRecord, baseStatusLabel, baseStatusTone } = props;
   const [open, setOpen] = useState(false);
   const submissions = useSubmissions();
-  const sub = submissions[taskId];
+  // Per-child lookup: a sibling's submission on the same task never blocks this child.
+  const sub = submissions[submissionKey(taskId, props.childId)];
 
   // Decide what to show.
   let badge: { label: string; tone: BadgeTone } | null = null;

@@ -4,7 +4,7 @@
   sees only their own halaqa. No wishes, no unapproved videos.
 */
 import Link from "next/link";
-import { AppAssetIcon, Badge, Card, PageHeader, RoleAvatar, RoleName, SectionTitle, SettingsLink, StatCard } from "@/components";
+import { AppAssetIcon, Badge, Card, PageHeader, RoleAvatar, SectionTitle, SettingsLink, StatCard } from "@/components";
 import {
   getAttendanceForLesson,
   getLessonsForTeacher,
@@ -14,6 +14,7 @@ import { IconActivity, IconBook, IconCalendar, IconPrep, IconUsers, IconVideo } 
 import { getTeacherContext } from "./_shared";
 import { TeacherReviewAlert } from "./TeacherReviewAlert";
 import { TeacherIdentityStrip } from "./TeacherIdentityStrip";
+import { TeacherSessionName } from "./TeacherSessionName";
 import { EnrolledChildCountStat } from "./EnrolledChildCountStat";
 
 const chip = "inline-flex size-8 items-center justify-center";
@@ -55,7 +56,7 @@ export default function TeacherOverviewPage() {
     <>
       <PageHeader
         eyebrow={halaqaName}
-        title={<RoleName role="teacher" fallback={viewer.displayName} />}
+        title={<TeacherSessionName fallback={viewer.displayName} />}
         subtitle="لوحة المعلم — متابعة الحلقة"
         leading={<RoleAvatar role="teacher" fallbackName={viewer.displayName} fallbackSrc="/assets/avatars/avatar_teacher_male_01.png" />}
         actions={<SettingsLink role="teacher" />}

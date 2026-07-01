@@ -58,6 +58,11 @@ export function removeParentChildLink(parentId: string, childId: string) {
 export function getLinkedChildIdsForParent(parentId: string): string[] {
   return readLinks().filter((l) => l.parentId === parentId).map((l) => l.childId);
 }
+/** Parents linked to a child (reverse lookup — covers self-registered children
+ *  claimed later by a parent via the WLD code). */
+export function getParentIdsForChild(childId: string): string[] {
+  return readLinks().filter((l) => l.childId === childId).map((l) => l.parentId);
+}
 export function isChildLinkedToParent(parentId: string, childId: string): boolean {
   return readLinks().some((l) => l.parentId === parentId && l.childId === childId);
 }

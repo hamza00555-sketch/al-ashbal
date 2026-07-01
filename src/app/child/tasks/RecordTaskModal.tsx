@@ -186,6 +186,9 @@ export function RecordTaskModal({
       setError("تعذّر حفظ التسجيل على هذا الجهاز.");
       return;
     }
+    // A self-registered student with no linked parent has no approval step:
+    // the recitation goes straight to the teacher's review queue.
+    const hasParent = Boolean(task.parentUserId);
     upsertSubmission({
       id: submissionId,
       taskId: task.taskId,
@@ -197,7 +200,7 @@ export function RecordTaskModal({
       title: task.title,
       recordingId,
       recordingType: mode,
-      state: "pending_parent",
+      state: hasParent ? "pending_parent" : "pending_teacher",
       createdAt: new Date().toISOString(),
       // carry the material/lesson link so acceptance can credit the material
       materialId: task.materialId,
@@ -206,17 +209,27 @@ export function RecordTaskModal({
       materialName: task.materialName,
       lessonTitle: task.lessonTitle,
     });
-    pushNotification({
-      userId: task.parentUserId,
-      title: "تسميع جديد بانتظار موافقتك",
-      body: `${task.title} — بانتظار مراجعتك.`,
-      type: "video_pending_parent",
-      href: `/parent/approvals?submissionId=${submissionId}`,
-    });
+    if (hasParent) {
+      pushNotification({
+        userId: task.parentUserId,
+        title: "تسميع جديد بانتظار موافقتك",
+        body: `${task.title} — بانتظار مراجعتك.`,
+        type: "video_pending_parent",
+        href: `/parent/approvals?submissionId=${submissionId}`,
+      });
+    } else if (task.teacherId) {
+      pushNotification({
+        userId: task.teacherId,
+        title: "تسميع جديد بانتظار المراجعة",
+        body: `${task.title} — من ${task.childName}.`,
+        type: "video_pending_teacher",
+        href: `/teacher/reviews?submissionId=${submissionId}`,
+      });
+    }
     pushNotification({
       userId: task.childUserId,
-      title: "تم إرسال تسميعك لولي الأمر",
-      body: "بانتظار موافقة ولي أمرك قبل إرساله للمعلم.",
+      title: hasParent ? "تم إرسال تسميعك لولي الأمر" : "تم إرسال تسميعك للمعلم",
+      body: hasParent ? "بانتظار موافقة ولي أمرك قبل إرساله للمعلم." : "بانتظار مراجعة المعلم.",
       type: "submitted",
       href: `/child/tasks?taskId=${task.taskId}`,
     });
@@ -321,7 +334,9 @@ export function RecordTaskModal({
             {phase === "recorded" && (
               <>
                 <Button variant="secondary" onClick={reRecord}>إعادة التسجيل</Button>
-                <Button variant="primary" onClick={() => setConfirming(true)}>إرسال لولي الأمر</Button>
+                <Button variant="primary" onClick={() => setConfirming(true)}>
+                  {task.parentUserId ? "إرسال لولي الأمر" : "إرسال للمعلم"}
+                </Button>
               </>
             )}
             {phase === "error" && (

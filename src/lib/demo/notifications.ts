@@ -66,6 +66,9 @@ export function pushNotification(input: {
   type?: string;
   href?: string;
 }) {
+  // Created demo children/parents may have no userId — skip orphan notifications
+  // instead of accumulating unreadable entries.
+  if (!input.userId) return;
   const item: DemoNotification = {
     id: `dn-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
     createdAt: new Date().toISOString(),

@@ -4,6 +4,11 @@
   الأشبال — demo recitation submissions workflow (Phase 01 · Task A4).
   Tracks the lifecycle of a recorded recitation across child → parent → teacher.
   localStorage only (the Blob itself lives in IndexedDB, see recordings.ts).
+
+  Keyed by `${taskId}::${childId}` — one submission PER CHILD per task, so two
+  siblings on the same shared family device can submit the same assignment
+  without overwriting or blocking each other. (Legacy taskId-only keys are
+  migrated on read.)
 */
 import { useCallback, useRef, useSyncExternalStore } from "react";
 
@@ -33,11 +38,16 @@ export interface Submission {
   lessonTitle?: string;
 }
 
-type SubmissionMap = Record<string, Submission>; // keyed by taskId
+type SubmissionMap = Record<string, Submission>; // keyed by `${taskId}::${childId}`
 
 const KEY = "alashbal:submissions";
 const EVENT = "alashbal:submissions-changed";
 const EMPTY: SubmissionMap = {};
+
+/** Composite store key: one submission per child per task (sibling-safe). */
+export function submissionKey(taskId: string, childId: string): string {
+  return `${taskId}::${childId}`;
+}
 
 function readAll(): SubmissionMap {
   if (typeof window === "undefined") return EMPTY;
@@ -45,9 +55,21 @@ function readAll(): SubmissionMap {
     const raw = window.localStorage.getItem(KEY);
     if (!raw) return EMPTY;
     const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === "object" && !Array.isArray(parsed)
-      ? (parsed as SubmissionMap)
-      : EMPTY;
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return EMPTY;
+    const map = parsed as SubmissionMap;
+    // Migrate legacy entries keyed by bare taskId to the composite key.
+    let migrated = false;
+    const next: SubmissionMap = {};
+    for (const [key, sub] of Object.entries(map)) {
+      if (key.includes("::")) {
+        next[key] = sub;
+      } else {
+        next[submissionKey(sub.taskId, sub.childId)] = sub;
+        migrated = true;
+      }
+    }
+    if (migrated) window.localStorage.setItem(KEY, JSON.stringify(next));
+    return next;
   } catch {
     return EMPTY;
   }
@@ -76,18 +98,25 @@ function subscribe(callback: () => void) {
   };
 }
 
-/** Create or replace the submission for a task. */
-export function upsertSubmission(sub: Submission) {
-  const map = readAll();
-  writeAll({ ...map, [sub.taskId]: { ...map[sub.taskId], ...sub } });
+/** The one submission for THIS child on THIS task (or undefined). */
+export function getSubmissionFor(taskId: string, childId: string): Submission | undefined {
+  return readAll()[submissionKey(taskId, childId)];
 }
 
-/** Patch the state (and optional note) of an existing submission. */
-export function updateSubmission(taskId: string, patch: Partial<Submission>) {
+/** Create or replace the submission for a (task, child) pair. */
+export function upsertSubmission(sub: Submission) {
   const map = readAll();
-  const current = map[taskId];
+  const key = submissionKey(sub.taskId, sub.childId);
+  writeAll({ ...map, [key]: { ...map[key], ...sub } });
+}
+
+/** Patch the state (and optional note) of an existing (task, child) submission. */
+export function updateSubmission(taskId: string, childId: string, patch: Partial<Submission>) {
+  const map = readAll();
+  const key = submissionKey(taskId, childId);
+  const current = map[key];
   if (!current) return;
-  writeAll({ ...map, [taskId]: { ...current, ...patch } });
+  writeAll({ ...map, [key]: { ...current, ...patch } });
 }
 
 export function useSubmissions(): SubmissionMap {
