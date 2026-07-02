@@ -17,8 +17,9 @@ import { useEffect, type ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { TeacherIdentityProvider, type TeacherIdentity } from "./TeacherIdentity";
 import { TeacherAccessDenied } from "./TeacherAccessDenied";
+import { TeacherAreaError } from "./TeacherAreaError";
 
-export type TeacherAuthState = "no-user" | "not-teacher" | "teacher";
+export type TeacherAuthState = "no-user" | "not-teacher" | "teacher" | "error";
 
 export function TeacherShellGate({
   authState,
@@ -44,7 +45,15 @@ export function TeacherShellGate({
   // The login route renders standalone (no teacher shell).
   if (onLogin) return <>{plain}</>;
 
-  if (authState === "no-user") return null; // redirecting (proxy fallback)
+  if (authState === "error") return <TeacherAreaError />;
+  if (authState === "no-user") {
+    // Redirecting to login (proxy fallback). Never a dead-blank screen.
+    return (
+      <main className="flex min-h-dvh items-center justify-center px-5">
+        <p className="text-body text-on-dark-muted">جاري التحويل لصفحة الدخول...</p>
+      </main>
+    );
+  }
   if (authState === "not-teacher" || !teacher) return <TeacherAccessDenied />;
 
   return <TeacherIdentityProvider value={teacher}>{withShell}</TeacherIdentityProvider>;

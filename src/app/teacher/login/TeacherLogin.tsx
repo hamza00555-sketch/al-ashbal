@@ -5,13 +5,11 @@
    On success the session lives in auth cookies; the server (proxy + layout)
    authorizes every /teacher request from then on. */
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Badge, Button, Card, Field, Input } from "@/components";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { clearLegacyTeacherSession } from "@/lib/demo/legacyTeacherSession";
 
 export function TeacherLogin() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -48,8 +46,9 @@ export function TeacherLogin() {
         return;
       }
       clearLegacyTeacherSession();
-      router.replace("/teacher");
-      router.refresh();
+      // FULL navigation (not router.replace): guarantees the server re-reads
+      // the fresh auth cookies with no stale client router cache in the way.
+      window.location.assign("/teacher");
     } catch (thrown) {
       // Safe diagnostic: distinguishes "env missing in bundle" from real network
       // failures in the browser console without exposing any values.

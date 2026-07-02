@@ -10,7 +10,7 @@
   delete the throwaway user. Random credentials are generated in-memory and
   never returned.
 */
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +20,23 @@ function short(text: string): string {
   return text.replace(/\s+/g, " ").slice(0, 160);
 }
 
-export async function GET() {
+/** Build the @supabase/ssr auth cookies for a session object (chunked like the
+ *  browser client writes them), so we can request /teacher AS a signed-in user. */
+function sessionCookies(supabaseUrl: string, session: unknown): string {
+  const ref = new URL(supabaseUrl).hostname.split(".")[0];
+  const name = `sb-${ref}-auth-token`;
+  const encoded =
+    "base64-" + Buffer.from(JSON.stringify(session), "utf8").toString("base64url");
+  const MAX = 3180; // @supabase/ssr chunk size
+  if (encoded.length <= MAX) return `${name}=${encoded}`;
+  const parts: string[] = [];
+  for (let i = 0; i * MAX < encoded.length; i++) {
+    parts.push(`${name}.${i}=${encoded.slice(i * MAX, (i + 1) * MAX)}`);
+  }
+  return parts.join("; ");
+}
+
+export async function GET(request: NextRequest) {
   // Static reads (same inlining rule the app itself relies on).
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -35,6 +51,7 @@ export async function GET() {
     anonProfilesProbe: "skipped", // anon may be blocked (401) — that is fine/secure
     profileQueryCheck: "skipped", // authenticated-user read: the path the app uses
     authFlowCheck: "skipped",
+    dashboardCheck: "skipped", // synthetic teacher session actually renders /teacher
     errorCode: null as string | null,
     errorMessage: null as string | null,
   };
@@ -93,7 +110,8 @@ export async function GET() {
           signal: AbortSignal.timeout(TIMEOUT),
         });
         if (!signin.ok) throw new Error(`status ${signin.status}: ${short(await signin.text())}`);
-        const accessToken = (await signin.json()).access_token as string;
+        const sessionJson = (await signin.json()) as { access_token: string };
+        const accessToken = sessionJson.access_token;
 
         stage = "profiles_read";
         // EXACTLY what the app does after login: publishable apikey + user JWT
@@ -106,6 +124,46 @@ export async function GET() {
 
         out.authFlowCheck = "pass";
         out.profileQueryCheck = "pass";
+
+        // ---- dashboardCheck: link the throwaway user as a teacher, then
+        // request /teacher WITH its session cookies — the page must render the
+        // actual dashboard (Asma's exact path), not a blank/redirect. ----
+        stage = "dashboard";
+        try {
+          for (const [table, row] of [
+            ["profiles", { id: userId, role: "teacher", display_name: "فحص مؤقت" }],
+            ["teacher_profiles", { id: userId }],
+          ] as const) {
+            const ins = await fetch(`${url}/rest/v1/${table}`, {
+              method: "POST",
+              headers: {
+                apikey: serviceKey,
+                "Content-Type": "application/json",
+                Prefer: "return=minimal",
+              },
+              body: JSON.stringify(row),
+              cache: "no-store",
+              signal: AbortSignal.timeout(TIMEOUT),
+            });
+            if (!ins.ok) throw new Error(`${table} insert ${ins.status}: ${short(await ins.text())}`);
+          }
+          const origin = request.nextUrl.origin;
+          const page = await fetch(`${origin}/teacher`, {
+            headers: { cookie: sessionCookies(url, sessionJson) },
+            redirect: "manual",
+            cache: "no-store",
+            signal: AbortSignal.timeout(15000),
+          });
+          const html = page.status === 200 ? await page.text() : "";
+          out.dashboardCheck =
+            page.status === 200 && html.includes("أدوات المعلم")
+              ? "pass"
+              : `fail_status_${page.status}${page.status === 200 ? "_no_dashboard_markup" : ""}`;
+        } catch (dashError) {
+          out.dashboardCheck = `fail:${short(
+            dashError instanceof Error ? dashError.message : "unknown",
+          )}`;
+        }
       } catch (flowError) {
         out.authFlowCheck = `fail_${stage}`;
         out.profileQueryCheck = stage === "profiles_read" ? "fail" : "skipped";
