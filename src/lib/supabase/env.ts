@@ -22,29 +22,31 @@ export function assertServerOnly(where: string): void {
   }
 }
 
-function required(name: string): string {
-  const value = process.env[name];
-  if (!value) {
-    throw new Error(
-      `[supabase] Missing required environment variable: ${name}. ` +
-        `See .env.example / supabase/README.md.`,
-    );
-  }
-  return value;
+function missing(name: string): Error {
+  return new Error(
+    `[supabase] Missing required environment variable: ${name}. ` +
+      `See .env.example / supabase/README.md.`,
+  );
 }
 
-/** Client-safe Supabase URL + anon key (used by browser + server user clients). */
+/** Client-safe Supabase URL + anon key (used by browser + server user clients).
+ *  ⚠️ NEXT_PUBLIC_* must be read as STATIC member expressions — Next.js inlines
+ *  them into the browser bundle only then. A dynamic `process.env[name]` lookup
+ *  is never inlined and reads `undefined` in every browser. */
 export function getPublicSupabaseEnv(): { url: string; anonKey: string } {
-  return {
-    url: required("NEXT_PUBLIC_SUPABASE_URL"),
-    anonKey: required("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
-  };
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url) throw missing("NEXT_PUBLIC_SUPABASE_URL");
+  if (!anonKey) throw missing("NEXT_PUBLIC_SUPABASE_ANON_KEY");
+  return { url, anonKey };
 }
 
 /** SERVER-ONLY: the service role key. Never call this from client code. */
 export function getServiceRoleKey(): string {
   assertServerOnly("getServiceRoleKey");
-  return required("SUPABASE_SERVICE_ROLE_KEY");
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!key) throw missing("SUPABASE_SERVICE_ROLE_KEY");
+  return key;
 }
 
 /** Recordings bucket name (defaults to "recordings"). */
