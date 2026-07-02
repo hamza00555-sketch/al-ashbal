@@ -16,10 +16,8 @@ import {
 import { ATTENDANCE_STATUS, CHILD_STATUS, getTeacherContext, RECITATION_STATUS } from "../../_shared";
 import { TeacherChildPoints } from "./TeacherChildPoints";
 
-export function generateStaticParams() {
-  const { children } = getTeacherContext();
-  return children.map((c) => ({ childId: c.id }));
-}
+// No generateStaticParams here: teacher pages are auth-gated per request
+// (cookies), so nothing under /teacher may be prerendered at build time.
 
 export default async function TeacherChildDetailPage({
   params,

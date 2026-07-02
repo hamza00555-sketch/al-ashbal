@@ -1,7 +1,7 @@
 /*
-  Teacher login (/teacher/login) — LOCAL DEMO access gate before the teacher
-  area. Standalone branded screen (no teacher nav). Demo-only, localStorage.
-  NOT real auth — see src/lib/demo/teacherSession.ts.
+  Teacher login (/teacher/login) — real Supabase Auth (Phase 2).
+  Standalone branded screen (no teacher nav). Email + password only; there is
+  NO public signup — accounts come from scripts/bootstrap-teacher.mjs.
 */
 import Link from "next/link";
 import { TeacherLogin } from "./TeacherLogin";
@@ -20,7 +20,7 @@ export default function TeacherLoginPage() {
           </Link>
           <h1 className="text-h1 font-extrabold text-cream">لوحة المعلم</h1>
           <p className="max-w-sm text-body text-cream/75">
-            هذه المنطقة مخصّصة للمعلم. أدخل كود المعلم للمتابعة.
+            هذه المنطقة مخصّصة للمعلم. سجّل الدخول بحسابك للمتابعة.
           </p>
         </header>
 

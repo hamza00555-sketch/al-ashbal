@@ -14,7 +14,7 @@ import { IconActivity, IconBook, IconCalendar, IconPrep, IconUsers, IconVideo } 
 import { getTeacherContext } from "./_shared";
 import { TeacherReviewAlert } from "./TeacherReviewAlert";
 import { TeacherIdentityStrip } from "./TeacherIdentityStrip";
-import { TeacherSessionName } from "./TeacherSessionName";
+import { TeacherName } from "./TeacherIdentity";
 import { EnrolledChildCountStat } from "./EnrolledChildCountStat";
 
 const chip = "inline-flex size-8 items-center justify-center";
@@ -57,7 +57,7 @@ export default function TeacherOverviewPage() {
     <>
       <PageHeader
         eyebrow={halaqaName}
-        title={<TeacherSessionName fallback={viewer.displayName} />}
+        title={<TeacherName fallback={viewer.displayName} />}
         subtitle="لوحة المعلم — متابعة الحلقة"
         leading={<RoleAvatar role="teacher" fallbackName={viewer.displayName} fallbackSrc="/assets/avatars/avatar_teacher_male_01.png" />}
         actions={<SettingsLink role="teacher" />}

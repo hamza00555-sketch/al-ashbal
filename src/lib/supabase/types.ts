@@ -29,19 +29,24 @@ export type AttendanceStatus =
   | "not_joined"
   | "excused";
 
-export interface Profile {
+/** profiles — `type` (not `interface`) because it is used as a Row in the
+ *  `Database` generic, which requires `Record<string, unknown>` compatibility. */
+export type Profile = {
   id: Uuid; // = auth.users.id
   role: UserRole;
   display_name: string;
   avatar_url: string | null;
   created_at: Timestamptz;
   updated_at: Timestamptz;
-}
+};
 
-export interface TeacherProfile {
+/** teacher_profiles — `type` for the same Database-generic reason as Profile. */
+export type TeacherProfile = {
   id: Uuid;
   bio: string | null;
-}
+  created_at: Timestamptz;
+  updated_at: Timestamptz;
+};
 
 export interface ParentProfile {
   id: Uuid;

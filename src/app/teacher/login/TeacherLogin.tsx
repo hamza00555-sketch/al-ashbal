@@ -1,68 +1,92 @@
 "use client";
 
-/* Teacher access code form (LOCAL DEMO gate — not real auth). On a valid seeded
-   code it creates a local teacher session and opens /teacher. */
-import { useState } from "react";
+/* Teacher sign-in form (Phase 2 — real Supabase Auth, email + password).
+   No public signup: teacher accounts are created with scripts/bootstrap-teacher.mjs.
+   On success the session lives in auth cookies; the server (proxy + layout)
+   authorizes every /teacher request from then on. */
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Badge, Button, Card, inputClass, fieldLabel } from "@/components";
-import {
-  findTeacherByCode,
-  setActiveTeacherSession,
-} from "@/lib/demo/teacherSession";
+import { Badge, Button, Card, Field, Input } from "@/components";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
+import { clearLegacyTeacherSession } from "@/lib/demo/legacyTeacherSession";
 
 export function TeacherLogin() {
   const router = useRouter();
-  const [code, setCode] = useState("");
-  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  function submit(e: React.FormEvent) {
+  // The old demo gate (TCH- codes) is retired — wipe any leftover localStorage
+  // session so it can never be mistaken for a login.
+  useEffect(() => {
+    clearLegacyTeacherSession();
+  }, []);
+
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
-    const match = findTeacherByCode(code);
-    if (!match) {
-      setError("كود المعلم غير صحيح");
-      return;
-    }
+    if (busy) return;
+    setBusy(true);
     setError(null);
-    setActiveTeacherSession({
-      teacherId: match.teacherId,
-      displayName: name.trim() || match.displayName,
-      accessCode: match.code,
-      loggedInAt: new Date().toISOString(),
-    });
-    router.replace("/teacher");
+    try {
+      const { error: signInError } = await getSupabaseBrowserClient().auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
+      if (signInError) {
+        // 400 = bad credentials; anything else is a connectivity/server problem.
+        setError(
+          signInError.status === 400
+            ? "بيانات الدخول غير صحيحة"
+            : "تعذّر الاتصال بالخادم. حاول مرة أخرى.",
+        );
+        setBusy(false);
+        return;
+      }
+      clearLegacyTeacherSession();
+      router.replace("/teacher");
+      router.refresh();
+    } catch {
+      setError("تعذّر الاتصال بالخادم. حاول مرة أخرى.");
+      setBusy(false);
+    }
   }
 
   return (
     <Card className="flex flex-col gap-3">
       <div className="flex flex-col gap-1">
         <span className="text-card-title font-bold">دخول المعلم</span>
-        <p className="text-caption text-on-dark-muted">أدخل كود المعلم للمتابعة إلى لوحة المعلم.</p>
+        <p className="text-caption text-on-dark-muted">
+          أدخل البريد الإلكتروني وكلمة المرور للمتابعة إلى لوحة المعلم.
+        </p>
       </div>
       <form onSubmit={submit} className="flex flex-col gap-3">
-        <label className="flex flex-col gap-1.5">
-          <span className={fieldLabel}>كود المعلم *</span>
-          <input
+        <Field label="البريد الإلكتروني *">
+          <Input
+            type="email"
             dir="ltr"
-            value={code}
-            onChange={(e) => { setCode(e.target.value); setError(null); }}
-            placeholder="مثال: TCH-XXX"
-            className={inputClass}
+            value={email}
+            onChange={(e) => { setEmail(e.target.value); setError(null); }}
+            autoComplete="email"
+            required
             autoFocus
           />
-        </label>
-        <label className="flex flex-col gap-1.5">
-          <span className={fieldLabel}>اسمك (اختياري)</span>
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="مثال: الأستاذ خالد"
-            className={inputClass}
+        </Field>
+        <Field label="كلمة المرور *">
+          <Input
+            type="password"
+            dir="ltr"
+            value={password}
+            onChange={(e) => { setPassword(e.target.value); setError(null); }}
+            autoComplete="current-password"
+            required
           />
-        </label>
+        </Field>
         {error && <Badge tone="danger">{error}</Badge>}
         <div className="sm:max-w-xs">
-          <Button type="submit" variant="primary" fullWidth>دخول</Button>
+          <Button type="submit" variant="primary" fullWidth disabled={busy}>
+            {busy ? "جاري الدخول..." : "دخول"}
+          </Button>
         </div>
       </form>
     </Card>

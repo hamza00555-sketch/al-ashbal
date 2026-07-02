@@ -11,7 +11,7 @@ import {
   useInvitationsForTeacher,
   type DemoInvitation,
 } from "@/lib/demo/invitations";
-import { useTeacherSession } from "@/lib/demo/teacherSession";
+import { useTeacherIdentity } from "../TeacherIdentity";
 
 /** Full PORTABLE link: includes the code + a demo-safe encoded payload so the
  *  link works in another browser/localStorage (local demo only — see store). */
@@ -71,10 +71,10 @@ function ResultCard({ inv }: { inv: DemoInvitation }) {
 }
 
 export function InvitationsManager({ teacherId }: { teacherId: string }) {
-  // Prefer the active teacher-session id (the gate guarantees one is present);
-  // fall back to the passed id for safety.
-  const session = useTeacherSession();
-  const activeTeacherId = session?.teacherId ?? teacherId;
+  // Prefer the REAL signed-in teacher id (server-verified via the layout);
+  // fall back to the passed seed id for safety.
+  const identity = useTeacherIdentity();
+  const activeTeacherId = identity?.id ?? teacherId;
   const invitations = useInvitationsForTeacher(activeTeacherId);
 
   // family form
@@ -93,7 +93,7 @@ export function InvitationsManager({ teacherId }: { teacherId: string }) {
   const [revokeTarget, setRevokeTarget] = useState<DemoInvitation | null>(null);
 
   function createFamily() {
-    if (!session) return; // no teacher session → the gate will require login
+    if (!identity) return; // no verified teacher identity → the gate blocks anyway
     const inv = createInvitation(activeTeacherId, {
       type: "family",
       label: famLabel,
@@ -104,7 +104,7 @@ export function InvitationsManager({ teacherId }: { teacherId: string }) {
     setFamResult(inv);
   }
   function createStudent() {
-    if (!session) return; // no teacher session → the gate will require login
+    if (!identity) return; // no verified teacher identity → the gate blocks anyway
     const inv = createInvitation(activeTeacherId, {
       type: "student",
       label: stuLabel,

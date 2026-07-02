@@ -1,40 +1,51 @@
 "use client";
 
 /*
-  LOCAL DEMO teacher route gate. Picks between:
-   - the standalone login (when on /teacher/login), and
-   - the AppShell-wrapped dashboard (only when a local teacher session exists).
-  A logged-out user on any other /teacher route is redirected to /teacher/login.
+  Client frame for the /teacher area (Phase 2 — real Supabase Auth).
 
-  NOT real security — this only gates the demo UI. Production must protect
-  teacher routes on the server. See src/lib/demo/teacherSession.ts.
+  The SERVER decides the auth state (proxy redirect + layout role check); this
+  component only picks what to render for that state:
+   - /teacher/login → the standalone login (no shell), whatever the state;
+   - "teacher"      → the dashboard shell, with the verified identity provided
+                      to client components via TeacherIdentityProvider;
+   - "not-teacher"  → the access-denied screen (signed in, wrong role);
+   - "no-user"      → nothing + a client redirect to /teacher/login (belt &
+                      suspenders — the proxy normally redirects before render).
+  localStorage plays NO part in this decision.
 */
 import { useEffect, type ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { useTeacherSession } from "@/lib/demo/teacherSession";
-import { useHydrated } from "@/lib/demo/deviceChildren";
+import { TeacherIdentityProvider, type TeacherIdentity } from "./TeacherIdentity";
+import { TeacherAccessDenied } from "./TeacherAccessDenied";
 
-export function TeacherShellGate({ plain, withShell }: { plain: ReactNode; withShell: ReactNode }) {
+export type TeacherAuthState = "no-user" | "not-teacher" | "teacher";
+
+export function TeacherShellGate({
+  authState,
+  teacher,
+  plain,
+  withShell,
+}: {
+  authState: TeacherAuthState;
+  teacher: TeacherIdentity | null;
+  plain: ReactNode;
+  withShell: ReactNode;
+}) {
   const pathname = usePathname();
   const router = useRouter();
-  const hydrated = useHydrated();
-  const session = useTeacherSession();
-
   const onLogin = Boolean(pathname && pathname.startsWith("/teacher/login"));
-  const loggedIn = Boolean(session);
 
   useEffect(() => {
-    if (hydrated && !onLogin && !loggedIn) {
+    if (!onLogin && authState === "no-user") {
       router.replace("/teacher/login");
     }
-  }, [hydrated, onLogin, loggedIn, router]);
+  }, [onLogin, authState, router]);
 
   // The login route renders standalone (no teacher shell).
   if (onLogin) return <>{plain}</>;
 
-  // Before hydration or while redirecting a logged-out user, render nothing
-  // from the teacher area (avoids flashing the dashboard to a guest).
-  if (!hydrated || !loggedIn) return null;
+  if (authState === "no-user") return null; // redirecting (proxy fallback)
+  if (authState === "not-teacher" || !teacher) return <TeacherAccessDenied />;
 
-  return <>{withShell}</>;
+  return <TeacherIdentityProvider value={teacher}>{withShell}</TeacherIdentityProvider>;
 }

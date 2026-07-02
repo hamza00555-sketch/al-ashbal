@@ -5,7 +5,7 @@
   component.
 
   - <Input> / <Select>: the standard control. Pass `dir="ltr"` for Latin code
-    fields (FAM-XXXX / TCH-XXX) so the caret behaves in the RTL layout.
+    fields (FAM-XXXX codes, emails) so the caret behaves in the RTL layout.
   - <Field label="…">: a <label> wrapper that associates the label with the
     control for screen readers (wrapping association — no id needed).
   - inputClass / fieldLabel: exported for the rare custom control that can't use
