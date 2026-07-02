@@ -48,8 +48,10 @@ export async function GET() {
 
       // Anon read of profiles: RLS policies are `to authenticated`, so this must
       // return 200 with ZERO rows (that's a pass — no data, no error).
+      // NOTE: apikey header ONLY — new sb_publishable_* keys are not JWTs, so
+      // they must never be sent as `Authorization: Bearer` (that would 401).
       const query = await fetch(`${url}/rest/v1/profiles?select=id&limit=1`, {
-        headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` },
+        headers: { apikey: anonKey },
         cache: "no-store",
         signal: AbortSignal.timeout(8000),
       });
