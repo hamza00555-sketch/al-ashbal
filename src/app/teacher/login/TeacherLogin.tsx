@@ -33,10 +33,6 @@ export function TeacherLogin() {
       });
       if (signInError) {
         // 400 = bad credentials; anything else is a connectivity/server problem.
-        // Safe diagnostic (name/status only — never values or tokens):
-        console.error(
-          `[teacher-login] sign-in error: ${signInError.name} (status ${signInError.status ?? "?"})`,
-        );
         setError(
           signInError.status === 400
             ? "بيانات الدخول غير صحيحة"
@@ -49,13 +45,7 @@ export function TeacherLogin() {
       // FULL navigation (not router.replace): guarantees the server re-reads
       // the fresh auth cookies with no stale client router cache in the way.
       window.location.assign("/teacher");
-    } catch (thrown) {
-      // Safe diagnostic: distinguishes "env missing in bundle" from real network
-      // failures in the browser console without exposing any values.
-      console.error(
-        "[teacher-login] sign-in threw:",
-        thrown instanceof Error ? `${thrown.name}: ${thrown.message}` : "unknown error",
-      );
+    } catch {
       setError("تعذّر الاتصال بالخادم. حاول مرة أخرى.");
       setBusy(false);
     }
