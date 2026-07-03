@@ -31,6 +31,7 @@ export type { LinkButtonProps } from "./ui/LinkButton";
 export { Field, Input, Select, inputClass, fieldLabel } from "./ui/Field";
 export { EmptyState } from "./ui/EmptyState";
 export { CopyButton } from "./ui/CopyButton";
+export { BackButton } from "./ui/BackButton";
 
 // forms
 export { AvatarPicker } from "./forms/AvatarPicker";
