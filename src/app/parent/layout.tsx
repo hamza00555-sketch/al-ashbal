@@ -10,6 +10,8 @@ import { AppShell, DemoExperienceSwitcher, NotificationBell } from "@/components
 import { getMockUser, getNotificationsForViewer } from "@/lib/data";
 import { getCurrentUserProfile } from "@/lib/backend/auth";
 import { listChildrenForParent } from "@/lib/backend/families";
+import { listSubmissionsForParent } from "@/lib/backend/submissions";
+import { pointsTotalsByChild } from "@/lib/backend/reviews";
 import { ParentDesktopNav } from "./ParentDesktopNav";
 import { ParentMobileNav } from "./ParentMobileNav";
 import { ParentAccountStatus } from "./ParentAccountStatus";
@@ -29,8 +31,13 @@ export default async function ParentLayout({ children }: { children: ReactNode }
     profile = null;
   }
   if (profile?.role === "parent") {
-    // REAL parent → their Supabase-linked children (RLS-scoped), never demo data.
-    const children = await listChildrenForParent().catch(() => []);
+    // REAL parent → children + submissions + points (all RLS-scoped).
+    const [children, submissions, points] = await Promise.all([
+      listChildrenForParent().catch(() => []),
+      listSubmissionsForParent().catch(() => []),
+      pointsTotalsByChild().catch(() => ({}) as Record<string, number>),
+    ]);
+    const nameOf = new Map(children.map((c) => [c.id, c.display_name]));
     return (
       <ParentAccountStatus
         displayName={profile.display_name}
@@ -38,6 +45,14 @@ export default async function ParentLayout({ children }: { children: ReactNode }
           id: c.id,
           displayName: c.display_name,
           avatarUrl: c.avatar_url,
+          points: points[c.id] ?? 0,
+        }))}
+        submissions={submissions.map((s) => ({
+          id: s.id,
+          childName: nameOf.get(s.child_id) ?? "طفل",
+          title: s.title,
+          state: s.state,
+          createdAt: s.created_at,
         }))}
       />
     );

@@ -10,19 +10,23 @@ import { useState } from "react";
 import { Avatar, Badge, Button, Card } from "@/components";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { clearLegacyTeacherSession } from "@/lib/demo/legacyTeacherSession";
+import { ParentRealApprovals, type ParentSubmissionView } from "./ParentRealApprovals";
 
 export interface ParentChildView {
   id: string;
   displayName: string;
   avatarUrl: string | null;
+  points: number;
 }
 
 export function ParentAccountStatus({
   displayName,
   linkedChildren,
+  submissions,
 }: {
   displayName: string;
   linkedChildren: ParentChildView[];
+  submissions: ParentSubmissionView[];
 }) {
   const [busy, setBusy] = useState(false);
 
@@ -63,11 +67,16 @@ export function ParentAccountStatus({
                 <li key={c.id} className="flex items-center gap-3 rounded-md bg-purple/5 px-3 py-2 ring-1 ring-purple/10">
                   <Avatar name={c.displayName} size="md" src={c.avatarUrl ?? undefined} />
                   <span className="flex-1 text-body font-bold text-on-dark">{c.displayName}</span>
-                  <Badge tone="success">مرتبط بالحلقة</Badge>
+                  <Badge tone="gold">{c.points} نقطة</Badge>
                 </li>
               ))}
             </ul>
           )}
+        </Card>
+
+        <Card className="flex flex-col gap-3">
+          <span className="text-card-title font-bold text-on-dark">تسميعات أطفالك</span>
+          <ParentRealApprovals submissions={submissions} />
         </Card>
 
         <div className="sm:max-w-xs">
