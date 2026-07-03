@@ -9,10 +9,10 @@ export type AppBackgroundKey = "abstract" | "ref" | "journey" | "none";
 
 const BACKGROUND_CLASS: Record<AppBackgroundKey, string> = {
   abstract:
-    "bg-[url('/backgrounds/background_abstract_mobile.png')] md:bg-[url('/backgrounds/background_abstract_desktop.png')]",
-  ref: "bg-[url('/backgrounds/background_ref_mobile.png')] md:bg-[url('/backgrounds/background_ref_desktop.png')]",
+    "bg-[url('/backgrounds/background_abstract_mobile.webp')] md:bg-[url('/backgrounds/background_abstract_desktop.webp')]",
+  ref: "bg-[url('/backgrounds/background_ref_mobile.webp')] md:bg-[url('/backgrounds/background_ref_desktop.webp')]",
   journey:
-    "bg-[url('/backgrounds/background_journey_mobile.png')] md:bg-[url('/backgrounds/background_journey_desktop.png')]",
+    "bg-[url('/backgrounds/background_journey_mobile.webp')] md:bg-[url('/backgrounds/background_journey_desktop.webp')]",
   none: "",
 };
 
