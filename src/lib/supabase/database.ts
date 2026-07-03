@@ -7,6 +7,7 @@
   replace it wholesale with generated types: `supabase gen types typescript`.
 */
 import type {
+  Assignment,
   Child,
   ChildDeviceGrant,
   ClassRow,
@@ -15,10 +16,14 @@ import type {
   Invitation,
   InvitationUse,
   JoinRequest,
+  ParentApproval,
   ParentChildLink,
   ParentProfile,
+  PointsLedgerEntry,
   Profile,
+  Submission,
   TeacherProfile,
+  TeacherReview,
 } from "./types";
 
 type Empty = Record<string, never>;
@@ -93,6 +98,59 @@ export interface Database {
         Row: ParentChildLink;
         Insert: Partial<ParentChildLink> & { parent_id: string; child_id: string };
         Update: Partial<ParentChildLink>;
+        Relationships: [];
+      };
+      assignments: {
+        Row: Assignment;
+        Insert: Partial<Assignment> & {
+          class_id: string;
+          teacher_id: string;
+          title: string;
+          type: string;
+          submission_type: string;
+        };
+        Update: Partial<Assignment>;
+        Relationships: [];
+      };
+      submissions: {
+        Row: Submission;
+        Insert: Partial<Submission> & {
+          class_id: string;
+          child_id: string;
+          title: string;
+          source_type: Submission["source_type"];
+        };
+        Update: Partial<Submission>;
+        Relationships: [];
+      };
+      parent_approvals: {
+        Row: ParentApproval;
+        Insert: Partial<ParentApproval> & {
+          submission_id: string;
+          parent_id: string;
+          decision: ParentApproval["decision"];
+        };
+        Update: Partial<ParentApproval>;
+        Relationships: [];
+      };
+      teacher_reviews: {
+        Row: TeacherReview;
+        Insert: Partial<TeacherReview> & {
+          submission_id: string;
+          teacher_id: string;
+          decision: TeacherReview["decision"];
+        };
+        Update: Partial<TeacherReview>;
+        Relationships: [];
+      };
+      points_ledger: {
+        Row: PointsLedgerEntry;
+        Insert: Partial<PointsLedgerEntry> & {
+          child_id: string;
+          class_id: string;
+          value: number;
+        };
+        Update: Partial<PointsLedgerEntry>;
         Relationships: [];
       };
       join_requests: {

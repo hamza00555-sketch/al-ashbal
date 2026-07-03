@@ -23,6 +23,7 @@ import {
 import { useActiveChild } from "../ChildExperienceGate";
 import { PrepTasks } from "./PrepTasks";
 import { RecitationTaskAction } from "./RecitationTaskAction";
+import { RealRecitationCard } from "./RealRecitationCard";
 import { ScrollToId } from "./ScrollToId";
 import { StudentAssignmentTasks } from "./StudentAssignmentTasks";
 import { TaskActionButton } from "./TaskActionButton";
@@ -108,6 +109,10 @@ export default function ChildTasksPage() {
   return (
     <>
       <PageHeader title="مهامي" subtitle="التسميع والحفظ والمراجعة" />
+
+      {/* REAL recitation (Phase 3): only for children this device holds a
+          grant for — records/uploads to the backend and reaches the teacher. */}
+      <RealRecitationCard childId={child.id} />
 
       <StudentAssignmentTasks
         halaqaId={child.halaqaId}

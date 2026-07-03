@@ -197,7 +197,7 @@ export type ChildDeviceGrant = {
   created_at: Timestamptz;
 };
 
-export interface Assignment {
+export type Assignment = {
   id: Uuid;
   class_id: Uuid;
   teacher_id: Uuid;
@@ -210,9 +210,11 @@ export interface Assignment {
   material_id: Uuid | null;
   lesson_id: Uuid | null;
   points: number | null;
-}
+  created_at: Timestamptz;
+  updated_at: Timestamptz;
+};
 
-export interface Submission {
+export type Submission = {
   id: Uuid;
   assignment_id: Uuid | null;
   source_type: SubmissionSource;
@@ -231,18 +233,18 @@ export interface Submission {
   points: number | null;
   created_at: Timestamptz;
   updated_at: Timestamptz;
-}
+};
 
-export interface ParentApproval {
+export type ParentApproval = {
   id: Uuid;
   submission_id: Uuid;
   parent_id: Uuid;
   decision: "approved" | "rerecord";
   note: string | null;
   created_at: Timestamptz;
-}
+};
 
-export interface TeacherReview {
+export type TeacherReview = {
   id: Uuid;
   submission_id: Uuid;
   teacher_id: Uuid;
@@ -250,9 +252,9 @@ export interface TeacherReview {
   note: string | null;
   awarded_points: number;
   created_at: Timestamptz;
-}
+};
 
-export interface PointsLedgerEntry {
+export type PointsLedgerEntry = {
   id: Uuid;
   child_id: Uuid;
   class_id: Uuid;
@@ -265,7 +267,7 @@ export interface PointsLedgerEntry {
   source_id: Uuid | null; // = submissions.id when source_type='submission'
   material_id: Uuid | null;
   created_at: Timestamptz;
-}
+};
 
 export interface AttendanceRecord {
   id: Uuid;
