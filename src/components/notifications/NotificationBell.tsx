@@ -85,7 +85,8 @@ export function NotificationBell({
           <span className="absolute -top-0.5 -end-0.5 size-2.5 rounded-pill bg-coral" />
         )}
       </button>
-      <Drawer open={open} onClose={() => setOpen(false)} title="الإشعارات">
+      {/* The bell sits on the LEFT of the top bar → the drawer opens from the left. */}
+      <Drawer open={open} onClose={() => setOpen(false)} title="الإشعارات" side="left">
         <NotificationList notifications={notifications} onSelect={handleSelect} />
       </Drawer>
     </>

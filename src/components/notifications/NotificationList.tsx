@@ -32,29 +32,32 @@ export function NotificationList({
               type="button"
               onClick={() => onSelect?.(n)}
               className={cn(
-                "flex w-full items-start gap-3 rounded-md p-3 text-start transition hover:bg-purple/8",
-                read && "opacity-60",
+                "flex w-full items-start gap-3 rounded-md p-3 text-start transition hover:bg-purple/8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-soft",
+                // Read items are dimmed but still readable (opacity-60 was too faint).
+                read && "opacity-75",
               )}
             >
               <span
                 className={cn(
                   "mt-1.5 inline-flex size-2 shrink-0 rounded-pill",
-                  read ? "bg-white/25" : "bg-purple-soft",
+                  read ? "bg-purple/25" : "bg-purple",
                 )}
               />
               <span className="flex min-w-0 flex-col gap-1">
-                <span className="text-body font-bold break-words">{n.title}</span>
-                <span className="text-caption text-on-dark-muted break-words">{n.body}</span>
-                {n.href && <span className="text-caption text-purple-soft">اضغط للانتقال ←</span>}
-                {read && <span className="text-caption text-mint">تمت القراءة</span>}
+                {/* Explicit colors: the drawer is a LIGHT panel — never inherit
+                    the page's cream text (was unreadable white-on-cream). */}
+                <span className="text-body font-bold break-words text-on-dark">{n.title}</span>
+                <span className="text-caption break-words text-on-light-muted">{n.body}</span>
+                {n.href && <span className="text-caption font-bold text-purple">اضغط للانتقال ←</span>}
+                {read && <span className="text-caption text-on-light-muted">تمت القراءة ✓</span>}
               </span>
             </button>
           );
         })
       ) : (
-        <p className="text-body text-on-dark-muted">لا تنبيهات جديدة.</p>
+        <p className="text-body text-on-light-muted">لا تنبيهات جديدة.</p>
       )}
-      <p className="text-caption text-on-dark-muted">تجربة مؤقتة — لا يتم الحفظ الآن.</p>
+      <p className="text-caption text-on-light-muted">تجربة مؤقتة — لا يتم الحفظ الآن.</p>
     </div>
   );
 }

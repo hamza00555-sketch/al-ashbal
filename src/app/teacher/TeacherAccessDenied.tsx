@@ -46,10 +46,10 @@ export function TeacherAccessDenied({ denied = null }: { denied?: TeacherDeniedR
   }
 
   return (
-    <main className="flex min-h-dvh flex-col items-center justify-center px-5 py-10">
-      <Card className="flex w-full max-w-md flex-col items-center gap-3 text-center">
-        <span className="text-h2 font-extrabold text-on-dark">{copy.title}</span>
-        <p className="text-body text-on-dark-muted">{copy.body}</p>
+    <main className="flex min-h-dvh flex-col items-center px-5 pt-[14vh] pb-10">
+      <Card className="flex w-full max-w-sm flex-col items-center gap-3 text-center">
+        <span className="text-h2 text-on-dark">{copy.title}</span>
+        <p className="text-body text-on-light-muted">{copy.body}</p>
         <div className="w-full sm:max-w-xs">
           <Button variant="primary" fullWidth onClick={logout} disabled={busy}>
             {busy ? "جاري الخروج..." : "تسجيل خروج"}

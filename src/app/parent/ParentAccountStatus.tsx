@@ -26,13 +26,15 @@ export function ParentAccountStatus({ displayName }: { displayName: string }) {
   }
 
   return (
-    <main className="flex min-h-dvh flex-col items-center justify-center px-5 py-10">
-      <Card className="flex w-full max-w-md flex-col items-center gap-3 text-center">
-        <span className="gradient-badge flex size-14 items-center justify-center rounded-pill text-h2 font-extrabold text-on-light shadow-glow">
+    // Sits at the upper third (not dead-center in a huge void) with a
+    // comfortable, not-oversized card.
+    <main className="flex min-h-dvh flex-col items-center px-5 pt-[14vh] pb-10">
+      <Card className="flex w-full max-w-sm flex-col items-center gap-3 text-center">
+        <span className="gradient-badge flex size-12 items-center justify-center rounded-pill text-card-title font-extrabold text-on-light shadow-glow">
           ش
         </span>
-        <span className="text-h2 font-extrabold text-on-dark">مرحبًا، {displayName}</span>
-        <p className="text-body text-on-dark-muted">
+        <span className="text-h2 text-on-dark">مرحبًا، {displayName}</span>
+        <p className="text-body text-on-light-muted">
           تم تفعيل حساب ولي الأمر. لوحة ولي الأمر قيد التجهيز — سيتم ربط الأطفال في المرحلة التالية.
         </p>
         <div className="w-full sm:max-w-xs">

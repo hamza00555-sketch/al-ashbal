@@ -63,7 +63,7 @@ export function TeacherToolsDrawer({
           />
           <nav
             aria-label="أدوات المعلم"
-            className="absolute inset-y-0 right-0 flex w-72 max-w-[85vw] flex-col overflow-y-auto bg-surface-raised p-4 shadow-soft ring-1 ring-purple/15 motion-safe:animate-[ash-drawer-in_0.22s_ease-out]"
+            className="absolute inset-y-0 right-0 flex w-72 max-w-[85vw] flex-col overflow-y-auto rounded-l-lg bg-surface-raised p-4 pb-[max(1.25rem,env(safe-area-inset-bottom))] text-on-dark shadow-soft ring-1 ring-purple/15 motion-safe:animate-[ash-drawer-in_0.22s_ease-out]"
           >
             <div className="mb-2 flex items-center justify-between gap-2">
               <span className="text-card-title font-extrabold text-on-dark">أدوات المعلم</span>

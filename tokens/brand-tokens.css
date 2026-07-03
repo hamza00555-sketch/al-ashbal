@@ -84,7 +84,8 @@
   --fs-h2: 20px;          --lh-h2: 1.3;
   --fs-card-title: 16px;  --lh-card-title: 1.35;
   --fs-body: 15px;        --lh-body: 1.55;
-  --fs-caption: 12px;     --lh-caption: 1.4;
+  /* Caption raised 12→13px: helper/muted text must stay readable on mobile. */
+  --fs-caption: 13px;     --lh-caption: 1.45;
   --fs-button: 16px;      --lh-button: 1.2;
 
   /* ---------- Spacing scale (4px base) ---------- */
