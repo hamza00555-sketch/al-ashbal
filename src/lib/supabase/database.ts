@@ -7,10 +7,15 @@
   replace it wholesale with generated types: `supabase gen types typescript`.
 */
 import type {
+  Child,
   ChildDeviceGrant,
   ClassRow,
+  ClassStudent,
   ClassTeacher,
+  Invitation,
+  InvitationUse,
   JoinRequest,
+  ParentChildLink,
   ParentProfile,
   Profile,
   TeacherProfile,
@@ -53,6 +58,41 @@ export interface Database {
         Row: ClassTeacher;
         Insert: Partial<ClassTeacher> & { class_id: string; teacher_id: string };
         Update: Partial<ClassTeacher>;
+        Relationships: [];
+      };
+      invitations: {
+        Row: Invitation;
+        Insert: Partial<Invitation> & {
+          type: Invitation["type"];
+          code: string;
+          class_id: string;
+          created_by_teacher_id: string;
+        };
+        Update: Partial<Invitation>;
+        Relationships: [];
+      };
+      invitation_uses: {
+        Row: InvitationUse;
+        Insert: Partial<InvitationUse> & { invitation_id: string };
+        Update: Partial<InvitationUse>;
+        Relationships: [];
+      };
+      children: {
+        Row: Child;
+        Insert: Partial<Child> & { display_name: string };
+        Update: Partial<Child>;
+        Relationships: [];
+      };
+      class_students: {
+        Row: ClassStudent;
+        Insert: Partial<ClassStudent> & { class_id: string; child_id: string };
+        Update: Partial<ClassStudent>;
+        Relationships: [];
+      };
+      parent_child_links: {
+        Row: ParentChildLink;
+        Insert: Partial<ParentChildLink> & { parent_id: string; child_id: string };
+        Update: Partial<ParentChildLink>;
         Relationships: [];
       };
       join_requests: {

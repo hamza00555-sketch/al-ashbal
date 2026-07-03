@@ -94,7 +94,8 @@ export type JoinRequest = {
   updated_at: Timestamptz;
 };
 
-export interface Child {
+/** children — `type` (used as a Row in the `Database` generic). */
+export type Child = {
   id: Uuid;
   display_name: string;
   avatar_url: string | null;
@@ -103,17 +104,29 @@ export interface Child {
   created_by_role: "parent" | "student" | "teacher" | null;
   via_invitation: boolean;
   created_at: Timestamptz;
-}
+  updated_at: Timestamptz;
+};
 
-export interface ParentChildLink {
+/** class_students — `type` (used as a Row in the `Database` generic). */
+export type ClassStudent = {
+  id: Uuid;
+  class_id: Uuid;
+  child_id: Uuid;
+  status: EnrollmentStatus;
+  enrolled_at: Timestamptz;
+};
+
+/** parent_child_links — `type` (used as a Row in the `Database` generic). */
+export type ParentChildLink = {
   id: Uuid;
   parent_id: Uuid;
   child_id: Uuid;
   status: LinkStatus;
   linked_at: Timestamptz;
-}
+};
 
-export interface Invitation {
+/** invitations — `type` (used as a Row in the `Database` generic). */
+export type Invitation = {
   id: Uuid;
   type: InvitationType;
   code: string;
@@ -128,7 +141,17 @@ export interface Invitation {
   revoked_at: Timestamptz | null;
   used_at: Timestamptz | null;
   created_at: Timestamptz;
-}
+  updated_at: Timestamptz;
+};
+
+/** invitation_uses — `type` (used as a Row in the `Database` generic). */
+export type InvitationUse = {
+  id: Uuid;
+  invitation_id: Uuid;
+  used_by_parent_id: Uuid | null;
+  child_id: Uuid | null;
+  created_at: Timestamptz;
+};
 
 /** Public-safe view of an invitation for the /join screen (no internal ids). */
 export interface InvitationPublic {
