@@ -18,7 +18,7 @@ export function TeacherAreaError() {
           <Button variant="primary" fullWidth onClick={() => window.location.reload()}>
             تحديث الصفحة
           </Button>
-          <Button variant="secondary" fullWidth onClick={() => window.location.assign("/teacher/login")}>
+          <Button variant="secondary" fullWidth onClick={() => window.location.assign("/login")}>
             العودة لصفحة الدخول
           </Button>
         </div>

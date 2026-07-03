@@ -1,11 +1,10 @@
 /*
-  Landing / entry (Phase 01) — /.
-  Invitation-first: the main path is «لدي دعوة» (enter the teacher's invitation
-  code → /join). Teacher sign-in is a secondary action. Direct role entry is
-  kept only as a small local-demo fallback («تجربة محلية»).
+  Landing / entry — /.
+  Simple public entry: approved users sign in (/login), new users request to
+  join (/join/request). The old invitation-code flow stays reachable at /join
+  via a small secondary footer link only.
 */
 import Link from "next/link";
-import { JoinByCode } from "./JoinByCode";
 
 export default function Home() {
   return (
@@ -22,23 +21,20 @@ export default function Home() {
         </span>
         <h1 className="text-h1 font-extrabold text-cream lg:text-display">الأشبال</h1>
         <p className="max-w-[340px] text-body text-cream/75 lg:max-w-md">
-          لديك دعوة من المعلم؟ أدخل كود الدعوة للبدء بتسجيل عائلتك أو الطالب.
+          منصة متابعة تعليمية للعائلة والمعلم.
         </p>
       </div>
 
       <div className="relative flex w-full max-w-[430px] flex-col items-center gap-3">
-        {/* Primary path — invitation code */}
-        <JoinByCode />
-
-        {/* Secondary — teacher sign-in (real Supabase Auth) */}
+        {/* Primary — sign in (approved teacher / parent) */}
         <Link
-          href="/teacher/login"
-          className="flex min-h-11 w-full items-center justify-center rounded-lg bg-white/8 px-8 text-button font-bold text-cream/85 ring-1 ring-white/10 transition hover:bg-white/12 hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-soft"
+          href="/login"
+          className="flex min-h-12 w-full items-center justify-center rounded-lg gradient-cta px-8 text-button font-bold text-cream shadow-glow ring-1 ring-white/15 transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-soft"
         >
-          دخول المعلم
+          تسجيل الدخول
         </Link>
 
-        {/* Secondary — join request (no invitation code: teacher / parent) */}
+        {/* Secondary — request to join (no account yet) */}
         <Link
           href="/join/request"
           className="flex min-h-11 w-full items-center justify-center rounded-lg bg-white/8 px-8 text-button font-bold text-cream/85 ring-1 ring-white/10 transition hover:bg-white/12 hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-soft"
@@ -46,19 +42,16 @@ export default function Home() {
           طلب انضمام
         </Link>
 
-        {/* Tertiary — local demo fallback only */}
-        <div className="mt-2 flex flex-col items-center gap-1.5">
-          <span className="text-caption text-cream/70">تجربة محلية</span>
-          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-caption text-cream/75">
-            <Link href="/child/switch" className="rounded-sm transition hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-soft">مبدّل الأطفال</Link>
-            <span aria-hidden className="text-cream/25">·</span>
-            <Link href="/parent" className="rounded-sm transition hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-soft">ولي أمر</Link>
-            <span aria-hidden className="text-cream/25">·</span>
-            <Link href="/teacher" className="rounded-sm transition hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-soft">معلم</Link>
-            <span aria-hidden className="text-cream/25">·</span>
-            <Link href="/guest" className="rounded-sm transition hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-soft">ضيف الشرف</Link>
-          </div>
-        </div>
+        {/* Tertiary — legacy invitation-code entry (kept, not prominent) */}
+        <p className="mt-2 text-caption text-cream/70">
+          لديك كود دعوة قديم؟{" "}
+          <Link
+            href="/join"
+            className="font-bold text-cream/85 underline-offset-4 transition hover:text-cream hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-soft"
+          >
+            إدخال كود الدعوة
+          </Link>
+        </p>
       </div>
     </main>
   );

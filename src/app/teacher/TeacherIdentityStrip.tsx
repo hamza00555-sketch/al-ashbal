@@ -25,7 +25,7 @@ export function TeacherIdentityStrip() {
       // even if sign-out fails (offline), still leave the teacher area
     }
     clearLegacyTeacherSession();
-    router.replace("/teacher/login");
+    router.replace("/login");
     router.refresh();
   }
 

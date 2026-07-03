@@ -42,7 +42,7 @@ export function TeacherShellGate({
 
   useEffect(() => {
     if (!onLogin && authState === "no-user") {
-      router.replace("/teacher/login");
+      router.replace("/login");
     }
   }, [onLogin, authState, router]);
 

@@ -28,10 +28,8 @@ import { ParentPoints } from "./ParentPoints";
 import { ParentPrepInfo } from "./ParentPrepInfo";
 import { CreatedChildDetail } from "./CreatedChildDetail";
 
-export function generateStaticParams() {
-  // Demo children may be linked at runtime; pre-render all known demo children.
-  return childProfiles.map((c) => ({ childId: c.id }));
-}
+// No generateStaticParams: the parent layout is auth-gated per request
+// (cookies), so nothing under /parent may be prerendered at build time.
 
 const RING_TONE: Record<ChildStatusLevel, "success" | "gold" | "purple"> = {
   excellent: "success",

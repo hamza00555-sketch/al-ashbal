@@ -15,7 +15,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
-const LOGIN_PATH = "/teacher/login";
+// Unified public sign-in page (outside /teacher, so outside this matcher).
+const LOGIN_PATH = "/login";
+// Legacy path kept as a redirect page → still needs the login carve-out here.
+const TEACHER_LOGIN_PATH = "/teacher/login";
 
 /** Copy any (possibly refreshed) auth cookies onto a redirect response. */
 function redirectTo(pathname: string, request: NextRequest, from: NextResponse) {
@@ -25,7 +28,7 @@ function redirectTo(pathname: string, request: NextRequest, from: NextResponse) 
 }
 
 export async function proxy(request: NextRequest) {
-  const isLogin = request.nextUrl.pathname.startsWith(LOGIN_PATH);
+  const isLogin = request.nextUrl.pathname.startsWith(TEACHER_LOGIN_PATH);
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
