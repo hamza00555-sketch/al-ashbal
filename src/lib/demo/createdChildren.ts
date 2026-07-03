@@ -113,6 +113,28 @@ export function createChild(input: {
   return child;
 }
 
+/** Bridge (Phase 2): register a SUPABASE-created child in the local demo store
+ *  under its REAL backend id, so the child switcher/experience (still
+ *  localStorage) can resolve it on this device. */
+export function registerBackendChildLocally(input: {
+  id: string;
+  displayName: string;
+  avatar?: string | null;
+}): void {
+  const existing = readAll();
+  if (existing.some((c) => c.id === input.id)) return;
+  const child: DemoCreatedChild = {
+    id: input.id,
+    displayName: input.displayName.trim(),
+    avatar: input.avatar ?? undefined,
+    halaqaId: CURRENT_HALAQA_ID,
+    createdBy: "parent",
+    viaInvitation: true,
+    createdAt: new Date().toISOString(),
+  };
+  writeAll([...existing, child]);
+}
+
 /** All created child ids in a class (teacher roster source — registration based). */
 export function getCreatedChildIdsForHalaqa(halaqaId: string): string[] {
   return readAll().filter((c) => c.halaqaId === halaqaId).map((c) => c.id);
