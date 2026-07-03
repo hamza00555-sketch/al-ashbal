@@ -121,6 +121,17 @@ export async function getOwnJoinRequest(): Promise<JoinRequest | null> {
   return data;
 }
 
+/** Count of PENDING requests (RLS: approved teachers) — dashboard info only. */
+export async function countPendingJoinRequests(): Promise<number> {
+  const supabase = await createSupabaseServerClient();
+  const { count, error } = await supabase
+    .from("join_requests")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "pending");
+  if (error) throw new Error(`join_requests count failed: ${error.message}`);
+  return count ?? 0;
+}
+
 /** All requests for the review page (RLS: select_teacher — approved teachers). */
 export async function listJoinRequests(): Promise<JoinRequest[]> {
   await requireTeacher();

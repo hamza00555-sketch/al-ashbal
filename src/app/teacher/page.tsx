@@ -1,16 +1,17 @@
 /*
-  Teacher overview (Phase 01 · Task 7) — /teacher.
-  Desktop-first dashboard overview. Viewer-scoped accessors only; the teacher
-  sees only their own halaqa. No wishes, no unapproved videos.
+  Teacher overview (/teacher) — INFORMATION ONLY.
+  All teacher tools/navigation live exclusively in the desktop sidebar and the
+  mobile «☰ أدوات المعلم» drawer (one source: _nav.tsx). No navigation tiles
+  here — just a welcome, live counts, and the last-lesson summary.
 */
-import Link from "next/link";
-import { AppAssetIcon, Badge, Card, PageHeader, RoleAvatar, SectionTitle, SettingsLink, StatCard } from "@/components";
+import { Badge, Card, PageHeader, RoleAvatar, SectionTitle, SettingsLink, StatCard } from "@/components";
 import {
   getAttendanceForLesson,
   getLessonsForTeacher,
   getPendingTeacherReviews,
 } from "@/lib/data";
-import { IconActivity, IconBook, IconCalendar, IconPrep, IconUsers, IconVideo } from "./_icons";
+import { countPendingJoinRequests } from "@/lib/backend/joinRequests";
+import { IconBook, IconCalendar, IconUsers, IconVideo } from "./_icons";
 import { getTeacherContext } from "./_shared";
 import { TeacherReviewAlert } from "./TeacherReviewAlert";
 import { TeacherIdentityStrip } from "./TeacherIdentityStrip";
@@ -19,24 +20,13 @@ import { EnrolledChildCountStat } from "./EnrolledChildCountStat";
 
 const chip = "inline-flex size-8 items-center justify-center";
 
-/** Teacher control-center tiles — the primary way to reach the daily pages. */
-const TEACHER_TOOLS = [
-  // Each tile gets a DISTINCT icon (الدعوات/الأطفال and المواد/الأنشطة used to share one).
-  // These tiles are a convenience — the FULL tool list lives in the sidebar
-  // (desktop) and the burger drawer (mobile).
-  { href: "/teacher/join-requests", label: "طلبات الانضمام", icon: "icon_notifications", fallback: <IconUsers /> },
-  { href: "/teacher/invitations", label: "الدعوات", icon: "icon_wishes", fallback: <IconBook /> },
-  { href: "/teacher/prep", label: "التحضير", icon: "icon_preparation", fallback: <IconPrep /> },
-  { href: "/teacher/attendance", label: "الحضور", icon: "icon_attendance", fallback: <IconCalendar /> },
-  { href: "/teacher/children", label: "الأطفال", icon: "icon_children", fallback: <IconUsers /> },
-  { href: "/teacher/reviews", label: "المراجعات", icon: "icon_review", fallback: <IconVideo /> },
-  { href: "/teacher/activities", label: "الأنشطة", icon: "icon_activity", fallback: <IconActivity /> },
-  { href: "/teacher/materials", label: "المواد والتقدم", icon: "icon_lessons", fallback: <IconBook /> },
-];
-
-export default function TeacherOverviewPage() {
+export default async function TeacherOverviewPage() {
   const { viewer, halaqas } = getTeacherContext();
   const lessons = getLessonsForTeacher(viewer);
+
+  // Live count from the backend (RLS: approved teachers). Fails safe to null →
+  // rendered as «—» without breaking the page.
+  const pendingJoinRequests = await countPendingJoinRequests().catch(() => null);
 
   const todayLesson =
     lessons.find((l) => l.status === "live") ??
@@ -59,9 +49,9 @@ export default function TeacherOverviewPage() {
   return (
     <>
       <PageHeader
-        eyebrow={halaqaName}
+        eyebrow="مرحبًا"
         title={<TeacherName fallback={viewer.displayName} />}
-        subtitle="لوحة المعلم — متابعة الحلقة"
+        subtitle="هذه لوحة المتابعة الخاصة بك."
         leading={<RoleAvatar role="teacher" fallbackName={viewer.displayName} fallbackSrc="/assets/avatars/avatar_teacher_male_01.png" />}
         actions={<SettingsLink role="teacher" />}
       />
@@ -70,33 +60,49 @@ export default function TeacherOverviewPage() {
 
       <TeacherReviewAlert teacherId={viewer.id} dbPendingReviews={pendingReviews.length} />
 
-      {/* أدوات المعلم — مركز الوصول الأساسي (كروت مربعة) */}
+      {/* Where the tools live now — one calm hint, no navigation tiles. */}
+      <Card variant="lavender" className="py-3">
+        <p className="text-body text-on-dark">
+          كل أدوات المعلم — الدعوات، طلبات الانضمام، الأطفال، المراجعات وغيرها — في{" "}
+          <span className="font-bold">القائمة الجانبية</span> على الشاشات الكبيرة، وفي زر{" "}
+          <span className="whitespace-nowrap font-bold">«☰ أدوات المعلم»</span> أعلى الصفحة على الجوال.
+        </p>
+      </Card>
+
+      {/* Info summary — numbers only, not navigation */}
       <section className="flex flex-col gap-4">
-        <SectionTitle title="أدوات المعلم" />
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-          {TEACHER_TOOLS.map((t) => (
-            <Link
-              key={t.href}
-              href={t.href}
-              className="flex aspect-square flex-col items-center justify-center gap-2 rounded-lg bg-[#E6DAFF] p-4 text-center text-[#2B1238] shadow-soft ring-1 ring-[#6940A5]/15 transition hover:brightness-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-soft"
-            >
-              <AppAssetIcon src={`/assets/icons/${t.icon}.png`} size="heroLg" fallback={t.fallback} />
-              <span className="text-card-title font-bold">{t.label}</span>
-            </Link>
-          ))}
+        <SectionTitle title="ملخص اليوم" subtitle={`الحلقة: ${halaqaName}`} />
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <StatCard
+            variant="plum"
+            label="طلبات انضمام معلقة"
+            value={pendingJoinRequests ?? "—"}
+            tone={pendingJoinRequests ? "danger" : "success"}
+            icon={<span className={chip}><IconUsers /></span>}
+            hint="تُراجع من قائمة الأدوات"
+          />
+          {halaqas[0] ? (
+            <EnrolledChildCountStat halaqaId={halaqas[0].id} />
+          ) : (
+            <StatCard variant="lavender" label="أطفال الحلقة" value={0} tone="purple" icon={<span className={chip}><IconUsers /></span>} />
+          )}
+          <StatCard
+            variant="plum"
+            label="بانتظار المراجعة"
+            value={pendingReviews.length}
+            tone={pendingReviews.length > 0 ? "danger" : "success"}
+            icon={<span className={chip}><IconVideo /></span>}
+            hint="فيديوهات معتمدة"
+          />
+          <StatCard
+            label="حلقة اليوم"
+            value={todayLesson ? todayLesson.startTime : "—"}
+            tone="purple"
+            icon={<span className={chip}><IconCalendar /></span>}
+            hint={todayLesson?.title ?? "لا حلقة اليوم"}
+          />
         </div>
       </section>
-
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard variant="plum" label="حلقة اليوم" value={todayLesson ? todayLesson.startTime : "—"} tone="purple" icon={<span className={chip}><IconCalendar /></span>} hint={todayLesson?.title ?? "لا حلقة اليوم"} />
-        {halaqas[0] ? (
-          <EnrolledChildCountStat halaqaId={halaqas[0].id} />
-        ) : (
-          <StatCard variant="lavender" label="أطفال الحلقة" value={0} tone="purple" icon={<span className={chip}><IconUsers /></span>} />
-        )}
-        <StatCard label="الحضور" value={lastLesson ? `${present}/${lastAttendance.length}` : "—"} tone="success" icon={<span className={chip}><IconCalendar /></span>} hint="آخر حلقة" />
-        <StatCard variant="plum" label="بانتظار المراجعة" value={pendingReviews.length} tone={pendingReviews.length > 0 ? "danger" : "success"} icon={<span className={chip}><IconVideo /></span>} hint="فيديوهات معتمدة" />
-      </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
         {/* Last lesson summary */}
@@ -122,21 +128,24 @@ export default function TeacherOverviewPage() {
           )}
         </Card>
 
-        {/* Quick tasks */}
+        {/* Last attendance — info only */}
         <Card variant="lavender" className="flex flex-col gap-3">
-          <SectionTitle title="مهام اليوم" />
-          <Link href="/teacher/reviews" className="flex items-center justify-between gap-3 rounded-md bg-surface-raised px-4 py-3 text-button text-on-dark transition hover:bg-purple/8">
-            <span>مراجعة التسميعات</span>
-            <Badge tone={pendingReviews.length > 0 ? "gold" : "neutral"}>{pendingReviews.length}</Badge>
-          </Link>
-          <Link href="/teacher/attendance" className="flex items-center justify-between gap-3 rounded-md bg-surface-raised px-4 py-2.5 text-button text-on-dark transition hover:bg-purple/8">
-            <span>تسجيل حضور حلقة اليوم</span>
-            <span className="inline-flex size-6 text-purple"><IconCalendar /></span>
-          </Link>
-          <Link href="/teacher/children" className="flex items-center justify-between gap-3 rounded-md bg-surface-raised px-4 py-2.5 text-button text-on-dark transition hover:bg-purple/8">
-            <span>أطفال الحلقة</span>
-            <span className="inline-flex size-6 text-purple"><IconUsers /></span>
-          </Link>
+          <SectionTitle title="حضور آخر حلقة" />
+          {lastLesson ? (
+            <div className="flex items-center gap-3">
+              <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-md bg-purple/15 p-2 text-purple">
+                <IconCalendar />
+              </span>
+              <div className="flex flex-col">
+                <span className="text-card-title font-bold text-on-dark">
+                  {present}/{lastAttendance.length} حاضر
+                </span>
+                <span className="text-caption text-on-dark-muted">{lastLesson.date}</span>
+              </div>
+            </div>
+          ) : (
+            <p className="text-body text-on-dark-muted">لا يوجد سجل حضور بعد.</p>
+          )}
         </Card>
       </div>
     </>
