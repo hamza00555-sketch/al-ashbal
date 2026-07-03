@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useSyncExternalStore, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/cn";
+
+const emptySubscribe = () => () => {};
 
 export interface DrawerProps {
   open: boolean;
@@ -24,8 +26,11 @@ export function Drawer({ open, onClose, title, side = "right", children }: Drawe
   // Portal target exists only after mount (SSR renders nothing — fine, the
   // drawer is interaction-only). Portaling to <body> escapes the layout's
   // stacking context so the panel really sits ABOVE the fixed bottom nav.
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true, // client snapshot
+    () => false, // server snapshot
+  );
 
   // Escape closes (matches the teacher tools drawer behavior).
   useEffect(() => {

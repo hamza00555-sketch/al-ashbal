@@ -13,6 +13,9 @@ export interface DesktopSidebarProps {
   header?: ReactNode;
   /** Bottom slot, e.g. a RoleSwitcher or user card. */
   footer?: ReactNode;
+  /** Pass false for AUTH-PROTECTED areas: prefetching each protected link
+   *  triggers server auth work per link (a background request storm). */
+  prefetchLinks?: boolean;
   className?: string;
 }
 
@@ -22,6 +25,7 @@ export function DesktopSidebar({
   onSelect,
   header,
   footer,
+  prefetchLinks = true,
   className,
 }: DesktopSidebarProps) {
   return (
@@ -63,6 +67,7 @@ export function DesktopSidebar({
             <Link
               key={item.id}
               href={item.href}
+              prefetch={prefetchLinks ? undefined : false}
               aria-current={active ? "page" : undefined}
               className={itemClass}
             >

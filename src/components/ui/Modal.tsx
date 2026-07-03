@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "@/lib/cn";
 
 export interface ModalProps {
@@ -14,10 +15,13 @@ export interface ModalProps {
 /**
  * Lightweight modal / bottom-sheet (no deps).
  * Bottom sheet on mobile, centered dialog on md+. Backdrop click closes.
+ * Portaled to <body>: rendered inline it would sit inside the layout's
+ * stacking context (relative z-10), BELOW the fixed z-40 bottom nav — which
+ * then intercepts taps on the sheet's bottom buttons (e.g. confirm approve).
  */
 export function Modal({ open, onClose, title, children, className }: ModalProps) {
   if (!open) return null;
-  return (
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
@@ -31,7 +35,7 @@ export function Modal({ open, onClose, title, children, className }: ModalProps)
       />
       <div
         className={cn(
-          "relative z-10 flex w-full max-w-md flex-col gap-4 rounded-t-xl bg-surface-raised p-6 shadow-card ring-1 ring-purple/10 md:rounded-xl",
+          "relative z-10 flex w-full max-w-md flex-col gap-4 rounded-t-xl bg-surface-raised p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] shadow-card ring-1 ring-purple/10 md:rounded-xl md:pb-6",
           className,
         )}
       >
@@ -48,6 +52,7 @@ export function Modal({ open, onClose, title, children, className }: ModalProps)
         </div>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

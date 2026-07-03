@@ -27,7 +27,16 @@ export interface BottomNavItem {
   badge?: number;
 }
 
-export function AppBottomNav({ items, activeId }: { items: BottomNavItem[]; activeId?: string }) {
+export function AppBottomNav({
+  items,
+  activeId,
+  prefetchLinks = true,
+}: {
+  items: BottomNavItem[];
+  activeId?: string;
+  /** false for auth-protected areas — see DesktopSidebar.prefetchLinks. */
+  prefetchLinks?: boolean;
+}) {
   return (
     <nav
       aria-label="التنقل"
@@ -40,6 +49,7 @@ export function AppBottomNav({ items, activeId }: { items: BottomNavItem[]; acti
             <Link
               key={item.id}
               href={item.href}
+              prefetch={prefetchLinks ? undefined : false}
               aria-current={active ? "page" : undefined}
               className={cn(
                 "flex flex-1 flex-col items-center justify-end gap-0.5 text-[13px] leading-none transition",

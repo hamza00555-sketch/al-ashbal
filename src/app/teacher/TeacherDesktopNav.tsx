@@ -26,6 +26,7 @@ export function TeacherDesktopNav({
       activeId={active}
       header={<span className="text-card-title font-extrabold text-cream">الأشبال · المعلم</span>}
       footer={<TeacherLogoutButton variant="sidebar" />}
+      prefetchLinks={false} // protected routes: no background auth per link
     />
   );
 }

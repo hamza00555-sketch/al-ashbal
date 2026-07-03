@@ -14,5 +14,5 @@ export function ParentMobileNav() {
     { id: "approvals", label: "الموافقات", href: "/parent/approvals", src: "/assets/icons/icon_record_video.png", fallback: <IconVideo />, artworkScale: 1.75},
   ];
   const active = items.find((i) => i.href === pathname)?.id ?? "";
-  return <AppBottomNav items={items} activeId={active} />;
+  return <AppBottomNav items={items} activeId={active} prefetchLinks={false} />;
 }

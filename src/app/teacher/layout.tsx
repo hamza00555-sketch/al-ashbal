@@ -19,9 +19,8 @@ import { AppShell, DemoExperienceSwitcher, NotificationBell } from "@/components
 // time, or a page could ship with a baked-in "signed out" state.
 export const dynamic = "force-dynamic";
 import { getMockUser, getNotificationsForViewer, getPendingTeacherReviews } from "@/lib/data";
-import { getCurrentUserProfile, getCurrentTeacherProfile } from "@/lib/backend/auth";
+import { getSessionUser, getCurrentUserProfile } from "@/lib/backend/auth";
 import { getOwnJoinRequest } from "@/lib/backend/joinRequests";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { TeacherDesktopNav } from "./TeacherDesktopNav";
 import { TeacherMobileNav } from "./TeacherMobileNav";
 import { TeacherToolsDrawer } from "./TeacherToolsDrawer";
@@ -40,9 +39,10 @@ async function resolveTeacherAuth(): Promise<{
   denied: TeacherDeniedReason;
 }> {
   try {
-    const supabase = await createSupabaseServerClient();
-    const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user) return { authState: "no-user", teacher: null, denied: null };
+    // ONE verified-user read + ONE profiles read per request (React cache —
+    // the page's requireTeacher/data reads in the same pass reuse both).
+    const user = await getSessionUser();
+    if (!user) return { authState: "no-user", teacher: null, denied: null };
 
     // Session exists — from here on, never fall back to "no-user".
     const profile = await getCurrentUserProfile();
@@ -61,11 +61,11 @@ async function resolveTeacherAuth(): Promise<{
       );
       return { authState: "not-teacher", teacher: null, denied };
     }
-    const teacher = await getCurrentTeacherProfile();
-    if (!teacher) return { authState: "not-teacher", teacher: null, denied: null };
+    // The layout only needs id + display name — both live on profiles, so the
+    // extra teacher_profiles read (bio, unused here) is skipped on purpose.
     return {
       authState: "teacher",
-      teacher: { id: teacher.id, displayName: teacher.display_name },
+      teacher: { id: profile.id, displayName: profile.display_name },
       denied: null,
     };
   } catch (error) {

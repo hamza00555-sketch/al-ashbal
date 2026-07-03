@@ -24,8 +24,20 @@ export function TeacherToolsDrawer({
   dbPendingReviews: number;
 }) {
   const [open, setOpen] = useState(false);
+  // Client-side «navigating» overlay: with prefetch disabled on protected
+  // links (auth-storm fix), the server needs a moment before loading.tsx can
+  // stream — this overlay makes the tap feel instant regardless.
+  const [navigating, setNavigating] = useState(false);
   const pathname = usePathname();
   const reviewCount = useTeacherReviewCount(teacherId, dbPendingReviews);
+
+  // Navigation committed (pathname changed) → clear the overlay. This is the
+  // React "adjust state during render" pattern (no effect, no extra paint).
+  const [lastPathname, setLastPathname] = useState(pathname);
+  if (pathname !== lastPathname) {
+    setLastPathname(pathname);
+    setNavigating(false);
+  }
 
   // Close on Escape; lock body scroll while open.
   useEffect(() => {
@@ -89,7 +101,11 @@ export function TeacherToolsDrawer({
                   <li key={item.id}>
                     <Link
                       href={href}
-                      onClick={() => setOpen(false)}
+                      prefetch={false} // protected route — no background auth
+                      onClick={() => {
+                        setOpen(false);
+                        if (!active) setNavigating(true); // same page → no overlay
+                      }}
                       aria-current={active ? "page" : undefined}
                       className={`flex min-h-11 items-center gap-3 rounded-md px-3 text-body transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-soft ${
                         active
@@ -110,6 +126,17 @@ export function TeacherToolsDrawer({
               <TeacherLogoutButton variant="drawer" />
             </div>
           </nav>
+        </div>,
+        document.body,
+      )}
+
+      {/* Instant tap feedback while the route responds (cleared on pathname change). */}
+      {navigating && createPortal(
+        <div aria-hidden className="fixed inset-0 z-50 flex flex-col items-center bg-night/40 pt-[18vh] backdrop-blur-[2px]">
+          <div className="flex w-full max-w-xs flex-col items-center gap-3 rounded-lg p-6 text-center card-elevated text-on-dark">
+            <span className="inline-block size-8 rounded-pill border-[3px] border-purple/20 border-t-purple motion-safe:animate-spin" />
+            <p className="text-body font-bold">جاري فتح أدوات المعلم...</p>
+          </div>
         </div>,
         document.body,
       )}

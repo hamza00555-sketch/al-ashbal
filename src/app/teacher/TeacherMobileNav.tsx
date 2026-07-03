@@ -21,5 +21,6 @@ export function TeacherMobileNav({
     { id: "reviews", label: "المراجعات", href: "/teacher/reviews", src: "/assets/icons/icon_review.png", fallback: <IconVideo />, badge: reviewCount },
   ];
   const active = items.find((i) => i.href === pathname)?.id ?? "";
-  return <AppBottomNav items={items} activeId={active} />;
+  // protected routes: no background auth request per prefetched link
+  return <AppBottomNav items={items} activeId={active} prefetchLinks={false} />;
 }

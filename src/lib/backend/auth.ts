@@ -1,90 +1,95 @@
 /*
-  Auth/session data access (Phase 2 — REAL implementation, wired to Supabase).
-  ⚠️ Server-only: every function here builds a request-scoped server client
-  (cookies + anon key), so RLS applies as the signed-in user.
+  Auth/session data access — REQUEST-SCOPED CACHED (perf task N2).
+  ⚠️ Server-only. React cache() dedupes the expensive reads inside ONE server
+  render/action pass: no matter how many layers ask (layout → page →
+  requireTeacher), the request performs at most ONE auth/v1/user call and ONE
+  profiles read. Security is unchanged: the values still come from Supabase
+  under RLS on every request — never from the client, never across requests.
 */
+import { cache } from "react";
 import { createSupabaseServerClient } from "../supabase/server";
 import { BackendAuthError, BackendPermissionError } from "./errors";
 import type { Profile, TeacherProfile } from "../supabase/types";
 
-type ServerClient = Awaited<ReturnType<typeof createSupabaseServerClient>>;
+/** One server client per request (cookie-bound; creation is cheap but this
+ *  also guarantees every helper shares the same session view). */
+export const getRequestSupabase = cache(async () => createSupabaseServerClient());
 
-/** The signed-in auth user's id, or null (no session / expired session). */
-async function getSessionUserId(supabase: ServerClient): Promise<string | null> {
+/** One VERIFIED auth user per request (single /auth/v1/user round trip). */
+const getRequestUser = cache(async () => {
+  const supabase = await getRequestSupabase();
   const { data, error } = await supabase.auth.getUser();
-  if (error || !data.user) return null; // fail closed: no verified user → signed out
-  return data.user.id;
-}
+  if (error || !data.user) return null; // fail closed: unverified → signed out
+  return data.user;
+});
 
-/** The user's own `profiles` row (RLS: `id = auth.uid()`), or null if absent. */
-async function readOwnProfile(
-  supabase: ServerClient,
-  userId: string,
-): Promise<Profile | null> {
+/** One profiles read per request (RLS: `id = auth.uid()`). */
+const getRequestProfile = cache(async (): Promise<Profile | null> => {
+  const user = await getRequestUser();
+  if (!user) return null;
+  const supabase = await getRequestSupabase();
   const { data, error } = await supabase
     .from("profiles")
     .select("*")
-    .eq("id", userId)
+    .eq("id", user.id)
     .maybeSingle();
   if (error) throw new Error(`[backend/auth] profiles read failed: ${error.message}`);
   return data;
+});
+
+/** Does the request carry a verified session? (cached — no extra round trip) */
+export async function getSessionUser() {
+  return getRequestUser();
 }
 
 /**
- * getCurrentUserProfile — the signed-in user's profile.
- *   Caller: server. Auth: requires a Supabase session. Input: none.
- *   Output: Profile | null (null when signed out OR the auth user has no
- *   profiles row yet). Tables: profiles (select own via RLS `id = auth.uid()`).
+ * getCurrentUserProfile — the signed-in user's profile (cached per request).
+ *   Output: Profile | null (null when signed out OR no profiles row yet).
  */
 export async function getCurrentUserProfile(): Promise<Profile | null> {
-  const supabase = await createSupabaseServerClient();
-  const userId = await getSessionUserId(supabase);
-  if (!userId) return null;
-  return readOwnProfile(supabase, userId);
+  return getRequestProfile();
 }
 
 /**
- * getCurrentTeacherProfile — profile + teacher_profile for the signed-in teacher.
- *   Caller: server. Output: combined row, or null when signed out / not a
- *   teacher. The role check is on the SERVER-read profiles row — never a
- *   client-sent value. Tables: profiles, teacher_profiles (own rows via RLS).
+ * getCurrentTeacherProfile — profile + teacher_profiles for the signed-in
+ * teacher (cached per request). Role comes from the SERVER-read profile.
  */
-export async function getCurrentTeacherProfile(): Promise<
-  (Profile & TeacherProfile) | null
-> {
-  const supabase = await createSupabaseServerClient();
-  const userId = await getSessionUserId(supabase);
-  if (!userId) return null;
-  const profile = await readOwnProfile(supabase, userId);
-  if (!profile || profile.role !== "teacher") return null;
-  const { data: teacher, error } = await supabase
-    .from("teacher_profiles")
-    .select("*")
-    .eq("id", userId)
-    .maybeSingle();
-  if (error) {
-    throw new Error(`[backend/auth] teacher_profiles read failed: ${error.message}`);
-  }
-  // A teacher-role profile without its teacher_profiles row (half-bootstrapped)
-  // still counts as a teacher; bio is simply empty.
-  return {
-    ...profile,
-    bio: teacher?.bio ?? null,
-  };
-}
+export const getCurrentTeacherProfile = cache(
+  async (): Promise<(Profile & TeacherProfile) | null> => {
+    const profile = await getRequestProfile();
+    if (!profile || profile.role !== "teacher") return null;
+    const supabase = await getRequestSupabase();
+    const { data: teacher, error } = await supabase
+      .from("teacher_profiles")
+      .select("*")
+      .eq("id", profile.id)
+      .maybeSingle();
+    if (error) {
+      throw new Error(`[backend/auth] teacher_profiles read failed: ${error.message}`);
+    }
+    // A teacher-role profile without its teacher_profiles row (half-bootstrapped)
+    // still counts as a teacher; bio is simply empty.
+    return {
+      ...profile,
+      bio: teacher?.bio ?? null,
+      created_at: profile.created_at,
+      updated_at: profile.updated_at,
+    };
+  },
+);
 
 /**
- * requireTeacher — assert the caller is an authenticated teacher; return their id.
- *   Caller: top of every teacher server action. Throws BackendAuthError when
- *   signed out, BackendPermissionError when signed in without the teacher role.
+ * requireTeacher — assert the caller is an authenticated teacher; return their
+ * id. Throws BackendAuthError (signed out) / BackendPermissionError (wrong
+ * role). Benefits from the request cache: inside a render pass that already
+ * resolved the user/profile (the teacher layout), this adds ZERO round trips.
  */
 export async function requireTeacher(): Promise<{ teacherId: string }> {
-  const supabase = await createSupabaseServerClient();
-  const userId = await getSessionUserId(supabase);
-  if (!userId) throw new BackendAuthError("requireTeacher: no session");
-  const profile = await readOwnProfile(supabase, userId);
+  const user = await getRequestUser();
+  if (!user) throw new BackendAuthError("requireTeacher: no session");
+  const profile = await getRequestProfile();
   if (!profile || profile.role !== "teacher") {
     throw new BackendPermissionError("requireTeacher: signed-in user is not a teacher");
   }
-  return { teacherId: userId };
+  return { teacherId: user.id };
 }

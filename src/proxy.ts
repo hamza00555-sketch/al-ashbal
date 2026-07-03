@@ -27,6 +27,13 @@ function redirectTo(pathname: string, request: NextRequest, from: NextResponse) 
   return redirect;
 }
 
+/** Does the request carry Supabase auth cookies at all? (no network) */
+function hasAuthCookie(request: NextRequest): boolean {
+  return request.cookies
+    .getAll()
+    .some((c) => c.name.startsWith("sb-") && c.name.includes("-auth-token"));
+}
+
 export async function proxy(request: NextRequest) {
   const isLogin = request.nextUrl.pathname.startsWith(TEACHER_LOGIN_PATH);
 
@@ -36,6 +43,21 @@ export async function proxy(request: NextRequest) {
     // No Supabase configured → nobody can be authenticated. Fail CLOSED:
     // only the login screen is reachable.
     return isLogin
+      ? NextResponse.next({ request })
+      : NextResponse.redirect(new URL(LOGIN_PATH, request.url));
+  }
+
+  // PREFETCH requests (router warming routes, e.g. nav links): cookie-PRESENCE
+  // check only — no network verification, so a burst of prefetches never
+  // becomes an auth-request storm. This does not weaken protection: the
+  // teacher layout re-verifies the session server-side on every render, and a
+  // request without any auth cookie still gets redirected here.
+  const isPrefetch =
+    request.headers.get("next-router-prefetch") === "1" ||
+    request.headers.get("purpose") === "prefetch" ||
+    request.headers.get("x-middleware-prefetch") === "1";
+  if (isPrefetch && !isLogin) {
+    return hasAuthCookie(request)
       ? NextResponse.next({ request })
       : NextResponse.redirect(new URL(LOGIN_PATH, request.url));
   }

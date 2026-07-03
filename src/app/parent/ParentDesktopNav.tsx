@@ -10,6 +10,7 @@ export function ParentDesktopNav() {
   const active = parentNavItems.find((item) => item.href === pathname)?.id ?? "home";
   return (
     <DesktopSidebar
+      prefetchLinks={false} // parent layout does per-request auth
       items={parentNavItems}
       activeId={active}
       header={<span className="text-card-title font-extrabold text-cream">الأشبال</span>}
