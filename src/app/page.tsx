@@ -30,12 +30,20 @@ export default function Home() {
         {/* Primary path — invitation code */}
         <JoinByCode />
 
-        {/* Secondary — teacher sign-in (local demo access gate) */}
+        {/* Secondary — teacher sign-in (real Supabase Auth) */}
         <Link
           href="/teacher/login"
           className="flex min-h-11 w-full items-center justify-center rounded-lg bg-white/8 px-8 text-button font-bold text-cream/85 ring-1 ring-white/10 transition hover:bg-white/12 hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-soft"
         >
           دخول المعلم
+        </Link>
+
+        {/* Secondary — join request (no invitation code: teacher / parent) */}
+        <Link
+          href="/join/request"
+          className="flex min-h-11 w-full items-center justify-center rounded-lg bg-white/8 px-8 text-button font-bold text-cream/85 ring-1 ring-white/10 transition hover:bg-white/12 hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-soft"
+        >
+          طلب انضمام
         </Link>
 
         {/* Tertiary — local demo fallback only */}
