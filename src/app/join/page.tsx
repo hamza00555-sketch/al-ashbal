@@ -5,6 +5,7 @@
   Public route (no AppShell). Demo-only, localStorage.
 */
 import Link from "next/link";
+import { BackButton } from "@/components";
 import { JoinFlow } from "./JoinFlow";
 
 export default async function JoinPage({
@@ -22,6 +23,7 @@ export default async function JoinPage({
         className="pointer-events-none absolute -top-24 size-72 rounded-pill bg-purple/20 blur-3xl lg:size-[26rem]"
       />
       <div className="relative flex w-full max-w-xl flex-col gap-6">
+        <BackButton />
         <header className="flex flex-col items-center gap-3 text-center">
           <Link href="/" className="gradient-badge flex size-14 items-center justify-center rounded-pill text-h2 font-extrabold text-on-light shadow-glow">
             ش
