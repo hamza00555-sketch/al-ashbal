@@ -8,11 +8,13 @@
   Layout/navigation only — no auth or backend changes.
 */
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Badge } from "@/components";
 import { teacherNavItems } from "./_nav";
 import { useTeacherReviewCount } from "./useReviewCount";
+import { TeacherLogoutButton } from "./TeacherLogoutButton";
 
 export function TeacherToolsDrawer({
   teacherId,
@@ -52,7 +54,10 @@ export function TeacherToolsDrawer({
         أدوات المعلم
       </button>
 
-      {open && (
+      {/* Portal to <body>: the layout content creates a stacking context
+          (relative z-10 in AppShell), so a fixed drawer rendered inline would
+          sit BELOW the z-40 bottom nav no matter its own z-index. */}
+      {open && createPortal(
         <div role="dialog" aria-modal="true" aria-label="أدوات المعلم" className="fixed inset-0 z-50">
           {/* backdrop — tap outside to close */}
           <button
@@ -100,8 +105,13 @@ export function TeacherToolsDrawer({
                 );
               })}
             </ul>
+            {/* Account action pinned at the bottom of the tools list. */}
+            <div className="mt-auto border-t border-purple/12 pt-2">
+              <TeacherLogoutButton variant="drawer" />
+            </div>
           </nav>
-        </div>
+        </div>,
+        document.body,
       )}
     </div>
   );

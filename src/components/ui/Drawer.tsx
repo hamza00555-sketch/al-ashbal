@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "@/lib/cn";
 
 export interface DrawerProps {
@@ -20,6 +21,12 @@ export interface DrawerProps {
  * page's cream-on-purple text by accident. Stays mounted so the slide runs.
  */
 export function Drawer({ open, onClose, title, side = "right", children }: DrawerProps) {
+  // Portal target exists only after mount (SSR renders nothing — fine, the
+  // drawer is interaction-only). Portaling to <body> escapes the layout's
+  // stacking context so the panel really sits ABOVE the fixed bottom nav.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   // Escape closes (matches the teacher tools drawer behavior).
   useEffect(() => {
     if (!open) return;
@@ -31,7 +38,8 @@ export function Drawer({ open, onClose, title, side = "right", children }: Drawe
   }, [open, onClose]);
 
   const fromRight = side === "right";
-  return (
+  if (!mounted) return null;
+  return createPortal(
     <div
       className={cn("fixed inset-0 z-50", !open && "pointer-events-none")}
       aria-hidden={!open}
@@ -75,6 +83,7 @@ export function Drawer({ open, onClose, title, side = "right", children }: Drawe
           {children}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

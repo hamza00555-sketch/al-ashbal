@@ -14,7 +14,6 @@ import { countPendingJoinRequests } from "@/lib/backend/joinRequests";
 import { IconBook, IconCalendar, IconUsers, IconVideo } from "./_icons";
 import { getTeacherContext } from "./_shared";
 import { TeacherReviewAlert } from "./TeacherReviewAlert";
-import { TeacherIdentityStrip } from "./TeacherIdentityStrip";
 import { TeacherName } from "./TeacherIdentity";
 import { EnrolledChildCountStat } from "./EnrolledChildCountStat";
 
@@ -56,18 +55,7 @@ export default async function TeacherOverviewPage() {
         actions={<SettingsLink role="teacher" />}
       />
 
-      <TeacherIdentityStrip />
-
       <TeacherReviewAlert teacherId={viewer.id} dbPendingReviews={pendingReviews.length} />
-
-      {/* Where the tools live now — one calm hint, no navigation tiles. */}
-      <Card variant="lavender" className="py-3">
-        <p className="text-body text-on-dark">
-          كل أدوات المعلم — الدعوات، طلبات الانضمام، الأطفال، المراجعات وغيرها — في{" "}
-          <span className="font-bold">القائمة الجانبية</span> على الشاشات الكبيرة، وفي زر{" "}
-          <span className="whitespace-nowrap font-bold">«☰ أدوات المعلم»</span> أعلى الصفحة على الجوال.
-        </p>
-      </Card>
 
       {/* Info summary — numbers only, not navigation */}
       <section className="flex flex-col gap-4">

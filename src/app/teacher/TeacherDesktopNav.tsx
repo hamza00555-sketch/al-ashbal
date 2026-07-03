@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { DesktopSidebar } from "@/components";
 import { teacherNavItems } from "./_nav";
 import { useTeacherReviewCount } from "./useReviewCount";
+import { TeacherLogoutButton } from "./TeacherLogoutButton";
 
 /** Desktop side navigation for the teacher dashboard (hidden on mobile). */
 export function TeacherDesktopNav({
@@ -24,6 +25,7 @@ export function TeacherDesktopNav({
       items={items}
       activeId={active}
       header={<span className="text-card-title font-extrabold text-cream">الأشبال · المعلم</span>}
+      footer={<TeacherLogoutButton variant="sidebar" />}
     />
   );
 }
