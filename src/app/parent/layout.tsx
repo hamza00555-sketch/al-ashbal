@@ -9,6 +9,7 @@ import type { ReactNode } from "react";
 import { AppShell, DemoExperienceSwitcher, NotificationBell } from "@/components";
 import { getMockUser, getNotificationsForViewer } from "@/lib/data";
 import { getCurrentUserProfile } from "@/lib/backend/auth";
+import { listChildrenForParent } from "@/lib/backend/families";
 import { ParentDesktopNav } from "./ParentDesktopNav";
 import { ParentMobileNav } from "./ParentMobileNav";
 import { ParentAccountStatus } from "./ParentAccountStatus";
@@ -28,7 +29,18 @@ export default async function ParentLayout({ children }: { children: ReactNode }
     profile = null;
   }
   if (profile?.role === "parent") {
-    return <ParentAccountStatus displayName={profile.display_name} />;
+    // REAL parent → their Supabase-linked children (RLS-scoped), never demo data.
+    const children = await listChildrenForParent().catch(() => []);
+    return (
+      <ParentAccountStatus
+        displayName={profile.display_name}
+        linkedChildren={children.map((c) => ({
+          id: c.id,
+          displayName: c.display_name,
+          avatarUrl: c.avatar_url,
+        }))}
+      />
+    );
   }
 
   const viewer = getMockUser("parent");
