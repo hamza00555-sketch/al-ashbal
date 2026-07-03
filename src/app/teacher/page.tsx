@@ -22,6 +22,9 @@ const chip = "inline-flex size-8 items-center justify-center";
 /** Teacher control-center tiles — the primary way to reach the daily pages. */
 const TEACHER_TOOLS = [
   // Each tile gets a DISTINCT icon (الدعوات/الأطفال and المواد/الأنشطة used to share one).
+  // These tiles are a convenience — the FULL tool list lives in the sidebar
+  // (desktop) and the burger drawer (mobile).
+  { href: "/teacher/join-requests", label: "طلبات الانضمام", icon: "icon_notifications", fallback: <IconUsers /> },
   { href: "/teacher/invitations", label: "الدعوات", icon: "icon_wishes", fallback: <IconBook /> },
   { href: "/teacher/prep", label: "التحضير", icon: "icon_preparation", fallback: <IconPrep /> },
   { href: "/teacher/attendance", label: "الحضور", icon: "icon_attendance", fallback: <IconCalendar /> },

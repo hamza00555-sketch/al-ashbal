@@ -24,6 +24,7 @@ import { getOwnJoinRequest } from "@/lib/backend/joinRequests";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { TeacherDesktopNav } from "./TeacherDesktopNav";
 import { TeacherMobileNav } from "./TeacherMobileNav";
+import { TeacherToolsDrawer } from "./TeacherToolsDrawer";
 import { TeacherShellGate, type TeacherAuthState, type TeacherDeniedReason } from "./TeacherShellGate";
 import type { TeacherIdentity } from "./TeacherIdentity";
 
@@ -95,7 +96,11 @@ export default async function TeacherLayout({ children }: { children: ReactNode 
     >
       <div className="mx-auto flex w-full max-w-[1180px] flex-col gap-4">
         <div className="flex items-center justify-between gap-2">
-          <DemoExperienceSwitcher current="teacher" />
+          <div className="flex min-w-0 items-center gap-2">
+            {/* Mobile: burger → drawer with ALL teacher tools (desktop has the sidebar). */}
+            <TeacherToolsDrawer teacherId={viewer.id} dbPendingReviews={dbPendingReviews} />
+            <DemoExperienceSwitcher current="teacher" />
+          </div>
           <NotificationBell userId={viewer.id} seed={seed} />
         </div>
         {children}

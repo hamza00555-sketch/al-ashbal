@@ -47,6 +47,11 @@
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+/* Mobile drawer slide-in from the RIGHT (RTL start side). */
+@keyframes ash-drawer-in {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
 @keyframes ash-float-a {
   0%, 100% { transform: translate3d(0, 0, 0); }
   50%      { transform: translate3d(0, -16px, 0); }

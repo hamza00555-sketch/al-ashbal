@@ -1,8 +1,8 @@
 import { AppIcon, type NavItem } from "@/components";
 import { IconActivity, IconBook, IconCalendar, IconHome, IconPrep, IconUsers, IconVideo } from "./_icons";
 
-/** Desktop sidebar navigation for the teacher area.
- *  أدوات التجربة intentionally NOT here — they live in /style-guide.
+/** The ONE list of teacher tools — used by the desktop sidebar AND the mobile
+ *  burger drawer (TeacherToolsDrawer), so both always match.
  *  Icons use brand PNGs when present (/assets/icons/...), else the inline SVG. */
 export const teacherNavItems: NavItem[] = [
   { id: "home", label: "الرئيسية", href: "/teacher", icon: <AppIcon name="icon_home" fallback={<IconHome />} /> },
@@ -14,4 +14,5 @@ export const teacherNavItems: NavItem[] = [
   { id: "reviews", label: "المراجعات", href: "/teacher/reviews", icon: <AppIcon name="icon_review" fallback={<IconVideo />} /> },
   { id: "activities", label: "الأنشطة", href: "/teacher/activities", icon: <AppIcon name="icon_activity" fallback={<IconActivity />} /> },
   { id: "materials", label: "المواد والتقدم", href: "/teacher/materials", icon: <AppIcon name="icon_lessons" fallback={<IconBook />} /> },
+  { id: "demo-tools", label: "أدوات التجربة", href: "/teacher/demo-tools", icon: <AppIcon name="icon_points" fallback={<IconPrep />} /> },
 ];
