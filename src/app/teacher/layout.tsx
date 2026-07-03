@@ -20,10 +20,11 @@ import { AppShell, DemoExperienceSwitcher, NotificationBell } from "@/components
 export const dynamic = "force-dynamic";
 import { getMockUser, getNotificationsForViewer, getPendingTeacherReviews } from "@/lib/data";
 import { getCurrentUserProfile, getCurrentTeacherProfile } from "@/lib/backend/auth";
+import { getOwnJoinRequest } from "@/lib/backend/joinRequests";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { TeacherDesktopNav } from "./TeacherDesktopNav";
 import { TeacherMobileNav } from "./TeacherMobileNav";
-import { TeacherShellGate, type TeacherAuthState } from "./TeacherShellGate";
+import { TeacherShellGate, type TeacherAuthState, type TeacherDeniedReason } from "./TeacherShellGate";
 import type { TeacherIdentity } from "./TeacherIdentity";
 
 /** Server-side auth state for the teacher area.
@@ -35,28 +36,36 @@ import type { TeacherIdentity } from "./TeacherIdentity";
 async function resolveTeacherAuth(): Promise<{
   authState: TeacherAuthState;
   teacher: TeacherIdentity | null;
+  denied: TeacherDeniedReason;
 }> {
   try {
     const supabase = await createSupabaseServerClient();
     const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user) return { authState: "no-user", teacher: null };
+    if (error || !data.user) return { authState: "no-user", teacher: null, denied: null };
 
     // Session exists — from here on, never fall back to "no-user".
     const profile = await getCurrentUserProfile();
     if (!profile || profile.role !== "teacher") {
-      // Signed in but not linked as a teacher (e.g. auth user recreated in the
-      // dashboard → the old profiles row cascaded away). Show the clear
-      // access-denied screen with logout — NOT a blank redirect loop.
+      // Signed in but not an approved teacher. If they have a join request,
+      // show its state (pending/rejected) instead of the generic denial.
+      const request = await getOwnJoinRequest().catch(() => null);
+      const denied: TeacherDeniedReason =
+        !profile && request?.status === "pending"
+          ? "pending"
+          : !profile && request?.status === "rejected"
+            ? "rejected"
+            : null;
       console.error(
-        `[teacher-layout] signed-in user without teacher profile: hasProfile=${Boolean(profile)} role=${profile?.role ?? "none"}`,
+        `[teacher-layout] signed-in user without teacher profile: hasProfile=${Boolean(profile)} role=${profile?.role ?? "none"} request=${request?.status ?? "none"}`,
       );
-      return { authState: "not-teacher", teacher: null };
+      return { authState: "not-teacher", teacher: null, denied };
     }
     const teacher = await getCurrentTeacherProfile();
-    if (!teacher) return { authState: "not-teacher", teacher: null };
+    if (!teacher) return { authState: "not-teacher", teacher: null, denied: null };
     return {
       authState: "teacher",
       teacher: { id: teacher.id, displayName: teacher.display_name },
+      denied: null,
     };
   } catch (error) {
     // Never swallow Next's control-flow errors (dynamic bailout, redirects).
@@ -66,12 +75,12 @@ async function resolveTeacherAuth(): Promise<{
       "[teacher-layout] auth resolution failed:",
       error instanceof Error ? `${error.name}: ${error.message}` : "unknown",
     );
-    return { authState: "error", teacher: null };
+    return { authState: "error", teacher: null, denied: null };
   }
 }
 
 export default async function TeacherLayout({ children }: { children: ReactNode }) {
-  const { authState, teacher } = await resolveTeacherAuth();
+  const { authState, teacher, denied } = await resolveTeacherAuth();
 
   // Demo data (notifications, pending reviews) still comes from the seed viewer
   // — the localStorage demo stores are untouched in this phase.
@@ -98,6 +107,7 @@ export default async function TeacherLayout({ children }: { children: ReactNode 
     <TeacherShellGate
       authState={authState}
       teacher={teacher}
+      denied={denied}
       plain={children}
       withShell={withShell}
     />

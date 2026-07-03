@@ -6,7 +6,15 @@
   need table typings. Extend this as later phases wire real reads/writes, or
   replace it wholesale with generated types: `supabase gen types typescript`.
 */
-import type { ChildDeviceGrant, Profile, TeacherProfile } from "./types";
+import type {
+  ChildDeviceGrant,
+  ClassRow,
+  ClassTeacher,
+  JoinRequest,
+  ParentProfile,
+  Profile,
+  TeacherProfile,
+} from "./types";
 
 type Empty = Record<string, never>;
 
@@ -27,6 +35,34 @@ export interface Database {
         Row: TeacherProfile;
         Insert: Partial<TeacherProfile> & { id: string };
         Update: Partial<TeacherProfile>;
+        Relationships: [];
+      };
+      parent_profiles: {
+        Row: ParentProfile;
+        Insert: Partial<ParentProfile> & { id: string };
+        Update: Partial<ParentProfile>;
+        Relationships: [];
+      };
+      classes: {
+        Row: ClassRow;
+        Insert: Partial<ClassRow> & { name: string };
+        Update: Partial<ClassRow>;
+        Relationships: [];
+      };
+      class_teachers: {
+        Row: ClassTeacher;
+        Insert: Partial<ClassTeacher> & { class_id: string; teacher_id: string };
+        Update: Partial<ClassTeacher>;
+        Relationships: [];
+      };
+      join_requests: {
+        Row: JoinRequest;
+        Insert: Partial<JoinRequest> & {
+          email: string;
+          display_name: string;
+          requested_role: JoinRequest["requested_role"];
+        };
+        Update: Partial<JoinRequest>;
         Relationships: [];
       };
       child_device_grants: {

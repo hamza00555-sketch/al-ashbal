@@ -48,17 +48,51 @@ export type TeacherProfile = {
   updated_at: Timestamptz;
 };
 
-export interface ParentProfile {
+/** parent_profiles — `type` (used as a Row in the `Database` generic). */
+export type ParentProfile = {
   id: Uuid;
   phone: string | null;
-}
+  created_at: Timestamptz;
+  updated_at: Timestamptz;
+};
 
-export interface ClassRow {
+/** classes — `type` (used as a Row in the `Database` generic). */
+export type ClassRow = {
   id: Uuid;
   name: string;
   created_by: Uuid | null;
   archived: boolean;
-}
+  created_at: Timestamptz;
+  updated_at: Timestamptz;
+};
+
+/** class_teachers — `type` (used as a Row in the `Database` generic). */
+export type ClassTeacher = {
+  id: Uuid;
+  class_id: Uuid;
+  teacher_id: Uuid;
+  role: "owner" | "assistant";
+  created_at: Timestamptz;
+};
+
+export type JoinRequestRole = "teacher" | "parent";
+export type JoinRequestStatus = "pending" | "approved" | "rejected" | "cancelled";
+
+/** join_requests — controlled onboarding (011). `type` for the Database generic. */
+export type JoinRequest = {
+  id: Uuid;
+  auth_user_id: Uuid | null;
+  email: string;
+  display_name: string;
+  requested_role: JoinRequestRole;
+  status: JoinRequestStatus;
+  note: string | null;
+  reviewed_by: Uuid | null;
+  reviewed_at: Timestamptz | null;
+  rejection_reason: string | null;
+  created_at: Timestamptz;
+  updated_at: Timestamptz;
+};
 
 export interface Child {
   id: Uuid;

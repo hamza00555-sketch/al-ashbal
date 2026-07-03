@@ -6,6 +6,7 @@ import { IconActivity, IconBook, IconCalendar, IconHome, IconPrep, IconUsers, Ic
  *  Icons use brand PNGs when present (/assets/icons/...), else the inline SVG. */
 export const teacherNavItems: NavItem[] = [
   { id: "home", label: "الرئيسية", href: "/teacher", icon: <AppIcon name="icon_home" fallback={<IconHome />} /> },
+  { id: "join-requests", label: "طلبات الانضمام", href: "/teacher/join-requests", icon: <AppIcon name="icon_notifications" fallback={<IconUsers />} /> },
   { id: "invitations", label: "الدعوات", href: "/teacher/invitations", icon: <AppIcon name="icon_wishes" fallback={<IconBook />} /> },
   { id: "prep", label: "التحضير", href: "/teacher/prep", icon: <AppIcon name="icon_preparation" fallback={<IconPrep />} /> },
   { id: "attendance", label: "الحضور", href: "/teacher/attendance", icon: <AppIcon name="icon_attendance" fallback={<IconCalendar />} /> },

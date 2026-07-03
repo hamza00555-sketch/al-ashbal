@@ -20,15 +20,19 @@ import { TeacherAccessDenied } from "./TeacherAccessDenied";
 import { TeacherAreaError } from "./TeacherAreaError";
 
 export type TeacherAuthState = "no-user" | "not-teacher" | "teacher" | "error";
+/** Why a signed-in non-teacher is denied: join request pending/rejected, or plain. */
+export type TeacherDeniedReason = "pending" | "rejected" | null;
 
 export function TeacherShellGate({
   authState,
   teacher,
+  denied = null,
   plain,
   withShell,
 }: {
   authState: TeacherAuthState;
   teacher: TeacherIdentity | null;
+  denied?: TeacherDeniedReason;
   plain: ReactNode;
   withShell: ReactNode;
 }) {
@@ -54,7 +58,7 @@ export function TeacherShellGate({
       </main>
     );
   }
-  if (authState === "not-teacher" || !teacher) return <TeacherAccessDenied />;
+  if (authState === "not-teacher" || !teacher) return <TeacherAccessDenied denied={denied} />;
 
   return <TeacherIdentityProvider value={teacher}>{withShell}</TeacherIdentityProvider>;
 }
