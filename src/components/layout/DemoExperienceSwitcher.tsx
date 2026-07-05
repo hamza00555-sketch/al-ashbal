@@ -75,6 +75,7 @@ export function DemoExperienceSwitcher({ current, compact = false }: { current?:
               <Link
                 key={x.id}
                 href={x.href}
+                prefetch={false} // targets include auth-gated layouts — no background auth work
                 onClick={() => setOpen(false)}
                 className={cn(
                   rowBase,

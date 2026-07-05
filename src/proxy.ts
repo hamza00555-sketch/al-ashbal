@@ -1,24 +1,27 @@
 /*
-  Server-side protection for the /teacher area (Phase 2 — real Supabase Auth).
+  Session keep-alive + /teacher protection (Next 16 proxy — the middleware
+  convention). Runs for EVERY app route (static assets excluded), because this
+  is the ONLY place refreshed auth cookies can be persisted:
 
-  Runs BEFORE any /teacher page renders (Next 16 proxy — the middleware
-  convention). Responsibilities:
-    1. Refresh the Supabase auth session (rotates cookies when needed).
-    2. Redirect signed-out visitors on any protected /teacher route to
-       /teacher/login — the dashboard HTML is never sent to a guest.
-    3. Redirect an already-signed-in user away from /teacher/login to /teacher.
-
-  The teacher ROLE check happens in the server layout (src/app/teacher/layout.tsx)
-  via a profiles read under RLS — the proxy only guarantees "has a session".
-  Old localStorage demo sessions play no part here: authorization is cookie-based.
+  Supabase access tokens expire (~1h) and refresh tokens ROTATE on use. A
+  Server Component (e.g. the /parent layout or the /login pre-check) CAN
+  refresh a session in memory but CANNOT write the rotated cookies — the new
+  refresh token would be lost and the session would die the next time the app
+  is opened ("keeps asking me to log in"). So:
+    1. Any request carrying auth cookies whose access token is EXPIRING gets a
+       full getUser() here → @supabase/ssr refreshes and THIS proxy persists
+       the rotated cookies on the response.
+    2. Fresh tokens skip the network entirely (fast path — no added latency).
+    3. /teacher/* keeps its gate: no session → /login; the layout remains the
+       authoritative role check. Prefetches stay network-free.
 */
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
-// Unified public sign-in page (outside /teacher, so outside this matcher).
 const LOGIN_PATH = "/login";
-// Legacy path kept as a redirect page → still needs the login carve-out here.
 const TEACHER_LOGIN_PATH = "/teacher/login";
+/** Refresh ahead of expiry so a token never dies mid-render. */
+const REFRESH_MARGIN_MS = 5 * 60_000;
 
 /** Copy any (possibly refreshed) auth cookies onto a redirect response. */
 function redirectTo(pathname: string, request: NextRequest, from: NextResponse) {
@@ -27,41 +30,83 @@ function redirectTo(pathname: string, request: NextRequest, from: NextResponse) 
   return redirect;
 }
 
-/** Does the request carry Supabase auth cookies at all? (no network) */
-function hasAuthCookie(request: NextRequest): boolean {
+function authCookies(request: NextRequest) {
   return request.cookies
     .getAll()
-    .some((c) => c.name.startsWith("sb-") && c.name.includes("-auth-token"));
+    .filter((c) => c.name.startsWith("sb-") && c.name.includes("-auth-token"));
+}
+
+/** Parse expires_at (epoch seconds) from the (possibly chunked) session cookie
+ *  WITHOUT any network. Returns null when unparseable → treat as expiring. */
+function sessionExpiresAtMs(request: NextRequest): number | null {
+  try {
+    const cookies = authCookies(request).filter((c) => !c.name.includes("-code-verifier"));
+    if (!cookies.length) return null;
+    // combine chunks: sb-x-auth-token, sb-x-auth-token.0, .1, ...
+    const base = cookies[0].name.replace(/\.\d+$/, "");
+    const chunks = cookies
+      .filter((c) => c.name === base || c.name.startsWith(`${base}.`))
+      .sort((a, b) => {
+        const ai = Number(a.name.split(".").pop());
+        const bi = Number(b.name.split(".").pop());
+        return (Number.isNaN(ai) ? -1 : ai) - (Number.isNaN(bi) ? -1 : bi);
+      })
+      .map((c) => c.value)
+      .join("");
+    const json = chunks.startsWith("base64-")
+      ? Buffer.from(chunks.slice(7), "base64").toString("utf8")
+      : chunks;
+    const session = JSON.parse(json) as { expires_at?: number };
+    return typeof session.expires_at === "number" ? session.expires_at * 1000 : null;
+  } catch {
+    return null;
+  }
 }
 
 export async function proxy(request: NextRequest) {
-  const isLogin = request.nextUrl.pathname.startsWith(TEACHER_LOGIN_PATH);
+  const path = request.nextUrl.pathname;
+  const isTeacherArea = path.startsWith("/teacher");
+  const isTeacherLogin = path.startsWith(TEACHER_LOGIN_PATH);
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !anonKey) {
-    // No Supabase configured → nobody can be authenticated. Fail CLOSED:
-    // only the login screen is reachable.
-    return isLogin
-      ? NextResponse.next({ request })
-      : NextResponse.redirect(new URL(LOGIN_PATH, request.url));
+    // No Supabase configured → nobody can be authenticated. Teacher area fails
+    // CLOSED; the rest of the app (demo/local) keeps working.
+    return isTeacherArea && !isTeacherLogin
+      ? NextResponse.redirect(new URL(LOGIN_PATH, request.url))
+      : NextResponse.next({ request });
   }
 
-  // PREFETCH requests (router warming routes, e.g. nav links): cookie-PRESENCE
-  // check only — no network verification, so a burst of prefetches never
-  // becomes an auth-request storm. This does not weaken protection: the
-  // teacher layout re-verifies the session server-side on every render, and a
-  // request without any auth cookie still gets redirected here.
+  const hasCookies = authCookies(request).length > 0;
+
+  // No session cookies at all → nothing to refresh; only the teacher gate acts.
+  if (!hasCookies) {
+    return isTeacherArea && !isTeacherLogin
+      ? NextResponse.redirect(new URL(LOGIN_PATH, request.url))
+      : NextResponse.next({ request });
+  }
+
+  // PREFETCH requests: never a network call (no auth-request storms). The
+  // layouts re-verify server-side; presence was already established above.
   const isPrefetch =
     request.headers.get("next-router-prefetch") === "1" ||
     request.headers.get("purpose") === "prefetch" ||
     request.headers.get("x-middleware-prefetch") === "1";
-  if (isPrefetch && !isLogin) {
-    return hasAuthCookie(request)
-      ? NextResponse.next({ request })
-      : NextResponse.redirect(new URL(LOGIN_PATH, request.url));
+  if (isPrefetch) return NextResponse.next({ request });
+
+  // FAST PATH: the access token is still comfortably valid → no network. The
+  // layouts do the authoritative verification; nothing needs rotating yet.
+  const expiresAtMs = sessionExpiresAtMs(request);
+  const isFresh = expiresAtMs !== null && expiresAtMs - Date.now() > REFRESH_MARGIN_MS;
+  if (isFresh) {
+    // Signed-in visitor on the legacy teacher login path → straight to the app.
+    if (isTeacherLogin) return NextResponse.redirect(new URL("/teacher", request.url));
+    return NextResponse.next({ request });
   }
 
+  // REFRESH PATH: token expiring/expired/unparseable → verify + rotate HERE,
+  // where the new cookies can actually be persisted.
   let response = NextResponse.next({ request });
   const supabase = createServerClient(url, anonKey, {
     cookies: {
@@ -78,20 +123,24 @@ export async function proxy(request: NextRequest) {
     },
   });
 
-  // getUser() VERIFIES the session with Supabase (never trust the raw cookie).
-  // Any failure (expired, revoked, network) counts as signed out — fail closed.
   let user = null;
   try {
     user = (await supabase.auth.getUser()).data.user;
   } catch {
-    user = null;
+    user = null; // fail closed for the teacher gate below
   }
 
-  if (!user && !isLogin) return redirectTo(LOGIN_PATH, request, response);
-  if (user && isLogin) return redirectTo("/teacher", request, response);
+  if (isTeacherArea && !isTeacherLogin && !user) {
+    return redirectTo(LOGIN_PATH, request, response);
+  }
+  if (isTeacherLogin && user) return redirectTo("/teacher", request, response);
   return response;
 }
 
 export const config = {
-  matcher: ["/teacher/:path*"],
+  // Everything except Next internals and static files — the session refresh
+  // must run wherever the app might read the session.
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|icon.png|assets/|backgrounds/|.*\\.(?:png|jpg|jpeg|webp|svg|ico|woff2?)$).*)",
+  ],
 };
